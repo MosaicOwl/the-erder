@@ -1,0 +1,11 @@
+Login=Логин
+Password=Пароль
+Reg=Регистрация
+Confirm=Подтвердить
+Delete=Удалить
+Create=Создать
+Choose=Выбрать
+NickWasTaken=Ник занят!
+LoginFailed=Ошибка входа!
+Name=Имя
+Back=Назад
