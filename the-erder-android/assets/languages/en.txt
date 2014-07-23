@@ -1,0 +1,11 @@
+Login=Login
+Password=Password
+Reg=Register
+Confirm=Confirm
+Delete=Delete
+Create=Create
+Choose=Choose
+NickWasTaken=This name was already taken!
+LoginFailed=Login Failed!
+Name=Name
+Back=Back
