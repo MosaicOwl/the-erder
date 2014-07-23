@@ -20,6 +20,7 @@ Dependencies
 
 What we still need to do:
 =========
-+ Equip
-+ AI
++ Better GUI
++ Better AI
++ Rewrite client
 + New textures
