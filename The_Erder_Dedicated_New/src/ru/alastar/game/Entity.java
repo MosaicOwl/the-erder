@@ -6,7 +6,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.alastar.game.Tile;
-import com.alastar.game.enums.ModeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -490,7 +489,6 @@ public class Entity extends Transform
         r.z = (int) e.pos.z;
         r.type = e.type;
         r.warMode = e.warMode;
-        r.mode = ModeType.World;
         
         if(c != null){
             Server.SendTo(c.connection, r);

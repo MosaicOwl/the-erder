@@ -16,7 +16,6 @@ import ru.alastar.main.net.responses.TargetInfoResponse;
 import ru.alastar.main.net.responses.UpdatePlayerResponse;
 
 import com.alastar.game.Tile;
-import com.alastar.game.enums.ModeType;
 import com.alastar.game.enums.TileType;
 import com.alastar.game.enums.UpdateType;
 import com.badlogic.gdx.math.Vector3;
@@ -75,7 +74,6 @@ public class ServerWorld
                 r.y = (int) t.position.y;
                 r.z = (int) t.position.z;
                 r.type = t.type;
-                r.mode = ModeType.World;
                 Server.SendTo(c.connection, r);
             }
         }
@@ -122,7 +120,6 @@ public class ServerWorld
                 r.x = (int) t.position.x;
                 r.y = (int) t.position.y;
                 r.z = (int) t.position.z;
-                r.mode = ModeType.World;
                 if (c != null)
                     Server.SendTo(c.connection, r);
             }

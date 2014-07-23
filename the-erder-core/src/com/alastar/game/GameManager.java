@@ -9,8 +9,6 @@ import java.util.Hashtable;
 
 import com.alastar.game.enums.EntityType;
 import com.alastar.game.enums.ItemType;
-import com.alastar.game.enums.ModeType;
-import com.alastar.game.enums.Race;
 import com.alastar.game.enums.TileType;
 import com.alastar.game.lang.Entry;
 import com.alastar.game.lang.EntryManager;
@@ -66,32 +64,14 @@ public class GameManager {
 
 	public static int textureResolution;
 
-	public static Hashtable<ModeType, Mode> modes;
 	public static String lang = "en.txt";
 	public static int fieldOfTransparency = 3;
     public static Hashtable<String, Skin> skins;
     public static String selectedSkin = "default";
 
-	public static Mode getMode(ModeType t) {
-	    try{
-	    System.out.println("Modes count " + modes.size() + " getting mode " + t.name());
-		return modes.get(t);
-		}
-	    catch(Exception e)
-		{
-		    System.out.println(e.getLocalizedMessage());
-		    e.printStackTrace();
-		    return null;
-		}
-	}
 
 	public static void LoadContent() {
-	       if(GameManager.modes == null){
-	           GameManager.modes = new Hashtable<ModeType, Mode>();
-	           GameManager.modes.put(ModeType.World, new Mode(ModeType.World));
-	           GameManager.modes.put(ModeType.Battle, new Mode(ModeType.Battle));
-	           ModeManager.PushMode(GameManager.modes.get(ModeType.World));
-	        }
+
 		System.out.println("Loading languages...");
 		LoadLanguage();
 		////////////
@@ -370,10 +350,6 @@ public class GameManager {
 			return grass;
 
 		}
-	}
-
-	public static Texture getPlayerTexture(Race t) {
-		return grass;
 	}
 
 	public static String getLocalizedMessage(int res) {

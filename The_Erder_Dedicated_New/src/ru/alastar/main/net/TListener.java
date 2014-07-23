@@ -42,7 +42,6 @@ public class TListener extends Listener
         kryo.register(String.class);
         kryo.register(Integer.class);
         kryo.register(String[].class);
-        kryo.register(ModeType.class);
         kryo.register(UpdateType.class);
         kryo.register(Vector2.class);
         kryo.register(ItemType.class);

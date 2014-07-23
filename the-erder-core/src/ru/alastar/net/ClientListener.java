@@ -12,11 +12,10 @@ import com.alastar.game.Entity;
 import com.alastar.game.GameManager;
 import com.alastar.game.Item;
 import com.alastar.game.MainScreen;
-import com.alastar.game.ModeManager;
+import com.alastar.game.Map;
 import com.alastar.game.TargetInfo;
 import com.alastar.game.enums.EntityType;
 import com.alastar.game.enums.ItemType;
-import com.alastar.game.enums.ModeType;
 import com.alastar.game.enums.UpdateType;
 import com.alastar.game.gui.GUICore;
 import com.alastar.game.gui.constructed.ChatGUI;
@@ -45,7 +44,6 @@ public class ClientListener extends Listener {
         kryo.register(String.class);
         kryo.register(Integer.class);
         kryo.register(String[].class);
-        kryo.register(ModeType.class);
         kryo.register(UpdateType.class);
         kryo.register(Vector2.class);
         kryo.register(ItemType.class);
@@ -135,7 +133,7 @@ public class ClientListener extends Listener {
 	                       + (e.position.z * GameManager.textureResolution);
 	          }
 	          
-	          ModeManager.handleEntity(e);
+	          Map.handleEntity(e);
 	          
 	     }
 	     else if (object instanceof AddStatResponse) {
@@ -172,7 +170,7 @@ public class ClientListener extends Listener {
 	     }
 	     else if (object instanceof RemoveEntityResponse) {
 	         RemoveEntityResponse r = (RemoveEntityResponse)object;
-	         ModeManager.removeEntity(r.id); 
+	         Map.removeEntity(r.id); 
 	     }
 	     else if (object instanceof LoadWorldResponse) {
 	         LoadWorldResponse r = (LoadWorldResponse)object;
@@ -185,7 +183,7 @@ public class ClientListener extends Listener {
 	          UpdatePlayerResponse r = (UpdatePlayerResponse)object;
 	          switch(r.updType){
 	              case Position:
-	              ModeManager.currentMode.handleUpdate(r.id, new Vector3(r.x, r.y, r.z));
+	                  Map.handleUpdate(r.id, new Vector3(r.x, r.y, r.z));
 	              break;
                 case All:
                     break;
@@ -194,7 +192,7 @@ public class ClientListener extends Listener {
                 case Name:
                     break;
                 case Mode:
-                    ModeManager.currentMode.handleUpdate(r.id, r.val);
+                    Map.handleUpdate(r.id, r.val);
                     break;
                 default:
                     break;
