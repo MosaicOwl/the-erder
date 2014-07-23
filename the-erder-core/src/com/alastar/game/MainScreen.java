@@ -408,11 +408,11 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 		ErderGame.batch.begin(); 
 	    ErderGame.batch.setProjectionMatrix(camera.combined);
 
-		        ModeManager.currentMode.StepInterpolations();
-		        if (ModeManager.currentMode.world != null && Client.controlledEntity != null) {      
-		            if (ModeManager.currentMode.world
+		        Map.StepInterpolations();
+		        if (Map.world != null && Client.controlledEntity != null) {      
+		            if (Map.world
 		                    .isUnderTile(Client.controlledEntity.position)) {
-		                Draw(ModeManager.currentMode.world.zMin,
+		                Draw(Map.world.zMin,
 		                       (int)Client.controlledEntity.position.z,
 		                (int) camera.position.x / GameManager.textureResolution
 		                        - tileView, (int) camera.position.x
@@ -421,8 +421,8 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 		                        - tileView, (int) camera.position.y
 		                        / GameManager.textureResolution + tileView);
 		            } else {
-		                 Draw(ModeManager.currentMode.world.zMin,
-		                            ModeManager.currentMode.world.zMax + 1,
+		                 Draw(Map.world.zMin,
+		                            Map.world.zMax + 1,
 		                            (int) camera.position.x / GameManager.textureResolution
 		                                    - tileView, (int) camera.position.x
 		                                    / GameManager.textureResolution + tileView,
@@ -469,7 +469,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 	            for (int x = xMin; x <= xMax; ++x) {
 	                for (int y = yMax; y >= yMin; --y) {
 
-	                    t = ModeManager.currentMode.world.tiles.get(new Vector3(x,
+	                    t = Map.world.tiles.get(new Vector3(x,
 	                            y, z));
 
 	                    if (t != null) {
@@ -479,7 +479,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 	                      }
 	                    }
 	                }
-	            ModeManager.currentMode.drawAllByZ(z);
+	            Map.drawAllByZ(z);
 
 	            }
 	 }
@@ -553,7 +553,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
     {
 
         Vector3 vec = camera.unproject(new Vector3(x, y, 0));
-        for(TexturedObject obj: ModeManager.currentMode.entities)
+        for(TexturedObject obj: Map.entities)
         {
            if(obj.getWindowRectangle().contains(vec.x, vec.y))
            {
@@ -576,7 +576,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
                
            }
         }
-     /*   for(TexturedObject obj: ModeManager.currentMode.world.tiles.values())
+     /*   for(TexturedObject obj: Map.world.tiles.values())
         {
            if(obj.getWindowRectangle().contains(vec.x, vec.y))
            {

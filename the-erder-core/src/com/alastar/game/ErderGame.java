@@ -73,10 +73,10 @@ public class ErderGame extends Game {
 	            FileInputStream f_in = new FileInputStream(file);
 
 	            ObjectInputStream obj_in = new ObjectInputStream(f_in);
-	            ModeManager.handleWorld((World) obj_in.readObject());
+	            Map.handleWorld((World) obj_in.readObject());
 	            System.out.println("Current world zMin: "
-	                    + ModeManager.currentMode.world.zMin + " zMax: "
-	                    + ModeManager.currentMode.world.zMax);
+	                    + Map.world.zMin + " zMax: "
+	                    + Map.world.zMax);
 	            System.out.println("File have been loaded!");
 
 	            obj_in.close();

@@ -9,7 +9,7 @@ import com.alastar.game.ContainersInfo;
 import com.alastar.game.Entity;
 import com.alastar.game.ErderGame;
 import com.alastar.game.Item;
-import com.alastar.game.ModeManager;
+import com.alastar.game.Map;
 import com.alastar.game.Vars;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application.ApplicationType;
@@ -107,7 +107,7 @@ public class Client {
 
     public static void handleSpeech(int id2, String msg)
     {
-        for(Entity e: ModeManager.currentMode.entities){
+        for(Entity e: Map.entities){
             if(e.id == id2){
                 e.drawMessageOverhead(msg);
           }
@@ -116,12 +116,12 @@ public class Client {
 
     public static void handleEntityRemove(int id2)
     {
-        ModeManager.currentMode.handleRemoveEntity(id2);
+        Map.handleRemoveEntity(id2);
     }
 
     public static void handleEquip(AddEquipResponse r)
     {
-        Entity e = ModeManager.currentMode.getEntityById(r.eid);
+        Entity e = Map.getEntityById(r.eid);
         if(e != null)
         {
             e.addEquip(r.slot, new Item(r.id, new Vector3(), r.captiion, r.type, r.amount, r.attrs));
@@ -130,7 +130,7 @@ public class Client {
 
     public static void handleEquip(int eid, String slot)
     {
-        Entity e = ModeManager.currentMode.getEntityById(eid);
+        Entity e = Map.getEntityById(eid);
         if(e != null)
         {
             e.removeEquip(slot);
@@ -140,7 +140,7 @@ public class Client {
     public static void handleTarget(int id2)
     {
         if(id2 != -1){
-        Entity e = ModeManager.currentMode.getEntityById(id2);
+        Entity e =Map.getEntityById(id2);
          if(e != null)
          {
             
