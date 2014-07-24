@@ -1,6 +1,6 @@
 package com.alastar.game.gui;
 
-import ru.alastar.net.PacketGenerator;
+import ru.alastar.net.Client;
 
 import com.alastar.game.GameManager;
 import com.alastar.game.MainScreen;
@@ -34,7 +34,7 @@ public class GUIDropdown implements GUIElement
                 r.name = name;
                 r.value = box.getSelected();
                 System.out.println(r.value);
-                PacketGenerator.generatePacket(r);
+                Client.Send(r);
             }
         };
         

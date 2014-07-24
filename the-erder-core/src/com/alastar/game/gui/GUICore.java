@@ -57,5 +57,6 @@ public class GUICore
             if(gui.getName() == name)
                 return gui;
         }
-        return null;    }
+        return null;   
+    }
 }

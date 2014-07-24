@@ -8,8 +8,11 @@ import ru.alastar.main.net.requests.InputRequest;
 import ru.alastar.main.net.requests.RegistrationPacketRequest;
 import ru.alastar.main.net.requests.TargetRequest;
 import ru.alastar.net.Client;
-import ru.alastar.net.PacketGenerator;
+import ru.alastar.net.LoginClient;
 
+import com.alastar.game.gui.GUICore;
+import com.alastar.game.gui.constructed.LoadingScreenGUI;
+import com.alastar.game.gui.constructed.ServersListGUI;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
@@ -38,6 +41,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 	public static Stage stageCreate;
 	public static Stage stageChoose;
     public static Stage currentStage;
+    public static Stage serversStage;
 
 	public static int tileView = 13;
 	
@@ -49,8 +53,9 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 
 	public static OrthographicCamera camera;
 
+
 	public MainScreen(ErderGame gam) {
-		Client.Connect();
+		LoginClient.Connect();
         final int bsw = Vars.getInt("balancedScreenWidth");
         final int bsh = Vars.getInt("balancedScreenHeight");
         
@@ -63,7 +68,10 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 
 		LoginStage = new Stage();
 		currentStage = LoginStage;
-		// back = new Image(GameManager.background);
+		
+		//Constructed guis
+        GUICore.addConstructedGUI(new LoadingScreenGUI(LoginStage));
+        ((LoadingScreenGUI)GUICore.getConstructedByName("loading_screen")).Hide();
 		final TextButton btn = new TextButton(
 				GameManager.getLocalizedMessage("Login"),
 				GameManager.txtBtnStyle);
@@ -116,7 +124,10 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 				AuthPacketRequest r = new AuthPacketRequest();
 				r.login = nameText.getText();
 				r.pass = passwordText.getText();
-				PacketGenerator.generatePacket(r);
+				Client.login = r.login;
+				Client.pass = r.pass;
+				LoginClient.Send(r);
+		        ((LoadingScreenGUI)GUICore.getConstructedByName("loading_screen")).Show();
 			}
 		});
 
@@ -197,7 +208,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 				r.pass = passText.getText();
 				r.mail = mailText.getText();
 
-				PacketGenerator.generatePacket(r);
+				LoginClient.Send(r);
 			}
 		});
 		stageChoose = new Stage();
@@ -255,7 +266,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 				if (Client.characters.size() > 0) {
 					CharacterChooseRequest r = new CharacterChooseRequest();
 					r.nick = nameLabel1.getText().toString();
-					PacketGenerator.generatePacket(r);
+					Client.Send(r);
 				}
 			}
 		});
@@ -383,11 +394,16 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 				CreateCharacterRequest r = new CreateCharacterRequest();
 				r.nick = nickText.getText().toString();
 				r.type = com.alastar.game.enums.EntityType.valueOf(raceLabel1.getText().toString());
-				PacketGenerator.generatePacket(r);
+				Client.Send(r);
 				id = 0;
                 currentStage = stageChoose;
 			}
 		});
+		
+		serversStage = new Stage();
+		GUICore.addConstructedGUI(new ServersListGUI(serversStage));
+		
+		
 		InputMultiplexer im = new InputMultiplexer();
 		GestureDetector gd = new GestureDetector(this);
 		im.addProcessor(gd);
@@ -442,22 +458,22 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 		        if (Gdx.input.isKeyPressed(Keys.W)) {
 		            r.x = 0;
 		            r.y = 1;
-		            PacketGenerator.generatePacket(r);
+		            Client.Send(r);
 		        }
 		        if (Gdx.input.isKeyPressed(Keys.S)) {
 		            r.x = 0;
 		            r.y = -1;
-		            PacketGenerator.generatePacket(r);
+		            Client.Send(r);
 		        }
 		        if (Gdx.input.isKeyPressed(Keys.D)) {
 		            r.x = 1;
 		            r.y = 0;
-		            PacketGenerator.generatePacket(r);
+		            Client.Send(r);
 		        }
 		        if (Gdx.input.isKeyPressed(Keys.A)) {
 		            r.x = -1;
 		            r.y = 0;
-		            PacketGenerator.generatePacket(r);
+		            Client.Send(r);
 		        }
 	            }
 	} 
@@ -487,7 +503,6 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
 	@Override
 	public void resize(int width, int height) {
 	  currentStage.getViewport().update(width, height, true);
-	  gui.getViewport().update(width, height, true);
 	}
 
 	@Override
@@ -563,13 +578,13 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
                r.type = obj.getType();
                r.x = obj.getTransform().position.x;
                r.y = obj.getTransform().position.y;
-               PacketGenerator.generatePacket(r);
+               Client.Send(r);
                }
                else
                {
                   TargetRequest r = new TargetRequest();
                   r.id = obj.getId();
-                  PacketGenerator.generatePacket(r);
+                  Client.Send(r);
                   System.out.println("Send target packet");
                }
                return true;
@@ -650,14 +665,12 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
     @Override
     public boolean longPress(float x, float y)
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean fling(float velocityX, float velocityY, int button)
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -666,7 +679,6 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY)
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -675,7 +687,6 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
     @Override
     public boolean panStop(float x, float y, int pointer, int button)
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -684,7 +695,6 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
     @Override
     public boolean zoom(float initialDistance, float distance)
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -694,8 +704,14 @@ public class MainScreen implements Screen, InputProcessor, GestureListener  {
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
             Vector2 pointer1, Vector2 pointer2)
     {
-        // TODO Auto-generated method stub
         return false;
+    }
+
+
+
+    public static void PushMessage(String string, boolean canDisturb)
+    {
+        ((LoadingScreenGUI)GUICore.getConstructedByName("loading_screen")).ChangeCaption(string, canDisturb);
     }
 
 }

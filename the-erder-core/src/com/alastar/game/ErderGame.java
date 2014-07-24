@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import ru.alastar.net.Client;
+import ru.alastar.net.LoginClient;
 
 import com.alastar.game.lang.LanguageManager;
 import com.badlogic.gdx.Application.ApplicationType;
@@ -17,8 +18,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class ErderGame extends Game {
 
     public static SpriteBatch batch = null;
-	public static int screenWidth = 0;
-	public static int screenHeight = 0;
     public static boolean canMove = true;
 
 	@Override
@@ -41,7 +40,7 @@ public class ErderGame extends Game {
         
         try
         {
-            Client.StartClient();
+            LoginClient.StartClient();
         } catch (Exception e)
         {
             e.printStackTrace();

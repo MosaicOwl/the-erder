@@ -56,7 +56,6 @@ import ru.alastar.game.worldwide.Location;
 import ru.alastar.main.Configuration;
 import ru.alastar.main.Main;
 import ru.alastar.main.handlers.*;
-import ru.alastar.main.net.requests.CommandRequest;
 import ru.alastar.main.net.responses.AddCharacterResponse;
 import ru.alastar.main.net.responses.AddSkillResponse;
 import ru.alastar.main.net.responses.AddStatResponse;
@@ -89,6 +88,7 @@ public class Server
     public static Random                                        random;
     public static float                                         syncDistance = 20;
     private static Hashtable<Integer, Item>                     items;
+    public static ServerState                                   state = ServerState.Working;
 
     public static void startServer()
     {
@@ -134,6 +134,13 @@ public class Server
                 FillCommands();
                 FillPlants();
                 FillCrafts();
+                try
+                {
+                    ServerRegistrator.StartClient();
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
 
             else
@@ -597,6 +604,7 @@ public class Server
 
     public static void addClient(Connection connection)
     {
+        Main.Log("[Connection]","Client connected");
         clients.put(connection.getRemoteAddressUDP(), new ConnectedClient(
                 connection));
     }
@@ -1267,7 +1275,7 @@ public class Server
             BufferedWriter bw;
             String s;
 
-            configFile = new File("config.con");
+            configFile = new File("config.cfg");
 
             if (!configFile.exists())
             {
@@ -1278,6 +1286,9 @@ public class Server
                 bw.write("dbName=theerder\n");
                 bw.write("dbuser=root\n");
                 bw.write("dbpass=\n");
+                bw.write("name=ErderServer\n");
+                bw.write("loginHost=127.0.0.1\n");
+                bw.write("loginPort=3526\n");
                 bw.write("port=25565\n");
                 bw.write("version=1.0");
 
@@ -1302,7 +1313,6 @@ public class Server
 
             br.close();
             fr.close();
-
             Main.Log("[CONFIG]", "Config loaded! ");
         } catch (IOException e)
         {
@@ -1555,27 +1565,6 @@ public class Server
         {
             Item item = i.getItem(s);
             i.consume(item);
-        }
-    }
-
-    public static void HandleCommand(CommandRequest commandRequest,
-            Connection connection)
-    {
-        try
-        {
-            String commandKey = commandRequest.args[0];
-            if (Server.commands.containsKey(commandKey))
-            {
-                Server.commands.get(commandKey).execute(commandRequest.args,
-                        connection);
-            } else
-            {
-                Server.warnClient(getClient(connection),
-                        "Invalid server command");
-            }
-        } catch (Exception e)
-        {
-            handleError(e);
         }
     }
 

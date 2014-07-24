@@ -1,7 +1,6 @@
 package ru.alastar.main.net;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Hashtable;
 
 import ru.alastar.enums.EntityType;
@@ -29,118 +28,114 @@ public class TListener extends Listener
     public TListener(EndPoint e)
     {
         kryo = e.getKryo();
+        
 
         // –егистраци€ пакетов. *ƒолжна выполн€тьс€ в такой же
         // последовательности, что и на сервере!*
         kryo.setRegistrationRequired(true);
         kryo.setAsmEnabled(true);
 
-        kryo.register(EntityType.class);
-        kryo.register(Hashtable.class);
-        kryo.register(ArrayList.class);
-        kryo.register(Entity.class);
-        kryo.register(String.class);
-        kryo.register(Integer.class);
-        kryo.register(String[].class);
-        kryo.register(UpdateType.class);
-        kryo.register(Vector2.class);
-        kryo.register(ItemType.class);
+        registerPacket(EntityType.class, true);
+        registerPacket(Hashtable.class, true);
+        registerPacket(ArrayList.class, true);
+        registerPacket(Entity.class, true);
+        registerPacket(String.class, true);
+        registerPacket(Integer.class, true);
+        registerPacket(String[].class, true);
+        registerPacket(UpdateType.class, true);
+        registerPacket(Vector2.class, true);
+        registerPacket(ItemType.class, true);
 
-        kryo.register(LoginResponse.class);
-        kryo.register(AddEntityResponse.class);
-        kryo.register(SetData.class);
-        kryo.register(ChatSendResponse.class);
-        kryo.register(RemoveEntityResponse.class);
-        kryo.register(RegisterResponse.class);
-        kryo.register(AddStatResponse.class);
-        kryo.register(AddSkillResponse.class);
-        kryo.register(MessageResponse.class);
-        kryo.register(CommandRequest.class);
-        kryo.register(AuthPacketRequest.class);
-        kryo.register(CharacterChooseRequest.class);
-        kryo.register(CreateCharacterRequest.class);
-        kryo.register(InputRequest.class);
-        kryo.register(MessagePacketRequest.class);
-        kryo.register(RegistrationPacketRequest.class);
-        kryo.register(AddCharacterResponse.class);
-        kryo.register(LoadWorldResponse.class);
-        kryo.register(CharacterRemove.class);
-        kryo.register(UpdatePlayerResponse.class);
-        kryo.register(NetGUIInfo.class);
-        kryo.register(NetGUIAnswer.class);
-        kryo.register(DropdownMenuRequest.class);
-        kryo.register(CloseGUIResponse.class);
-        kryo.register(TargetRequest.class);
-        kryo.register(SpeechResponse.class);
-        kryo.register(CreateContainerResponse.class);
-        kryo.register(AddToContainerResponse.class);
-        kryo.register(RemoveContainerResponse.class);
-        kryo.register(RemoveFromContainerResponse.class);
-        kryo.register(AddEquipResponse.class);
-        kryo.register(RemoveEquipResponse.class);
-        kryo.register(HitResponse.class);
-        kryo.register(TargetResponse.class);
-        kryo.register(TargetInfoResponse.class);
+        registerPacket(LoginResponse.class, true);
+        registerPacket(AddEntityResponse.class, true);
+        registerPacket(SetData.class, true);
+        registerPacket(ChatSendResponse.class, true);
+        registerPacket(RemoveEntityResponse.class, true);
+        registerPacket(RegisterResponse.class, true);
+        registerPacket(AddStatResponse.class, true);
+        registerPacket(AddSkillResponse.class, true);
+        registerPacket(MessageResponse.class, true);
+        registerPacket(AuthPacketRequest.class, false);
+        registerPacket(CharacterChooseRequest.class, true);
+        registerPacket(CreateCharacterRequest.class, true);
+        registerPacket(InputRequest.class, true);
+        registerPacket(MessagePacketRequest.class, true);
+        registerPacket(RegistrationPacketRequest.class, true);
+        registerPacket(AddCharacterResponse.class, true);
+        registerPacket(LoadWorldResponse.class, true);
+        registerPacket(CharacterRemove.class, true);
+        registerPacket(UpdatePlayerResponse.class, true);
+        registerPacket(NetGUIInfo.class, true);
+        registerPacket(NetGUIAnswer.class, true);
+        registerPacket(DropdownMenuRequest.class, true);
+        registerPacket(CloseGUIResponse.class, true);
+        registerPacket(TargetRequest.class, true);
+        registerPacket(SpeechResponse.class, true);
+        registerPacket(CreateContainerResponse.class, true);
+        registerPacket(AddToContainerResponse.class, true);
+        registerPacket(RemoveContainerResponse.class, true);
+        registerPacket(RemoveFromContainerResponse.class, true);
+        registerPacket(AddEquipResponse.class, true);
+        registerPacket(RemoveEquipResponse.class, true);
+        registerPacket(HitResponse.class, true);
+        registerPacket(TargetResponse.class, true);
+        registerPacket(TargetInfoResponse.class, true);
 
         // Main.Log("[LISTENER]", "All packets registered!");
+    }
+
+    public void registerPacket(@SuppressWarnings("rawtypes") Class c, boolean filtering)
+    {
+        kryo.register(c);
+        PacketFiltering.addFilterFor(c, filtering);
     }
 
     public void received(Connection connection, Object object)
     {
         try
         {
-            ConnectedClient c = Server.getClient(connection);
-            if (c != null)
+            if(PacketFiltering.checkFilter(object.getClass(), connection)){
+            if (object instanceof AuthPacketRequest)
+            {                
+                Main.Log("[Auth]", "auth request");
+                AuthPacketRequest r = (AuthPacketRequest) object;
+                Server.Login(r.login, r.pass, connection);
+            }
+            if (object instanceof CharacterChooseRequest)
             {
-                // Main.Log("[INFO]", "CTM - " + System.currentTimeMillis() +
-                // " lastPacket - " + c.lastPacket);
-                if ((new Date().getTime() - c.lastPacket.getTime()) > packetDelay)
-                {
-                    if (object instanceof CommandRequest)
-                    {
-                        Server.HandleCommand(((CommandRequest) object),
-                                connection);
-                    } else if (object instanceof AuthPacketRequest)
-                    {
-                        AuthPacketRequest r = (AuthPacketRequest) object;
-                        Server.Login(r.login, r.pass, connection);
-                    } else if (object instanceof CharacterChooseRequest)
-                    {
-                        CharacterChooseRequest r = (CharacterChooseRequest) object;
-                        Server.HandleCharacterChoose(r.nick, connection);
-                    } else if (object instanceof CreateCharacterRequest)
-                    {
-                        CreateCharacterRequest r = (CreateCharacterRequest) object;
-                        Server.HandleCharacterCreate(r.nick, r.type, connection);
-                    } else if (object instanceof CharacterRemove)
-                    {
-                        CharacterRemove r = (CharacterRemove) object;
-                        Server.HandleCharacterRemove(r.nick, connection);
-                    } else if (object instanceof InputRequest)
-                    {
-                        InputRequest r = (InputRequest) object;
-                        Server.HandleMove(r.x, r.y, connection);
-                    } else if (object instanceof NetGUIAnswer)
-                    {
-                        NetGUIAnswer r = (NetGUIAnswer) object;
-                        NetGUISystem.handleAnswer(r, connection);
-                    } else if (object instanceof DropdownMenuRequest)
-                    {
-                        DropdownMenuRequest r = (DropdownMenuRequest) object;
-                        NetGUISystem.handleDropRequest(r, connection);
-                    } else if (object instanceof ChatSendResponse)
-                    {
-                        ChatSendResponse r = (ChatSendResponse) object;
-                        Server.HandleChat(r.msg, connection);
-                    } else if (object instanceof TargetRequest)
-                    {
-                        TargetRequest r = (TargetRequest) object;
-                        Server.HandleTarget(r.id, Server.getClient(connection).controlledEntity);
-                    }
-                    c.lastPacket = new Date();
-                }
-            } else
-                Main.Log("[ERROR]", "Connected client is null");
+                CharacterChooseRequest r = (CharacterChooseRequest) object;
+                Server.HandleCharacterChoose(r.nick, connection);
+            } else if (object instanceof CreateCharacterRequest)
+            {
+                CreateCharacterRequest r = (CreateCharacterRequest) object;
+                Server.HandleCharacterCreate(r.nick, r.type, connection);
+            } else if (object instanceof CharacterRemove)
+            {
+                CharacterRemove r = (CharacterRemove) object;
+                Server.HandleCharacterRemove(r.nick, connection);
+            } else if (object instanceof InputRequest)
+            {
+                InputRequest r = (InputRequest) object;
+                Server.HandleMove(r.x, r.y, connection);
+            } else if (object instanceof NetGUIAnswer)
+            {
+                NetGUIAnswer r = (NetGUIAnswer) object;
+                NetGUISystem.handleAnswer(r, connection);
+            } else if (object instanceof DropdownMenuRequest)
+            {
+                DropdownMenuRequest r = (DropdownMenuRequest) object;
+                NetGUISystem.handleDropRequest(r, connection);
+            } else if (object instanceof ChatSendResponse)
+            {
+                ChatSendResponse r = (ChatSendResponse) object;
+                Server.HandleChat(r.msg, connection);
+            } else if (object instanceof TargetRequest)
+            {
+                TargetRequest r = (TargetRequest) object;
+                Server.HandleTarget(r.id,
+                        Server.getClient(connection).controlledEntity);
+            }
+         }
         } catch (Exception e)
         {
             Main.Log("[SERVER]", e.getMessage());

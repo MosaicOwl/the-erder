@@ -1,6 +1,6 @@
 package com.alastar.game.gui.net;
 
-import ru.alastar.net.PacketGenerator;
+import ru.alastar.net.Client;
 
 import com.alastar.game.MainScreen;
 import com.alastar.game.gui.GUICore;
@@ -30,7 +30,7 @@ public class NetGUICore
                     NetGUIAnswer r = new NetGUIAnswer();
                     r.name = info.name;
                     r.value = "";
-                    PacketGenerator.generatePacket(r);
+                    Client.Send(r);
                 }
                 
             };
