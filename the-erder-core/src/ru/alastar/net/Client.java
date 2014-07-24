@@ -3,6 +3,7 @@ package ru.alastar.net;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import ru.alastar.main.net.requests.AuthPacketRequest;
 import ru.alastar.main.net.responses.AddEquipResponse;
 
 import com.alastar.game.ContainersInfo;
@@ -17,7 +18,7 @@ import com.badlogic.gdx.math.Vector3;
 
 public class Client {
 	private static String host = "127.0.0.1";
-	private static int port = 25565;
+	private static int port;
 	public static com.esotericsoftware.kryonet.Client client = null;
 	public static ErderGame game = null;
 	public static int id = 0;
@@ -27,6 +28,8 @@ public class Client {
     public static Hashtable<String, Skill> skills = new Hashtable<String, Skill>();
     public static Hashtable<Integer, Item> inventory = new Hashtable<Integer, Item>();
     private static Entity                  target    = null;
+    public static String login = "";
+    public static String pass = "";
 
 	
 	public static void StartClient() throws Exception {
@@ -35,8 +38,10 @@ public class Client {
 		client.addListener(new ClientListener(client));
 	}
 
-	public static void Connect() {
+	public static void Connect(String address) {
 		try {
+		        port = Integer.parseInt(address.split(":")[1]);
+	            host = address.split(":")[0];
 		    if(Gdx.app.getType() == ApplicationType.Android)
 		        host = "10.0.0.2";
 			client.connect(100, host, port, port + 1);
@@ -100,6 +105,11 @@ public class Client {
       //  inventory.put(item.id, item);
     }
 
+    public static void Send(Object r)
+    {
+        client.sendUDP(r);
+    }
+    
     public static void handleChar(String name, String type)
     {
         characters.put(name, type);
@@ -159,5 +169,24 @@ public class Client {
             
             target = null;
         }
+    }
+
+    public static void init(String address)
+    {
+        try
+        {
+            Client.StartClient();
+            Client.Connect(address);
+            
+            AuthPacketRequest r = new AuthPacketRequest();
+            r.login = Client.login;
+            r.pass = Client.pass;
+            Client.Send(r);
+            
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
     }
 }

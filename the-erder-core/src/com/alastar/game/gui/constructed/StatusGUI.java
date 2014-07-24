@@ -1,25 +1,21 @@
 package com.alastar.game.gui.constructed;
 
-import java.util.ArrayList;
-
 import com.alastar.game.GameManager;
 import com.alastar.game.MainScreen;
-import com.alastar.game.gui.GUIElement;
 import com.alastar.game.gui.GUILabel;
 import com.alastar.game.gui.GUIWindow;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
-public class StatusGUI implements ConstructedGUI
+public class StatusGUI extends BaseConstructed
 {
     private GUIWindow window;
-    private String name;
-    private ArrayList<GUIElement> actors = new ArrayList<GUIElement>();
-    public StatusGUI(String name)
+
+    public StatusGUI(Stage s, String name)
     {
-        this.name = name;
-       
+        super(s, name);
         Window w = new Window("Status", GameManager.getSkin(GameManager.selectedSkin), "window");
         GUILabel hp = new GUILabel("HP:", new Label("HP:", GameManager.getSkin(GameManager.selectedSkin), "label"), "hits_value", 25);
         GUILabel mana = new GUILabel("MANA:", new Label("MANA:", GameManager.getSkin(GameManager.selectedSkin), "label"), "mana_value", 25);
@@ -49,27 +45,5 @@ public class StatusGUI implements ConstructedGUI
     public void Destroy()
     {
         window.Destroy();
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
-    public ArrayList<GUIElement> getElements()
-    {
-        return actors;
-    }
-
-    @Override
-    public void notifyAllElements(String s, String val)
-    {
-        for(GUIElement el: actors)
-        {
-            if(el.getHandledVariable().equals(s))
-                el.Update(val);
-        }
     }
 }

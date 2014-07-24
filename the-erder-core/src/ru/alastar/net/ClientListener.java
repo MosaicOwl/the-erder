@@ -20,6 +20,7 @@ import com.alastar.game.enums.UpdateType;
 import com.alastar.game.gui.GUICore;
 import com.alastar.game.gui.constructed.ChatGUI;
 import com.alastar.game.gui.constructed.StatusGUI;
+import com.alastar.game.gui.net.NetGUIAnswer;
 import com.alastar.game.gui.net.NetGUICore;
 import com.alastar.game.gui.net.NetGUIInfo;
 import com.badlogic.gdx.math.Vector2;
@@ -57,7 +58,6 @@ public class ClientListener extends Listener {
         kryo.register(AddStatResponse.class);
         kryo.register(AddSkillResponse.class);
         kryo.register(MessageResponse.class);
-        kryo.register(CommandRequest.class);
         kryo.register(AuthPacketRequest.class);
         kryo.register(CharacterChooseRequest.class);
         kryo.register(CreateCharacterRequest.class);
@@ -68,8 +68,8 @@ public class ClientListener extends Listener {
         kryo.register(LoadWorldResponse.class);
         kryo.register(CharacterRemove.class);
         kryo.register(UpdatePlayerResponse.class);
-        kryo.register(com.alastar.game.gui.net.NetGUIInfo.class);
-        kryo.register(com.alastar.game.gui.net.NetGUIAnswer.class);
+        kryo.register(NetGUIInfo.class);
+        kryo.register(NetGUIAnswer.class);
         kryo.register(DropdownMenuRequest.class);
         kryo.register(CloseGUIResponse.class);
         kryo.register(TargetRequest.class);
@@ -175,8 +175,8 @@ public class ClientListener extends Listener {
 	     else if (object instanceof LoadWorldResponse) {
 	         LoadWorldResponse r = (LoadWorldResponse)object;
 	         MainScreen.currentStage = MainScreen.gui;
-	         GUICore.addConstructedGUI(new StatusGUI("Status")); 
-	         GUICore.addConstructedGUI(new ChatGUI()); 
+	         GUICore.addConstructedGUI(new StatusGUI(MainScreen.gui, "Status")); 
+	         GUICore.addConstructedGUI(new ChatGUI(MainScreen.gui)); 
 	         Client.LoadWorld(r.name);
 	     }
 	     else if (object instanceof UpdatePlayerResponse) {

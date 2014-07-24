@@ -1,38 +1,32 @@
 package com.alastar.game.gui.constructed;
 
-import java.util.ArrayList;
-
 import ru.alastar.main.net.responses.ChatSendResponse;
-import ru.alastar.net.PacketGenerator;
+import ru.alastar.net.Client;
 
 import com.alastar.game.ErderGame;
 import com.alastar.game.GameManager;
 import com.alastar.game.MainScreen;
 import com.alastar.game.gui.GUIButton;
 import com.alastar.game.gui.GUIChatWindow;
-import com.alastar.game.gui.GUIElement;
 import com.alastar.game.gui.GUITextField;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 
-public class ChatGUI implements ConstructedGUI
+public class ChatGUI extends BaseConstructed
 {
     private GUIChatWindow window;
     private GUITextField field;
     private GUIButton sendMsg;
     
-    private String name;
-    private ArrayList<GUIElement> actors = new ArrayList<GUIElement>();
-    
-    public ChatGUI()
+    public ChatGUI(Stage s)
     {
-        this.name = "Chat";
-        
+        super(s, "Chat");
         field = new GUITextField("", new TextField("", GameManager.getSkin(GameManager.selectedSkin), "textField"));
         field.setWidth(250);
         field.setPosition(new Vector2(10,1800));
@@ -47,7 +41,7 @@ public class ChatGUI implements ConstructedGUI
                 r.msg = field.getText();
                 field.clear();
                 
-                PacketGenerator.generatePacket(r);
+                Client.Send(r);
             }
             
         };
@@ -106,21 +100,4 @@ public class ChatGUI implements ConstructedGUI
         sendMsg.Destroy();
     }
     
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-    
-    @Override
-    public ArrayList<GUIElement> getElements()
-    {
-        return actors;
-    }
-    
-    @Override
-    public void notifyAllElements(String s, String val)
-    {
-     
-    }
 }
