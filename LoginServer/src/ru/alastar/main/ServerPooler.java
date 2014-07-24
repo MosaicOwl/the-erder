@@ -3,7 +3,9 @@ package ru.alastar.main;
 
 import com.esotericsoftware.kryonet.Connection;
 
+import ru.alastar.requests.AccountRequest;
 import ru.alastar.requests.AuthServerRequest;
+import ru.alastar.responses.ProcessLoginResponse;
 
 public class ServerPooler
 {   
@@ -73,5 +75,32 @@ public class ServerPooler
         {
             handleError(e);
         }
+    }
+    
+    private static void SendTo(Connection c, Object r)
+    {
+        c.sendUDP(r);
+    }
+    
+    public static void ProcessAccountRequest(AccountRequest object,
+            Connection connection)
+    {   
+        ProcessLoginResponse r = new ProcessLoginResponse();
+        Account acc;
+        if(Server.hasAccount(object.login))
+        {
+            acc = Server.getAccount(object.login);
+            r.allow = true;
+            r.login = acc.login;
+            r.pass = acc.pass;
+            r.id = acc.id;
+            r.mail = acc.mail;
+        }
+        else
+        {
+            r.allow = false;
+            r.login = object.login;
+        }
+        SendTo(connection, r);
     }
 }

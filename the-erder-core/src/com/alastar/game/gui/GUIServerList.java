@@ -14,11 +14,11 @@ public class GUIServerList implements GUIElement
     public Window window;
     public Table table;
     public ScrollPane scroll;
+    public Table mainTable;
 
     public GUIServerList()
     {
         this.window = new Window("servers_list", GameManager.getSkin(GameManager.selectedSkin), "window");
-        this.window.setPosition(100 / Vars.getInt("balancedScreenWidth"), 100 / Vars.getInt("balancedScreenHeight"));
         this.window.setHeight(1000 / Vars.getInt("balancedScreenHeight"));
         this.window.setWidth(1000 / Vars.getInt("balancedScreenWidth"));
         window.defaults().padLeft(10);
@@ -27,7 +27,7 @@ public class GUIServerList implements GUIElement
         window.defaults().padBottom(10);
         window.defaults().prefWidth(1000 / Vars.getInt("balancedScreenWidth"));
         window.defaults().prefHeight(1000 / Vars.getInt("balancedScreenHeight"));
-        
+
         table = new 
                 Table();
         table.defaults().padLeft(10);
@@ -50,14 +50,18 @@ public class GUIServerList implements GUIElement
         scroll.setWidth(990);
         scroll.setHeight(990);
 
-        window.add(scroll).fill();
+        window.add(scroll).fill(); 
+        window.setTitle("Pick a server");
+        mainTable = new Table();
+        mainTable.setFillParent(true);
+        mainTable.add(window);
     }
     
     
     @Override
     public Actor getElementAsActor()
     {
-        return window;
+        return mainTable;
     }
 
     @Override
@@ -75,19 +79,19 @@ public class GUIServerList implements GUIElement
     @Override
     public void Destroy()
     {
-        window.remove();
+        mainTable.remove();
     }
 
     @Override
     public void Hide()
     {
-        window.setVisible(false);
+        mainTable.setVisible(false);
     }
 
     @Override
     public void Show()
     {
-        window.setVisible(true);   
+        mainTable.setVisible(true);   
     }
 
     @Override

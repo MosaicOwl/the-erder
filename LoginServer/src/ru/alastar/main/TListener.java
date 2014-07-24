@@ -43,6 +43,10 @@ public class TListener extends Listener
         {
              Server.ProcessAuth((AuthPacketRequest)object, connection);
         }
+        else if(object instanceof RegistrationPacketRequest)
+        {
+            Server.ProcessRegistration((RegistrationPacketRequest)object, connection);
+        }
     }
     
     @Override

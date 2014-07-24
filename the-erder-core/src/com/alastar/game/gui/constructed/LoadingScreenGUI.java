@@ -2,13 +2,13 @@ package com.alastar.game.gui.constructed;
 
 import com.alastar.game.GameManager;
 import com.alastar.game.gui.GUIButton;
-import com.alastar.game.gui.GUICore;
 import com.alastar.game.gui.GUILabel;
 import com.alastar.game.gui.GUIWindow;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -17,6 +17,8 @@ public class LoadingScreenGUI extends BaseConstructed
 {
     private GUIWindow window;
     private GUILabel label;
+    private Table table;
+    
     private boolean canDisturb = false;
     
     public LoadingScreenGUI(Stage s)
@@ -31,11 +33,14 @@ public class LoadingScreenGUI extends BaseConstructed
             {
                 if(canDisturb)
                 {
-                    GUICore.removeConstructedGUI(name);
+                    Hide();
                 }
             }
             
         };
+        table = new Table();
+        table.setFillParent(true);
+        
         Window w = new Window("Loading", GameManager.getSkin(GameManager.selectedSkin), "window");
         label = new GUILabel("", new Label("", GameManager.getSkin(GameManager.selectedSkin), "label"), "", 25);
         GUIButton disturb = new GUIButton("X", new TextButton("X", GameManager.getSkin(GameManager.selectedSkin), "button"), el);
@@ -44,12 +49,9 @@ public class LoadingScreenGUI extends BaseConstructed
         window.AddControl(label);
         window.AddControl(disturb);
 
-        actors.add(window);
-        actors.add(label);
-        actors.add(disturb);
+        table.add(window.getElementAsActor());
         
         register(window.getElementAsActor());
-        window.Show();
     }
 
     public void ChangeCaption(String string, boolean canDisturb2)
@@ -67,6 +69,6 @@ public class LoadingScreenGUI extends BaseConstructed
     @Override
     public void Show()
     {    
-        window.Show();
+        window.Show(); 
     }
 }

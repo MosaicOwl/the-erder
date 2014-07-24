@@ -14,8 +14,10 @@ import java.util.Hashtable;
 
 import ru.alastar.database.DatabaseClient;
 import ru.alastar.requests.AuthPacketRequest;
+import ru.alastar.requests.RegistrationPacketRequest;
 import ru.alastar.responses.AddServerResponse;
 import ru.alastar.responses.AuthResponse;
+import ru.alastar.responses.RegisterResponse;
 import ru.alastar.responses.ServerListing;
 
 import com.esotericsoftware.kryonet.Connection;
@@ -26,7 +28,7 @@ public class Server
     private static com.esotericsoftware.kryonet.Server           server;
     public  static Hashtable<String, ServerInfo>                     servers  = new Hashtable<String, ServerInfo>();
     public  static Hashtable<InetSocketAddress, ConnectedClient> clients  = new Hashtable<InetSocketAddress, ConnectedClient>();
-    public  static Hashtable<String, String>                     accounts = new Hashtable<String, String>();
+    public  static Hashtable<String, Account>                     accounts = new Hashtable<String, Account>();
 
     public static void startServer()
     {
@@ -98,7 +100,7 @@ public class Server
                 bw = new BufferedWriter(fw);
                 bw.write("port=2526\n");
                 bw.write("poolerPort=3526\n");
-                bw.write("dbName=theerder\n");
+                bw.write("dbName=te_login\n");
                 bw.write("dbUser=root\n");
                 bw.write("dbPass=\n");
 
@@ -163,8 +165,9 @@ public class Server
                 r.msg = "Succesfully logged in!";
                 r.localeId = 0;
                 r.state = AuthState.Success;
-                getClient(c).setAccount(new Account(rs.getInt("id"), rs.getString("login"), rs.getString("password"), rs.getString("mail")));
-                accounts.put(object.login, encrypt(object.pass));
+                Account a = new Account(rs.getInt("id"), rs.getString("login"), rs.getString("password"), rs.getString("mail"));
+                getClient(c).setAccount(a);
+                accounts.put(object.login, a);
                 SendServerList(c);
                 MainClass.Log("OK!\n", false);
                 
@@ -209,6 +212,11 @@ public class Server
         c.sendUDP(r);
     }
     
+    private static void SendTo(ConnectedClient c, Object r)
+    {
+        c.connection.sendUDP(r);
+    }
+    
     private static boolean Logged(AuthPacketRequest object)
     {
         if(accounts.get(object.login) != null)
@@ -246,6 +254,106 @@ public class Server
     public static void removeAccount(ConnectedClient c)
     {
       accounts.remove(c.account.login);        
+    }
+
+    public static void ProcessRegistration(RegistrationPacketRequest object, Connection connection)
+    {
+        try
+        {
+            ResultSet regRS = DatabaseClient
+                    .commandExecute("SELECT * FROM accounts WHERE login='"
+                            + object.login + "' AND mail='" + object.mail + "'");
+            RegisterResponse r = new RegisterResponse();
+
+            if (regRS.next())
+            {
+                r.successful = false;
+                SendTo(connection, r);
+            } else
+            {
+                CreateAccount(object.login, object.pass, object.mail,
+                        getClient(connection));
+                r.successful = true;
+                SendTo(connection, r);
+            }
+        } catch (SQLException e)
+        {
+            handleError(e);
+        }
+    } 
+    
+    private static int getAccountFreeId()
+    {
+        try
+        {
+            ResultSet rs = DatabaseClient
+                    .commandExecute("SELECT max(id) as id FROM accounts");
+            int i = 0;
+            if (rs.next())
+            {
+                i = rs.getInt("id");
+            }
+            return i + 1;
+        } catch (SQLException e)
+        {
+            handleError(e);
+        }
+        return -1;
+    }
+    
+    private static void CreateAccount(String login, String pass, String mail,
+            ConnectedClient client)
+   {
+        
+       ResultSet accountExists = DatabaseClient
+               .commandExecute("SELECT * FROM accounts WHERE login='" + login
+                       + "'");
+       RegisterResponse r = new RegisterResponse();
+       MainClass.Log("[AUTH]", "Passing account registration login - " + login + " password - " + pass +"...", false);
+
+       try
+       {
+           if (accountExists.next())
+           {
+               MainClass.Log("failed!\n", false);
+               r.successful = false;
+               r.reason = "That account with given mail and login is already exists!";
+           } else
+           {
+               MainClass.Log("OK!\n", false);
+               r.successful = true;
+               DatabaseClient
+                       .commandExecute("INSERT INTO accounts(id, login, password, mail) VALUES("
+                               + Server.getAccountFreeId()
+                               + ",'"
+                               + login
+                               + "','"
+                               + encrypt(pass)
+                               + "','"
+                               + mail
+                               + "')");
+           }
+          SendTo(client, r);
+       } catch (Exception e)
+       {
+           handleError(e);
+       }
+   }
+
+    public static boolean hasAccount(String login)
+    {
+        if(accounts.containsKey(login)){
+        return true;
+        }
+        else
+        {
+        return false;
+        }
+    }
+
+    public static Account getAccount(String login)
+    {
+        return accounts.get(login);
     }
 
 }

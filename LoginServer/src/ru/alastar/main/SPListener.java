@@ -1,7 +1,9 @@
 package ru.alastar.main;
 
 
+import ru.alastar.requests.AccountRequest;
 import ru.alastar.requests.AuthServerRequest;
+import ru.alastar.responses.ProcessLoginResponse;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
@@ -23,7 +25,9 @@ public class SPListener extends Listener
         kryo.register(ServerState.class);
 
         kryo.register(AuthServerRequest.class);
-        
+        kryo.register(AccountRequest.class);
+        kryo.register(ProcessLoginResponse.class);
+
     }
     
     public void received(Connection connection, Object object)
@@ -31,7 +35,11 @@ public class SPListener extends Listener
       if(object instanceof AuthServerRequest)
       {
           ServerPooler.ProcessAuth((AuthServerRequest)object, connection);
-      }         
+      }   
+      if(object instanceof AccountRequest)
+      {
+          ServerPooler.ProcessAccountRequest((AccountRequest)object, connection);
+      }     
     }
     
     @Override
