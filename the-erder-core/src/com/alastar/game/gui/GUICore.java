@@ -59,4 +59,13 @@ public class GUICore
         }
         return null;   
     }
+
+    public static void enableOne(String string)
+    {
+        for(ConstructedGUI cgui: uis.values())
+        {
+            cgui.Hide();
+        }
+        getConstructedByName(string).Show();;
+    }
 }

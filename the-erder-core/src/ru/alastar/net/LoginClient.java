@@ -5,12 +5,12 @@ import java.util.Hashtable;
 
 import ru.alastar.main.net.responses.AddServerResponse;
 import ru.alastar.main.net.responses.AuthResponse;
+import ru.alastar.main.net.responses.RegisterResponse;
 import ru.alastar.main.net.responses.ServerListing;
 
 import com.alastar.game.MainScreen;
 import com.alastar.game.ServerListingState;
 import com.alastar.game.gui.GUICore;
-import com.alastar.game.gui.constructed.LoadingScreenGUI;
 import com.alastar.game.gui.constructed.ServersListGUI;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application.ApplicationType;
@@ -82,11 +82,15 @@ public class LoginClient
     public static void handleServerListing(ServerListing r)
     {
          if(r.state == ServerListingState.End){
-             MainScreen.currentStage = MainScreen.serversStage;
+             GUICore.enableOne("servers_list");
          } 
          else{
-             GUICore.addConstructedGUI(new LoadingScreenGUI(MainScreen.LoginStage));
              MainScreen.PushMessage("Loading Servers...", false);
         }
+    }
+
+    public static void handleRegisterResponse(RegisterResponse r)
+    {
+        MainScreen.PushMessage(r.reason, true);
     }
 }

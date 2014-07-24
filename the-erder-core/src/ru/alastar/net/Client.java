@@ -12,6 +12,7 @@ import com.alastar.game.ErderGame;
 import com.alastar.game.Item;
 import com.alastar.game.Map;
 import com.alastar.game.Vars;
+import com.alastar.game.gui.GUICore;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.math.Vector3;
@@ -107,6 +108,7 @@ public class Client {
 
     public static void Send(Object r)
     {
+        if(client != null)
         client.sendUDP(r);
     }
     
@@ -182,7 +184,7 @@ public class Client {
             r.login = Client.login;
             r.pass = Client.pass;
             Client.Send(r);
-            
+            GUICore.getConstructedByName("servers_list").Hide();
         } catch (Exception e)
         {
             e.printStackTrace();

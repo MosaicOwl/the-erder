@@ -3,6 +3,7 @@ package ru.alastar.main.net;
 import java.io.IOException;
 
 import ru.alastar.main.Configuration;
+import ru.alastar.main.net.requests.AccountRequest;
 import ru.alastar.main.net.requests.AuthServerRequest;
 
 public class ServerRegistrator
@@ -39,5 +40,13 @@ public class ServerRegistrator
         r.port = Configuration.GetEntryValue("port");
         Send(r);
         
+    }
+
+    public static void getClient(String login, String pass)
+    {
+        AccountRequest r = new AccountRequest();
+        r.login = login;
+        r.pass = pass;
+        Send(r);
     }
 }

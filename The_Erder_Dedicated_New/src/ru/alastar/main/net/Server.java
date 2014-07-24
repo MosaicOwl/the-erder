@@ -64,6 +64,7 @@ import ru.alastar.main.net.responses.CreateContainerResponse;
 import ru.alastar.main.net.responses.LoadWorldResponse;
 import ru.alastar.main.net.responses.LoginResponse;
 import ru.alastar.main.net.responses.MessageResponse;
+import ru.alastar.main.net.responses.ProcessLoginResponse;
 import ru.alastar.main.net.responses.RegisterResponse;
 import ru.alastar.main.net.responses.SetData;
 import ru.alastar.main.net.responses.SpeechResponse;
@@ -627,7 +628,11 @@ public class Server
         try
         {
             Main.HiddenLog("[SERVER]", "Process auth for " + login + " password: " + pass);
-            ResultSet l = DatabaseClient
+            ServerRegistrator.getClient(login, pass);
+            ConnectedClient client = getClient(c);
+            client.awaitedLogin = login;
+            
+           /* ResultSet l = DatabaseClient
                     .commandExecute("SELECT * FROM accounts WHERE login='"
                             + login + "' AND password='" + Crypt.encrypt(pass)
                             + "'");
@@ -661,8 +666,8 @@ public class Server
                 r.succesful = false;
                 SendTo(c, r);
             }
-
-        } catch (SQLException e)
+            */
+        } catch (Exception e)
         {
             handleError(e);
         }
@@ -1056,7 +1061,7 @@ public class Server
                 Server.SendTo(connection, r);
             } else
             {
-                CreateAccount(login, pass, mail, name, race,
+                CreateAccount(login, pass, mail,
                         getClient(connection));
                 r.successful = true;
                 Server.SendTo(connection, r);
@@ -1068,7 +1073,7 @@ public class Server
     }
 
     private static void CreateAccount(String login, String pass, String mail,
-            String name, String race, ConnectedClient client)
+             ConnectedClient client)
     {
         ResultSet accountExists = DatabaseClient
                 .commandExecute("SELECT * FROM accounts WHERE login='" + login
@@ -1855,5 +1860,51 @@ public class Server
                 eq.SaveSlot(id, slotName, itemId);
             }
         }        
+    }
+
+    public static void ProcessLogin(ProcessLoginResponse object)
+    {
+
+            for(ConnectedClient client: clients.values())
+            {
+                if(client.awaitedLogin.equals(object.login))
+                {
+                    if(object.allow)
+                    {
+                        Main.Log("[DEBUG]", "Auth allowed");
+                        LoginResponse r = new LoginResponse();
+                        r.succesful = true;
+                        SendTo(client, r);
+
+                        if (!client.logged)
+                        {
+                            client.account = new Account(object.id,
+                                    object.login, object.pass,
+                                    object.mail);
+                            client.logged = true;
+                            SendCharacters(client);
+                        } else
+                        {
+                            MessageResponse r1 = new MessageResponse();
+                            r1.msg = "This account is already logged in!";
+                            SendTo(client, r1);
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        LoginResponse r = new LoginResponse();
+                        r.succesful = false;
+                        SendTo(client, r);
+                        break;
+                    }
+                }
+            }
+        
+    }
+
+    private static void SendTo(ConnectedClient client, Object r)
+    {
+        client.connection.sendUDP(r);
     }
 }

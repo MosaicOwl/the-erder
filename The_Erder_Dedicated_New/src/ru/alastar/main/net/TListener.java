@@ -97,7 +97,7 @@ public class TListener extends Listener
             if(PacketFiltering.checkFilter(object.getClass(), connection)){
             if (object instanceof AuthPacketRequest)
             {                
-                Main.Log("[Auth]", "auth request");
+               // Main.Log("[Auth]", "auth request");
                 AuthPacketRequest r = (AuthPacketRequest) object;
                 Server.Login(r.login, r.pass, connection);
             }

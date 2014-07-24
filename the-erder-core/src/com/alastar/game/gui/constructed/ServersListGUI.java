@@ -41,6 +41,18 @@ public class ServersListGUI extends BaseConstructed
             }
         };
         list.addChild(new GUIButton(name, new TextButton(name, GameManager.getSkin(GameManager.selectedSkin), "button"), el));
+    } 
+    
+    @Override
+    public void Hide()
+    {
+        list.Hide();
+    }
+    
+    @Override
+    public void Show()
+    {
+        list.Show();
     }
 
 }

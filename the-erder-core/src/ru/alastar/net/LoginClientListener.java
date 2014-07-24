@@ -45,7 +45,10 @@ public class LoginClientListener extends Listener {
              ServerListing r = (ServerListing)object;   
              LoginClient.handleServerListing(r);
          }
-
+         else if (object instanceof RegisterResponse) {
+             RegisterResponse r = (RegisterResponse)object;   
+             LoginClient.handleRegisterResponse(r);
+         }
 	}
 
 	@Override

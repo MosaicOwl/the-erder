@@ -1,6 +1,8 @@
 package ru.alastar.main.net;
 
+import ru.alastar.main.net.requests.AccountRequest;
 import ru.alastar.main.net.requests.AuthServerRequest;
+import ru.alastar.main.net.responses.ProcessLoginResponse;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
@@ -24,12 +26,17 @@ public class RegListener extends Listener
         
         kryo.register(ServerState.class);
 
-        kryo.register(AuthServerRequest.class);
+        kryo.register(AuthServerRequest.class); 
+        kryo.register(AccountRequest.class);
+        kryo.register(ProcessLoginResponse.class);
     }
 
     public void received(Connection connection, Object object)
     {
-       
+       if(object instanceof ProcessLoginResponse)
+       {
+           Server.ProcessLogin((ProcessLoginResponse)object);
+       }
     }
 
     @Override

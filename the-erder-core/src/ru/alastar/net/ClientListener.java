@@ -88,20 +88,23 @@ public class ClientListener extends Listener {
 	}
 
 	public void received(Connection connection, Object object) {
-		 if (object instanceof LoginResponse) {
-		 LoginResponse r = (LoginResponse)object;
-		 if(r.succesful){
-             MainScreen.currentStage = MainScreen.stageChoose;
-		 }
-		 else{
-	       MainScreen.currentStage = MainScreen.LoginStage;
 
-		 }
-		 }
-		 else if (object instanceof SetData) {
+	    
+		 if (object instanceof SetData) {
 		     SetData r = (SetData)object;
 		     Client.id = r.id;
 		 } 
+	     else if (object instanceof LoginResponse) {
+	         LoginResponse r = (LoginResponse)object;
+	         if(r.succesful)
+	         {
+	           GUICore.enableOne("choose");  
+	         }
+	         else
+	         {
+	             
+	         }
+	     }
 		 else if (object instanceof TargetInfoResponse) {
 		     TargetInfoResponse r = (TargetInfoResponse)object;
              TargetInfo.setInfo(r.hits, r.mhits);
