@@ -3,6 +3,7 @@ package ru.alastar.game.ai;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import ru.alastar.game.Entity;
@@ -42,9 +43,9 @@ public class BaseAI implements AI
             public void run()
             {
                 if(getEntity().target != null){
-              if(SkillsSystem.getRange(entity) < entity.pos.dst(entity.target.pos))
+              if(SkillsSystem.getRange(entity) < entity.body.getPosition().dst(entity.target.body.getPosition()))
               {
-                 MoveTo(entity.target.pos);
+                 MoveTo(entity.target.body.getPosition());
               }
               else
               {
@@ -59,28 +60,28 @@ public class BaseAI implements AI
         }, 1000, (long) (1000*getReactionTime()));
     }
     
-    public void MoveTo(Vector3 pos)
+    public void MoveTo(Vector2 pos)
     {
        Vector3 v = getNextTileToTarget(this.getEntity(), this.getEntity().target);
-       this.entity.tryMove((int)v.x, (int)v.y);
+       this.entity.tryMove(v.x, v.y);
     }
 
 
     private Vector3 getNextTileToTarget(Entity from, Entity to)
     {
-        Vector3 v = new Vector3(from.pos.x, from.pos.y, from.pos.z);
-        if(from.pos.x < to.pos.x){
+        Vector3 v = new Vector3(from.body.getPosition().x, from.body.getPosition().y, from.z);
+        if(from.body.getPosition().x < to.body.getPosition().x){
             v.x += 1;
             }
-        else if(from.pos.x > to.pos.x){
+        else if(from.body.getPosition().x > to.body.getPosition().x){
             v.x -= 1;
             }
         else{}
         
-        if(from.pos.y < to.pos.y){
+        if(from.body.getPosition().y < to.body.getPosition().y){
             v.y += 1;
             }
-        else if(from.pos.y > to.pos.y){
+        else if(from.body.getPosition().y > to.body.getPosition().y){
             v.y -= 1;
             }
         else{}

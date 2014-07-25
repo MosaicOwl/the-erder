@@ -37,8 +37,8 @@ public class CraftSystem
                                     .nextFloat())
                             {
                                 Item item = new Item(Server.getFreeItemId(),
-                                        e.id, ci.caption, i, (int) e.pos.x,
-                                        (int) e.pos.y, (int) e.pos.z,
+                                        e.id, ci.caption, i,  e.body.getPosition().x,
+                                         e.body.getPosition().y,  e.z,
                                         ci.eqType, ci.type, ci.attributes,
                                         e.world.id);
                                 Inventory inv = Server.getInventory(e);

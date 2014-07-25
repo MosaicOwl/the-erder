@@ -1,15 +1,12 @@
 package ru.alastar.game;
 
-import com.badlogic.gdx.math.Vector3;
-
 public class Transform
 {
+    public int z;
 
-    public Vector3 pos;
-
-    public Transform(Vector3 l)
+    public Transform(int z)
     {
-        this.pos = l;
+        this.z = z;
     }
 
 }

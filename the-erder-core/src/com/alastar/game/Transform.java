@@ -19,7 +19,8 @@ public class Transform implements Serializable {
 	{ 
 	    this.position.z = p.z;
 	    z = (int)p.z;
-	    Map.AddInter(new Interpolation(this, getTransformedVector3(p)));	   
+	    Map.AddInter(new Interpolation(this, getTransformedVector3(p)));	  
+	    //this.position = p;
 	}
 	
 	public Vector3 getTransformedVector3(Vector3 v)

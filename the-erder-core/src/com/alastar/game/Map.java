@@ -35,6 +35,7 @@ public class Map {
 	public static void handleUpdate(int id, Vector3 vec) {
 
 		try{
+		    if(getEntityById(id) != null)
 	    getEntityById(id).setPosition(vec);    
 	    
 		}catch(Exception e)
@@ -68,6 +69,7 @@ public class Map {
 
     public static void handleRemoveEntity(int id2)
     {
+        System.out.println("Remove entity: " + id2);
         Entity e = getEntityById(id2);
         if(e != null){
             removeEntity(id2);
@@ -76,24 +78,14 @@ public class Map {
 
     public static void StepInterpolations()
     {
-        for(Interpolation i: interps)
-        {
-            i.Step();
-        }
-       RemoveUnused();
-    }
-
-    private static void RemoveUnused()
-    {
-        for(Interpolation i: interps)
-        {
-            if(i.finished){
-            RemoveInter(i);
-            RemoveUnused();
-            break;
+            for (int i =interps.size()-1; i > -1; i--) {
+                interps.get(i).Step();
+                if(interps.get(i).finished){
+                    RemoveInter(interps.get(i));
+                }
             }
-        }        
     }
+   
 
     public static void handleEntity(Entity p) {
         try{

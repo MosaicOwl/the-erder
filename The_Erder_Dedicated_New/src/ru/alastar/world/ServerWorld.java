@@ -2,6 +2,8 @@ package ru.alastar.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import ru.alastar.game.Entity;
 import ru.alastar.game.Stats;
@@ -14,11 +16,14 @@ import ru.alastar.main.net.responses.RemoveEntityResponse;
 import ru.alastar.main.net.responses.RemoveTileResponse;
 import ru.alastar.main.net.responses.TargetInfoResponse;
 import ru.alastar.main.net.responses.UpdatePlayerResponse;
+import ru.alastar.physics.CollisionListener;
 
 import com.alastar.game.Tile;
 import com.alastar.game.enums.TileType;
 import com.alastar.game.enums.UpdateType;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class ServerWorld
 {
@@ -39,7 +44,10 @@ public class ServerWorld
 
     public int                    yMax      = 10;
     public int                    yMin      = -1;
-
+    
+    World                         pWorld; 
+    Timer                         physicsTimer;
+    
     public ServerWorld(int i, String n, int xMx, int xMn, int yMx, int yMn,
             int zMx, int zMn)
     {
@@ -52,7 +60,21 @@ public class ServerWorld
         this.zMax = zMx;
         this.zMin = zMn;
         tiles = new HashMap<Vector3, Tile>();
+        pWorld = new World(new Vector2(0, 0), true); 
         entities = new ArrayList<Entity>();
+        physicsTimer = new Timer();
+        pWorld.setContactListener(new CollisionListener());
+        physicsTimer.scheduleAtFixedRate(new TimerTask(){
+
+            @Override
+            public void run()
+            {
+               if(pWorld != null)
+                pWorld.step(1/45f, 6, 2);
+               else
+                 cancel();
+            }}, 10, 10);
+        
     }
 
     public void CreateTile(int x, int y, int z, TileType type, boolean p)
@@ -84,28 +106,37 @@ public class ServerWorld
         entities.add(e);
         for (Entity ent : entities)
         {
-            if (ent.pos.dst(e.pos) <= Server.syncDistance)
+            if (ent.body.getPosition().dst(e.body.getPosition()) <= Server.syncDistance)
             {
                 ent.tryAddToNear(e);
                 e.tryAddToNear(ent);
             }
-        }
+        }  
+       // Main.Log("[DEBUG]","Add " + e.caption + " to ServerWorld.entities. Count:  " + entities.size());
+
     }
 
     public void RemoveEntity(Entity entity)
     {
         RemoveEntityResponse r = new RemoveEntityResponse();
         ConnectedClient c;
-        entities.remove(entity);
+        int index = 0;
         for (int i = 0; i < entities.size(); ++i)
         {
+            if(entity.id != entities.get(i).id){
             c = Server.getClient(entities.get(i));
             if (c != null)
             {
                 r.id = entity.id;
                 Server.SendTo(c.connection, r);
             }
+            }
+            else
+                index = i;
         }
+        entities.remove(index);
+        
+      //  Main.Log("[DEBUG]","World entitys count: " + entities.size());
     }
 
     public void RemoveTile(Tile t)
@@ -190,7 +221,8 @@ public class ServerWorld
         }
     }
 
-    public void UpdateEntity(Entity entity)
+    // Updates warmode
+   public void UpdateEntity(Entity entity)
     {
         Entity ent;
         ConnectedClient c;
@@ -213,7 +245,7 @@ public class ServerWorld
         // Main.Log("[DEBUG]","UpdateNear");
         for (Entity e : ent.entitiesAround)
         {
-            if (e.pos.dst(ent.pos) > Server.syncDistance)
+            if (e.body.getPosition().dst(ent.body.getPosition()) > Server.syncDistance)
             {
                 e.tryRemoveNearEntity(ent);
                 ent.tryRemoveNearEntity(e);
@@ -224,7 +256,7 @@ public class ServerWorld
 
         for (Entity e : entities)
         {
-            if (e.pos.dst(ent.pos) <= Server.syncDistance)
+            if (e.body.getPosition().dst(ent.body.getPosition()) <= Server.syncDistance)
             {
                 e.tryAddToNear(ent);
                 ent.tryAddToNear(e);
@@ -246,6 +278,11 @@ public class ServerWorld
                     Server.SendTo(Server.getClient(e).connection, r);
             }
         }
+    }
+
+    public World getPhysic()
+    {
+        return pWorld;
     }
     
 }

@@ -18,7 +18,7 @@ public class GuardAI extends NPCAI
     public void OnDropdownRequest(Entity from)
     {
         NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("guard_dropdown_hire",
-                new Vector2(this.entity.pos.x, this.entity.pos.y), new Vector2(
+                new Vector2(this.entity.body.getPosition().x, this.entity.body.getPosition().y), new Vector2(
                         50, 50), "dropdown",
                 "com.alastar.game.gui.GUILabel", "", "Hire"), Server
                 .getClient(from));

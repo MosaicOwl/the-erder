@@ -8,6 +8,12 @@ import java.util.TimerTask;
 import com.alastar.game.Tile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import ru.alastar.enums.EntityType;
 import ru.alastar.game.systems.BattleSystem;
@@ -17,6 +23,7 @@ import ru.alastar.game.systems.gui.NetGUIInfo;
 import ru.alastar.game.systems.gui.NetGUISystem;
 import ru.alastar.game.systems.gui.hadlers.GUIHandler;
 import ru.alastar.game.systems.gui.hadlers.PlayerButtonGUIHandler;
+import ru.alastar.main.Main;
 import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddEntityResponse;
@@ -52,11 +59,21 @@ public class Entity extends Transform
   
     public boolean                       isAI          = false;
     public ru.alastar.game.ai.AI         AI            = null;
-
-    public Entity(int i, String c, EntityType t, int x, int y, int z,
+    public float                         speedMod      = 4F;
+    
+    //Physics
+    BodyDef                              bodyDef;
+    public Body                          body;
+    FixtureDef                           fixtureDef;
+    Fixture                              fixture;
+    CircleShape                          circle;
+    private int                          MAX_VELOCITY = 3;
+    private Timer                        updateTimer;
+    
+    public Entity(int i, String c, EntityType t, float f, float g, float h,
             Skills sk, Stats st, ServerWorld w)
     {
-        super(new Vector3(x, y, z));
+        super((int) h);
         this.id = i;
         this.caption = c;
         this.type = t;
@@ -64,28 +81,70 @@ public class Entity extends Transform
         this.stats = st;
         this.world = w;
         this.entitiesAround = new ArrayList<Entity>();
+    
+        // physics
+        bodyDef = new BodyDef();
+        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+        bodyDef.type = BodyType.DynamicBody;
+        // Set our body's starting position in the world
+        bodyDef.position.set(f, g);
+        bodyDef.linearDamping = 1.5F;
+
+        // Create our body in the world using our body definition
+        body = world.getPhysic().createBody(bodyDef);
+
+        // Create a circle shape and set its radius to 6
+        circle = new CircleShape();
+        circle.setRadius(0.5f);
+     
+        // Create a fixture definition to apply our shape to
+        fixtureDef = new FixtureDef();
+        fixtureDef.shape = circle;
+        fixtureDef.density = 1f; 
+        fixtureDef.friction = 1f;
+        fixtureDef.restitution = 0.6f; // Make it bounce a little bit
+        // Create our fixture and attach it to the body
+        fixture = body.createFixture(fixtureDef);
+        
+        circle.dispose();
+        if(updateTimer == null){ 
+            final Entity e = this;
+            updateTimer = new Timer();
+            updateTimer.scheduleAtFixedRate(new TimerTask(){
+
+                @Override
+                public void run()
+                {
+                    if(e.body.isActive())
+                    Server.UpdateEntityPosition(e);
+                    else{ 
+                    }
+                    
+                }}, 100, 100);
+        }
     }
 
     public void RemoveYourself(int aId)
-    {
+    {   
+        updateTimer.cancel();
         tryStopAttack();
-        
         for(Entity e: this.entitiesAround)
         {
             if(e != this)
             e.tryRemoveNearEntity(this);
         }
-        
+        world.RemoveEntity(this);
+
         Server.saveEntity(this, aId);
         
-        this.world.RemoveEntity(this);
         Server.unloadInventory(id);
         Server.unloadEquip(id);
         
         Server.inventories.remove(id);
         Server.equips.remove(id);
         Server.entities.remove(id);
-        
+       // Main.Log("[LOGIN]", "Entity removed. Count:" + Server.entities.size());
+
     }
 
     public void setRebirthHitsAmount()
@@ -101,16 +160,14 @@ public class Entity extends Transform
     }
 
 
-    public boolean tryMove(int x, int y)
+    public boolean tryMove(float x, float y)
     {
-        // Main.Log("[DEBUG]", "Try move");
-        if ((System.currentTimeMillis() - lastMoveTime) > 250)
-        {
-            int obstacleHeight = 0;
+        // Main.Log("[DEBUG]", "Try move. x:" + x + " y:" + y);
+            /*int obstacleHeight = 0;
             for (int i = 0; i < height; ++i)
             {
-                if (world.GetTile(((int) this.pos.x + x),
-                        ((int) this.pos.y + y), (int) this.pos.z + i) != null)
+                if (world.GetTile(((int) (this.pos.x + Math.floor(x))),
+                        ((int) (this.pos.y + Math.floor(y))), (int) this.pos.z + i) != null)
                     ++obstacleHeight;
             }
             // Main.Log("[INPUT]","obstacle height: " + obstacleHeight);
@@ -121,13 +178,14 @@ public class Entity extends Transform
                 this.pos.z += obstacleHeight;
                 CheckIfInAir();
                 Server.UpdateEntityPosition(this);
-                lastMoveTime = System.currentTimeMillis();
-                // Main.Log("[INPUT]","player moved");
+               // lastMoveTime = System.currentTimeMillis();
+               //  Main.Log("[INPUT]","player moved " + this.pos.x + " " + this.pos.y );
                 return true;
-            } else
+            } 
+            else
             {
-                Tile t = world.GetTile(((int) this.pos.x + x),
-                        ((int) this.pos.y + y), (int) this.pos.z);
+                Tile t = world.GetTile(((int) (this.pos.x + Math.floor(x))),
+                        ((int) (this.pos.y + Math.floor(y))), (int) this.pos.z);
                 // Main.Log("[INPUT]","Tile is not null");
                 if (t != null)
                 {
@@ -141,7 +199,7 @@ public class Entity extends Transform
                         CheckIfInAir();
 
                         Server.UpdateEntityPosition(this);
-                        lastMoveTime = System.currentTimeMillis();
+                        //lastMoveTime = System.currentTimeMillis();
                         // Main.Log("[INPUT]","player moved");
                         return true;
                     } else
@@ -159,41 +217,41 @@ public class Entity extends Transform
                     CheckIfInAir();
 
                     Server.UpdateEntityPosition(this);
-                    lastMoveTime = System.currentTimeMillis();
-                    // Main.Log("[INPUT]","player moved");
+                    //lastMoveTime = System.currentTimeMillis();
+                   //  Main.Log("[INPUT]","player moved");
                     return true;
                 }
 
             }
-        }
-        // else
-        // {
-        // this.x += x;
-        // this.y += y;
-        // Server.UpdateEntityPosition(this);
-        // lastMoveTime = DateTime.Now;
-        // Server.AddConsoleEntry("[INPUT]: Staff move");
+        */
+        if(System.currentTimeMillis() - lastMoveTime > 100){
+        Vector2 vel = this.body.getLinearVelocity();
+        Vector2 pos = this.body.getPosition(); 
 
-        // }
-        // }
+      //   Main.Log("[INPUT]","max velocity " + MAX_VELOCITY + " x velocity " + vel.x + " y velocity " + vel.y);
+        if (vel.x > -MAX_VELOCITY && vel.y > -MAX_VELOCITY && vel.x < MAX_VELOCITY && vel.y < MAX_VELOCITY) {
+            this.body.applyLinearImpulse(x * speedMod, y * speedMod, pos.x + x, pos.y + y, true);
+            CheckIfInAir();
+            lastMoveTime = System.currentTimeMillis();
+            return true;     
+
+       }
+        }
         else
-        {
-            // Server.Log("[INPUT]: Too early");
             return false;
-
-        }
-
-    }
+        
+           return false;
+      }
 
     private void CheckIfInAir()
     {
-        Tile t = world.GetTile(new Vector3(pos.x, pos.y, pos.z - 1));
-        for (int z = (int) pos.z; z > world.zMin; --z)
+        Tile t = world.GetTile(new Vector3(body.getPosition().x, body.getPosition().y, z - 1));
+        for (int z = this.z; z > world.zMin; --z)
         {
-            t = world.GetTile(new Vector3(pos.x, pos.y, z));
+            t = world.GetTile(new Vector3(body.getPosition().x, body.getPosition().y, z));
             if (t == null)
             {
-                pos.z = z;
+                this.z = z;
             } else
                 break;
         }
@@ -322,7 +380,7 @@ public class Entity extends Transform
                             // System.out.println("and it's alive");
                             // System.out.println("Dst is " +
                             // target.pos.dst2(e.pos));
-                            if (target.pos.dst2(e.pos) <= BattleSystem
+                            if (target.body.getPosition().dst2(e.body.getPosition()) <= BattleSystem
                                     .getWeaponRange(e))
                             {
                                 // System.out.println("and reachable for weapon("+target.pos.dst(e.pos)+")");
@@ -428,7 +486,7 @@ public class Entity extends Transform
         }
 
         NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("dropdown",
-                new Vector2(this.pos.x, this.pos.y + this.pos.z), new Vector2(
+                new Vector2(this.body.getPosition().x, this.body.getPosition().y + this.z), new Vector2(
                         50, 50), "", "com.alastar.game.gui.GUIDropdown", "",
                 "Player"), c);
 
@@ -436,8 +494,8 @@ public class Entity extends Transform
                 new PlayerButtonGUIHandler());
         if (isAI)
         {
-            Server.sendDropdownFor(AI, c, this.pos.x,
-                    this.pos.y + this.pos.z);
+            Server.sendDropdownFor(AI, c, this.body.getPosition().x,
+                    this.body.getPosition().y + this.z);
         }
     }
 
@@ -460,7 +518,7 @@ public class Entity extends Transform
     {
         if(entitiesAround.contains(ent)){
             entitiesAround.remove(ent);
-        
+         //   Main.Log("[DEBUG]","Remove " + ent.caption + " from near of " + caption + ". Count: " + entitiesAround.size());
         RemoveEntityResponse rer = new RemoveEntityResponse();
         rer.id = ent.id;
         
@@ -475,18 +533,20 @@ public class Entity extends Transform
     }
 
     public void tryAddToNear(Entity e)
-    {
+    {     
+
         if(!entitiesAround.contains(e)){
         entitiesAround.add(e);
-        
+       // Main.Log("[DEBUG]","Add " + e.caption + " to the near of " + caption + ". Count: " + entitiesAround.size());
+
         AddEntityResponse r = new AddEntityResponse();
         ConnectedClient c = Server.getClient(this);
         
         r.caption = e.caption;
         r.id = e.id;
-        r.x = (int) e.pos.x;
-        r.y = (int) e.pos.y;
-        r.z = (int) e.pos.z;
+        r.x = (int) e.body.getPosition().x;
+        r.y = (int) e.body.getPosition().y;
+        r.z = (int) e.z;
         r.type = e.type;
         r.warMode = e.warMode;
         

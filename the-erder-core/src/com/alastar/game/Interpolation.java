@@ -6,7 +6,7 @@ public class Interpolation
 {
   public Vector3 to;
   public Transform transfrom;
-  public float step = 16F;
+  public float step = 11F;
   public boolean finished = false;
   
   public Interpolation(Transform t, Vector3 to)
