@@ -30,6 +30,7 @@ public class ServerTile extends Transform
         groundBodyDef =new BodyDef();  
         groundBodyDef.position.set(new Vector2(pos.x, pos.y));  
         groundBody = world.getPhysic().createBody(groundBodyDef);  
+        groundBody.setUserData((int)this.position.z);
         groundBox = new PolygonShape();  
         groundBox.setAsBox(0.5f, 0.5f);
         groundBody.createFixture(groundBox, 0.0f); 
@@ -45,6 +46,7 @@ public class ServerTile extends Transform
             groundBodyDef =new BodyDef();  
             groundBodyDef.position.set(new Vector2(t.position.x, t.position.y));  
             groundBody = w.getPhysic().createBody(groundBodyDef);  
+            groundBody.setUserData((int)this.position.z);
             groundBox = new PolygonShape();  
             groundBox.setAsBox(0.5f, 0.5f);
             groundBody.createFixture(groundBox, 0.0f); 
