@@ -1,6 +1,5 @@
 package ru.alastar.game.systems.gui;
 
-import com.alastar.game.Tile;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 
@@ -11,6 +10,7 @@ import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.requests.DropdownMenuRequest;
 import ru.alastar.main.net.responses.CloseGUIResponse;
+import ru.alastar.world.ServerTile;
 
 public class NetGUISystem
 {
@@ -65,7 +65,7 @@ public class NetGUISystem
                 }
 
                 String t = "nothing";
-                Tile tile = c.controlledEntity.world.GetTile((int) r.x,
+                ServerTile tile = c.controlledEntity.world.GetTile((int) r.x,
                         (int) r.y, (int) c.controlledEntity.z);
                 if (tile != null)
                 {

@@ -20,6 +20,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.alastar.game.Tile;
 import com.alastar.game.enums.ItemType;
 import com.alastar.game.enums.UpdateType;
 import com.badlogic.gdx.math.Vector2;
@@ -68,6 +69,7 @@ import ru.alastar.main.net.responses.ProcessLoginResponse;
 import ru.alastar.main.net.responses.SetData;
 import ru.alastar.main.net.responses.SpeechResponse;
 import ru.alastar.main.net.responses.UpdatePlayerResponse;
+import ru.alastar.world.ServerTile;
 import ru.alastar.world.ServerWorld;
 
 public class Server
@@ -574,7 +576,10 @@ public class Server
                     w = new ServerWorld(i, fileName, clientW.xMax,
                             clientW.xMin, clientW.yMax, clientW.yMin,
                             clientW.zMax, clientW.zMin);
-                    w.tiles = clientW.tiles;
+                    //Remapping Tile.class to ServerTile.clas
+                    for(Tile t: clientW.tiles.values()){
+                        w.tiles.put(t.position, new ServerTile(t, w));
+                    }
                     w.id = clientW.id;
                     w.version = clientW.version;
                     Main.Log("[LOAD]", "Loaded world " + w.name + " id: "

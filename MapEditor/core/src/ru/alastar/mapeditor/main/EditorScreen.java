@@ -48,6 +48,7 @@ public class EditorScreen implements Screen {
 	public static int tileView = 16;
 	final TextField verText;
 	final TextField idText;
+	public boolean deleteMode = false;
 	
 	public EditorScreen(MapEditor map)
 	{
@@ -78,7 +79,11 @@ public class EditorScreen implements Screen {
 	                    if (ret == JFileChooser.APPROVE_OPTION) {
 	                        LoadWorld(load.getSelectedFile());
 	                    }   
-	                }
+	                } 
+	            if(keycode == Keys.D)
+                {
+                   deleteMode = !deleteMode; 
+                }
 				if(keycode == Keys.P)
 				{
 					physiXView = !physiXView;
@@ -157,26 +162,32 @@ public class EditorScreen implements Screen {
 	        verText = new TextField("1",
 	                GameManager.txtFieldStyle);
 	        verText.setPosition(50 / Vars.balancedScreenWidth,
-	                125 / Vars.balancedScreenHeight);
+	                150 / Vars.balancedScreenHeight);
 
 	        final Label idLabel = new Label("ID:",
 	                GameManager.labelStyle);
 	        idLabel.setPosition(50 / Vars.balancedScreenWidth,
-	                100 / Vars.balancedScreenHeight);
+	                125 / Vars.balancedScreenHeight);
 	        
             idText = new TextField("1",
                     GameManager.txtFieldStyle);
             idText.setPosition(50 / Vars.balancedScreenWidth,
-                    75 / Vars.balancedScreenHeight);
+                    100 / Vars.balancedScreenHeight);
 
 	        final TextButton labelOpen = new TextButton(
 	                "Открыть -  Q",
 	                GameManager.txtBtnStyle);
 	        labelOpen.setPosition(50 / Vars.balancedScreenWidth,
-	                50 / Vars.balancedScreenHeight);
+	                75 / Vars.balancedScreenHeight);
 	        
             final TextButton labelSave = new TextButton(
                     "Сохранить  -  E",
+                    GameManager.txtBtnStyle);
+            labelSave.setPosition(50 / Vars.balancedScreenWidth,
+                    50 / Vars.balancedScreenHeight);
+            
+            final TextButton labelDel = new TextButton(
+                    "Ластик  -  D",
                     GameManager.txtBtnStyle);
             labelSave.setPosition(50 / Vars.balancedScreenWidth,
                     25 / Vars.balancedScreenHeight);
@@ -186,7 +197,9 @@ public class EditorScreen implements Screen {
 	        stageCreate.addActor(idLabel);
 	        stageCreate.addActor(idText);
 	        stageCreate.addActor(labelSave);
-	        stageCreate.addActor(labelOpen);
+	        stageCreate.addActor(labelOpen); 
+	        stageCreate.addActor(labelDel);
+
 	}
 	
 	@Override
@@ -244,11 +257,11 @@ public class EditorScreen implements Screen {
 		
 		if(switchPos)
 		{
-			font.draw(map.batch, "Second Pos(x:" + (int)tr.x /GameManager.texWidth + ", y:" + (int)tr.y / GameManager.texHeight + ", z: "+MapEditor.positionZ+") P: " + passableState, tr.x - GameManager.texWidth / 2, tr.y -  GameManager.texHeight / 2);
+			font.draw(map.batch, "Second Pos(x:" + (int)tr.x /GameManager.texWidth + ", y:" + (int)tr.y / GameManager.texHeight + ", z: "+MapEditor.positionZ+") P: " + passableState + " D: " + deleteMode, tr.x - GameManager.texWidth / 2, tr.y -  GameManager.texHeight / 2);
 		}
 		else
 		{
-			font.draw(map.batch, "First Pos(x:" + (int)tr.x / GameManager.texWidth + ", y:" + (int)tr.y / GameManager.texHeight + ", z: "+MapEditor.positionZ+") P: " + passableState, tr.x - GameManager.texWidth / 2, tr.y -  GameManager.texHeight / 2);
+			font.draw(map.batch, "First Pos(x:" + (int)tr.x / GameManager.texWidth + ", y:" + (int)tr.y / GameManager.texHeight + ", z: "+MapEditor.positionZ+") P: " + passableState + " D: " + deleteMode, tr.x - GameManager.texWidth / 2, tr.y -  GameManager.texHeight / 2);
 
 		}
 		map.batch.end();
@@ -259,6 +272,7 @@ public class EditorScreen implements Screen {
 		         Vector3 tr1 = camera.unproject(new Vector3((int)Gdx.input.getX(), (int)Gdx.input.getY(), MapEditor.positionZ));
 
 			    Vector3 v1 = new Vector3((int)tr1.x / GameManager.texWidth,(int)tr1.y / GameManager.texHeight, MapEditor.positionZ);
+			    if(!deleteMode){
 			      world.tiles.put(v1,new Tile(v1, selectedType, passableState));
 			      if(v1.x > world.xMax)
 			          world.xMax = (int)v1.x;
@@ -273,6 +287,12 @@ public class EditorScreen implements Screen {
 			      if(v1.z < world.zMin)
 			          world.zMin = (int)v1.z;
 		         // System.out.println("Set tile at " + (int)tr1.x / GameManager.texWidth + " " + (int)tr1.y / GameManager.texHeight);
+			      }
+			    else
+			    {
+			        world.tiles.remove(v1);
+			    }
+			
 			}
 
 			if(Gdx.input.justTouched())
@@ -371,8 +391,8 @@ public class EditorScreen implements Screen {
 				{
 				    world.tiles.remove(vec);
 				}
+				if(!deleteMode)
                 world.tiles.put(vec,new Tile(vec, selectedType, passableState));
-               // System.out.println("Put cuboid tile");
 			    }
 			}
 		}

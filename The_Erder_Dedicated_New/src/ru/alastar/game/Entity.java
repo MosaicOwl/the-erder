@@ -5,7 +5,6 @@ import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.alastar.game.Tile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -32,6 +31,7 @@ import ru.alastar.main.net.responses.RemoveEntityResponse;
 import ru.alastar.main.net.responses.SpeechResponse;
 import ru.alastar.main.net.responses.TargetInfoResponse;
 import ru.alastar.main.net.responses.TargetResponse;
+import ru.alastar.world.ServerTile;
 import ru.alastar.world.ServerWorld;
 
 public class Entity extends Transform
@@ -231,7 +231,7 @@ public class Entity extends Transform
       //   Main.Log("[INPUT]","max velocity " + MAX_VELOCITY + " x velocity " + vel.x + " y velocity " + vel.y);
         if (vel.x > -MAX_VELOCITY && vel.y > -MAX_VELOCITY && vel.x < MAX_VELOCITY && vel.y < MAX_VELOCITY) {
             this.body.applyLinearImpulse(x * speedMod, y * speedMod, pos.x + x, pos.y + y, true);
-            CheckIfInAir();
+            CheckZ(pos, new Vector2(pos.x + x, pos.y + y));
             lastMoveTime = System.currentTimeMillis();
             return true;     
 
@@ -243,12 +243,34 @@ public class Entity extends Transform
            return false;
       }
 
+    private void CheckZ(Vector2 from, Vector2 to)
+    {
+        ServerTile toTile = world.GetTile(new Vector3((int)to.x, (int)to.y, this.z));        
+        if(toTile != null)
+        {
+            int obstacleHeight = 0;
+            ServerTile toTileAbove;
+            for(int i = 1; i <= this.height; ++i){
+            toTileAbove = world.GetTile(new Vector3((int)to.x, (int)to.y, this.z + i));
+            if(toTileAbove != null)
+                ++obstacleHeight;
+            }
+            if(obstacleHeight < 1)
+            {
+                Main.Log("[ZCheck]", "New z! Its now " + z + " after " + toTile.position.z );
+                this.z = (int) toTile.position.z + 1;
+            }
+        }
+
+        CheckIfInAir();
+    }
+
     private void CheckIfInAir()
     {
-        Tile t = world.GetTile(new Vector3(body.getPosition().x, body.getPosition().y, z - 1));
+        ServerTile t = world.GetTile(new Vector3((int)body.getPosition().x, (int)body.getPosition().y, z - 1));
         for (int z = this.z; z > world.zMin; --z)
         {
-            t = world.GetTile(new Vector3(body.getPosition().x, body.getPosition().y, z));
+            t = world.GetTile(new Vector3((int)body.getPosition().x, (int)body.getPosition().y, z));
             if (t == null)
             {
                 this.z = z;

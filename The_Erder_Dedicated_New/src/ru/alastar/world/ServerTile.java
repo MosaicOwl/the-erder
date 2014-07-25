@@ -1,5 +1,6 @@
 package ru.alastar.world;
 
+import com.alastar.game.Tile;
 import com.alastar.game.Transform;
 import com.alastar.game.enums.TileType;
 import com.badlogic.gdx.math.Vector2;
@@ -15,7 +16,7 @@ public class ServerTile extends Transform
      */
     private static final long serialVersionUID = 1L;
     public TileType           type;
-    public boolean            physic         = false;
+    public boolean            passable         = false;
     //Physics
     PolygonShape              groundBox;
     BodyDef                   groundBodyDef;
@@ -24,25 +25,30 @@ public class ServerTile extends Transform
     {
         super(pos);
         this.type = t;
-        this.physic = p;
+        this.passable = p;
         if(!p){
-        // Create our body definition
         groundBodyDef =new BodyDef();  
-        // Set its world position
         groundBodyDef.position.set(new Vector2(pos.x, pos.y));  
-
-        // Create a body from the defintion and add it to the world
         groundBody = world.getPhysic().createBody(groundBodyDef);  
-
-        // Create a polygon shape
         groundBox = new PolygonShape();  
-        // Set the polygon shape as a box which is twice the size of our view port and 20 high
-        // (setAsBox takes half-width and half-height as arguments)
-        groundBox.setAsBox(20.0f, 10.0f);
-        // Create a fixture from our polygon shape and add it to our ground body  
+        groundBox.setAsBox(0.5f, 0.5f);
         groundBody.createFixture(groundBox, 0.0f); 
-        // Clean up after ourselves
-       // groundBox.dispose();
+        groundBox.dispose();
+        }
+    }
+    public ServerTile(Tile t, ServerWorld w)
+    {
+        super(t.position);
+        this.type = t.type;
+        this.passable = t.passable;
+        if(!passable){
+            groundBodyDef =new BodyDef();  
+            groundBodyDef.position.set(new Vector2(t.position.x, t.position.y));  
+            groundBody = w.getPhysic().createBody(groundBodyDef);  
+            groundBox = new PolygonShape();  
+            groundBox.setAsBox(0.5f, 0.5f);
+            groundBody.createFixture(groundBox, 0.0f); 
+            groundBox.dispose();
         }
     }
 }

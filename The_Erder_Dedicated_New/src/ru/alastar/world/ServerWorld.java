@@ -32,7 +32,7 @@ public class ServerWorld
     public String                 name      = "GenericWorld";
 
     public int                    chunkSize = 16;
-    public HashMap<Vector3, Tile> tiles;
+    public HashMap<Vector3, ServerTile> tiles;
     public ArrayList<Entity>      entities;
     public int                    version   = 0;
 
@@ -59,7 +59,7 @@ public class ServerWorld
         this.yMin = yMn;
         this.zMax = zMx;
         this.zMin = zMn;
-        tiles = new HashMap<Vector3, Tile>();
+        tiles = new HashMap<Vector3, ServerTile>();
         pWorld = new World(new Vector2(0, 0), true); 
         entities = new ArrayList<Entity>();
         physicsTimer = new Timer();
@@ -79,10 +79,10 @@ public class ServerWorld
 
     public void CreateTile(int x, int y, int z, TileType type, boolean p)
     {
-        AddTile(new Tile(new Vector3(x, y, z), type, p));
+        AddTile(new ServerTile(new Vector3(x, y, z), type, p, this));
     }
 
-    public void AddTile(Tile t)
+    public void AddTile(ServerTile t)
     {
         AddTileResponse r = new AddTileResponse();
         ConnectedClient c;
@@ -163,12 +163,12 @@ public class ServerWorld
         }
     }
 
-    public Tile GetTile(int x, int y, int z)
+    public ServerTile GetTile(int x, int y, int z)
     {
         return tiles.get(new Vector3(x, y, z));
     }
 
-    public Tile GetTile(Vector3 xyz)
+    public ServerTile GetTile(Vector3 xyz)
     {
         return tiles.get(xyz);
     }
