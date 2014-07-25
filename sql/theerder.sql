@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: 127.0.0.1
--- Время создания: Июл 18 2014 г., 20:26
+-- Время создания: Июл 25 2014 г., 17:23
 -- Версия сервера: 5.5.25
 -- Версия PHP: 5.2.12
 
@@ -19,29 +19,6 @@ SET time_zone = "+00:00";
 --
 -- База данных: `theerder`
 --
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `accounts`
---
-
-CREATE TABLE IF NOT EXISTS `accounts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `login` text NOT NULL,
-  `password` text NOT NULL,
-  `mail` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- Дамп данных таблицы `accounts`
---
-
-INSERT INTO `accounts` (`id`, `login`, `password`, `mail`) VALUES
-(1, 'Alastar', '��B8��#�\r�P�ou��', 'some@mail.ru'),
-(2, 'Alastar2', '��B8��#��P�ou��', ''),
-(3, 'Alastar2', '��B8��#�\r�P�ou��', 'mail@mail.ru');
 
 -- --------------------------------------------------------
 
@@ -96,9 +73,9 @@ CREATE TABLE IF NOT EXISTS `entities` (
   `caption` text NOT NULL,
   `type` text NOT NULL,
   `worldId` int(11) NOT NULL,
-  `x` int(11) NOT NULL,
-  `y` int(11) NOT NULL,
-  `z` int(11) NOT NULL,
+  `x` float NOT NULL,
+  `y` float NOT NULL,
+  `z` float NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
@@ -107,11 +84,10 @@ CREATE TABLE IF NOT EXISTS `entities` (
 --
 
 INSERT INTO `entities` (`id`, `accountId`, `caption`, `type`, `worldId`, `x`, `y`, `z`) VALUES
-(4, 1, 'Wookie', 'Elf', 1, -14, -7, 2),
-(5, 1, 'Zuzya', 'Human', 1, -2, -1, 2),
+(4, 1, 'Wookie', 'Elf', 1, -5, -7, 2),
+(5, 1, 'Zuzya', 'Human', 1, -4.5178, 2.34251, 1),
 (6, 3, 'Alastar', 'Human', 1, -7, -3, 2),
-(7, -1, 'Ed', 'Human', 1, 1, 1, 2),
-(8, -1, 'Orc', 'Orc', 1, 5, 5, 2);
+(7, -1, 'Ed', 'Human', 1, 1, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -170,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `y` int(11) NOT NULL,
   `z` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=20 ;
 
 --
 -- Дамп данных таблицы `items`
@@ -186,27 +162,10 @@ INSERT INTO `items` (`id`, `worldId`, `caption`, `amount`, `entityId`, `equipTyp
 (11, 1, 'swiftstone', 3, 4, 'None', 'Gem', 0, 0, 0),
 (12, 1, 'copper ore', 7, 4, 'None', 'Ore', 0, 0, 0),
 (14, 1, 'Coin', 1, 4, 'None', 'Gold', 0, 0, 0),
-(15, 1, 'Coin', 1, 5, 'None', 'Gold', 0, 0, 0),
+(15, 1, 'Coin', 1, 5, 'None', 'Gold', 22, 40, 0),
 (17, 1, 'Wooden Totem', 10, 4, 'None', 'Totem', 0, 0, 0),
-(18, 1, 'Coin', 1, 6, 'None', 'Gold', 0, 0, 0);
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `knownspells`
---
-
-CREATE TABLE IF NOT EXISTS `knownspells` (
-  `spellName` text NOT NULL,
-  `entityId` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Дамп данных таблицы `knownspells`
---
-
-INSERT INTO `knownspells` (`spellName`, `entityId`) VALUES
-('heal', 4);
+(18, 1, 'Coin', 1, 6, 'None', 'Gold', 0, 0, 0),
+(19, -1, 'Helm', 1, 4, 'Head', 'Helm', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -291,64 +250,65 @@ CREATE TABLE IF NOT EXISTS `skills` (
   `mValue` int(11) NOT NULL,
   `hardness` float NOT NULL,
   `primaryStat` text NOT NULL,
-  `secondaryStat` text NOT NULL
+  `secondaryStat` text NOT NULL,
+  `state` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `skills`
 --
 
-INSERT INTO `skills` (`entityId`, `name`, `sValue`, `mValue`, `hardness`, `primaryStat`, `secondaryStat`) VALUES
-(4, 'Carpentry', 50, 50, 5, 'Int', 'Strength'),
-(4, 'Lumberjacking', 2, 50, 5, 'Strength', 'Dexterity'),
-(4, 'Herding', 0, 50, 5, 'Int', 'Int'),
-(4, 'Swords', 32, 50, 5, 'Strength', 'Dexterity'),
-(4, 'Necromancy', 0, 50, 5, 'Int', 'Int'),
-(4, 'Magery', 0, 50, 5, 'Int', 'Int'),
-(4, 'Chivalry', 0, 50, 5, 'Strength', 'Int'),
-(4, 'Parrying', 3, 50, 5, 'Dexterity', 'Strength'),
-(4, 'Mining', 0, 50, 5, 'Strength', 'Int'),
-(5, 'Taming', 0, 50, 5, 'Int', 'Strength'),
-(5, 'Lumberjacking', 0, 50, 5, 'Strength', 'Dexterity'),
-(5, 'Herding', 0, 50, 5, 'Int', 'Int'),
-(5, 'Swords', 33, 50, 5, 'Strength', 'Dexterity'),
-(5, 'Necromancy', 0, 50, 5, 'Int', 'Int'),
-(5, 'Magery', 0, 50, 5, 'Int', 'Int'),
-(5, 'Chivalry', 0, 50, 5, 'Strength', 'Int'),
-(5, 'Parrying', 10, 50, 5, 'Dexterity', 'Strength'),
-(5, 'Mining', 0, 50, 5, 'Strength', 'Int'),
-(6, 'Taming', 0, 50, 5, 'Int', 'Strength'),
-(6, 'Lumberjacking', 0, 50, 5, 'Strength', 'Dexterity'),
-(6, 'Herding', 0, 50, 5, 'Int', 'Int'),
-(6, 'Swords', 10, 50, 5, 'Strength', 'Dexterity'),
-(6, 'Necromancy', 0, 50, 5, 'Int', 'Int'),
-(6, 'Magery', 0, 50, 5, 'Int', 'Int'),
-(6, 'Carpentry', 0, 50, 5, 'Int', 'Strength'),
-(6, 'Chivalry', 0, 50, 5, 'Strength', 'Int'),
-(6, 'Parrying', 7, 50, 5, 'Dexterity', 'Strength'),
-(6, 'Mining', 0, 50, 5, 'Strength', 'Int'),
-(8, 'Swords', 1, 20, 1, 'Strength', 'Strength'),
-(8, 'Parrying', 1, 20, 1, 'Strength', 'Strength'),
-(4, 'Taming', 0, 50, 5, 'Int', 'Strength'),
-(5, 'Carpentry', 0, 50, 5, 'Int', 'Strength'),
-(7, 'Taming', 0, 50, 5, 'Int', 'Strength'),
-(7, 'Lumberjacking', 0, 50, 5, 'Strength', 'Dexterity'),
-(7, 'Herding', 0, 50, 5, 'Int', 'Int'),
-(7, 'Swords', 0, 50, 5, 'Strength', 'Dexterity'),
-(7, 'Necromancy', 0, 50, 5, 'Int', 'Int'),
-(7, 'Magery', 0, 50, 5, 'Int', 'Int'),
-(7, 'Carpentry', 0, 50, 5, 'Int', 'Strength'),
-(7, 'Chivalry', 0, 50, 5, 'Strength', 'Int'),
-(7, 'Parrying', 0, 50, 5, 'Dexterity', 'Strength'),
-(7, 'Mining', 0, 50, 5, 'Strength', 'Int'),
-(8, 'Taming', 0, 50, 5, 'Int', 'Strength'),
-(8, 'Lumberjacking', 0, 50, 5, 'Strength', 'Dexterity'),
-(8, 'Chivalry', 0, 50, 5, 'Strength', 'Int'),
-(8, 'Carpentry', 0, 50, 5, 'Int', 'Strength'),
-(8, 'Necromancy', 0, 50, 5, 'Int', 'Int'),
-(8, 'Mining', 0, 50, 5, 'Strength', 'Int'),
-(8, 'Herding', 0, 50, 5, 'Int', 'Int'),
-(8, 'Magery', 0, 50, 5, 'Int', 'Int');
+INSERT INTO `skills` (`entityId`, `name`, `sValue`, `mValue`, `hardness`, `primaryStat`, `secondaryStat`, `state`) VALUES
+(4, 'Carpentry', 50, 50, 5, 'Int', 'Strength', 0),
+(4, 'Lumberjacking', 2, 50, 5, 'Strength', 'Dexterity', 0),
+(4, 'Herding', 0, 50, 5, 'Int', 'Int', 0),
+(4, 'Swords', 32, 50, 5, 'Strength', 'Dexterity', 0),
+(4, 'Necromancy', 0, 50, 5, 'Int', 'Int', 0),
+(4, 'Magery', 0, 50, 5, 'Int', 'Int', 0),
+(4, 'Chivalry', 0, 50, 5, 'Strength', 'Int', 0),
+(4, 'Parrying', 3, 50, 5, 'Dexterity', 'Strength', 0),
+(4, 'Mining', 0, 50, 5, 'Strength', 'Int', 0),
+(5, 'Taming', 0, 50, 5, 'Int', 'Strength', 0),
+(5, 'Lumberjacking', 0, 50, 5, 'Strength', 'Dexterity', 0),
+(5, 'Herding', 0, 50, 5, 'Int', 'Int', 0),
+(5, 'Swords', 33, 50, 5, 'Strength', 'Dexterity', 0),
+(5, 'Necromancy', 0, 50, 5, 'Int', 'Int', 0),
+(5, 'Magery', 0, 50, 5, 'Int', 'Int', 0),
+(5, 'Chivalry', 0, 50, 5, 'Strength', 'Int', 0),
+(5, 'Parrying', 10, 50, 5, 'Dexterity', 'Strength', 0),
+(5, 'Mining', 0, 50, 5, 'Strength', 'Int', 0),
+(6, 'Taming', 0, 50, 5, 'Int', 'Strength', 0),
+(6, 'Lumberjacking', 0, 50, 5, 'Strength', 'Dexterity', 0),
+(6, 'Herding', 0, 50, 5, 'Int', 'Int', 0),
+(6, 'Swords', 10, 50, 5, 'Strength', 'Dexterity', 0),
+(6, 'Necromancy', 0, 50, 5, 'Int', 'Int', 0),
+(6, 'Magery', 0, 50, 5, 'Int', 'Int', 0),
+(6, 'Carpentry', 0, 50, 5, 'Int', 'Strength', 0),
+(6, 'Chivalry', 0, 50, 5, 'Strength', 'Int', 0),
+(6, 'Parrying', 7, 50, 5, 'Dexterity', 'Strength', 0),
+(6, 'Mining', 0, 50, 5, 'Strength', 'Int', 0),
+(8, 'Swords', 1, 20, 1, 'Strength', 'Strength', 0),
+(8, 'Parrying', 1, 20, 1, 'Strength', 'Strength', 0),
+(4, 'Taming', 0, 50, 5, 'Int', 'Strength', 0),
+(5, 'Carpentry', 0, 50, 5, 'Int', 'Strength', 0),
+(7, 'Taming', 0, 50, 5, 'Int', 'Strength', 0),
+(7, 'Lumberjacking', 0, 50, 5, 'Strength', 'Dexterity', 0),
+(7, 'Herding', 0, 50, 5, 'Int', 'Int', 0),
+(7, 'Swords', 0, 50, 5, 'Strength', 'Dexterity', 0),
+(7, 'Necromancy', 0, 50, 5, 'Int', 'Int', 0),
+(7, 'Magery', 0, 50, 5, 'Int', 'Int', 0),
+(7, 'Carpentry', 0, 50, 5, 'Int', 'Strength', 0),
+(7, 'Chivalry', 0, 50, 5, 'Strength', 'Int', 0),
+(7, 'Parrying', 0, 50, 5, 'Dexterity', 'Strength', 0),
+(7, 'Mining', 0, 50, 5, 'Strength', 'Int', 0),
+(8, 'Taming', 0, 50, 5, 'Int', 'Strength', 0),
+(8, 'Lumberjacking', 0, 50, 5, 'Strength', 'Dexterity', 0),
+(8, 'Chivalry', 0, 50, 5, 'Strength', 'Int', 0),
+(8, 'Carpentry', 0, 50, 5, 'Int', 'Strength', 0),
+(8, 'Necromancy', 0, 50, 5, 'Int', 'Int', 0),
+(8, 'Mining', 0, 50, 5, 'Strength', 'Int', 0),
+(8, 'Herding', 0, 50, 5, 'Int', 'Int', 0),
+(8, 'Magery', 0, 50, 5, 'Int', 'Int', 0);
 
 -- --------------------------------------------------------
 
@@ -361,43 +321,44 @@ CREATE TABLE IF NOT EXISTS `stats` (
   `sValue` int(11) NOT NULL,
   `mValue` int(11) NOT NULL,
   `name` text NOT NULL,
-  `hardness` float NOT NULL
+  `hardness` float NOT NULL,
+  `state` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `stats`
 --
 
-INSERT INTO `stats` (`entityId`, `sValue`, `mValue`, `name`, `hardness`) VALUES
-(4, 5, 50, 'Strength', 5),
-(4, 5, 50, 'Dexterity', 5),
-(4, 1, 50, 'Hits', 5),
-(4, 0, 20, 'Mana', 5),
-(4, 5, 50, 'Int', 5),
-(5, 5, 50, 'Strength', 5),
-(5, 5, 50, 'Dexterity', 5),
-(5, 14, 50, 'Hits', 5),
-(5, 20, 20, 'Mana', 5),
-(5, 5, 50, 'Int', 5),
-(6, 5, 50, 'Strength', 5),
-(6, 5, 50, 'Dexterity', 5),
-(6, 8, 50, 'Hits', 5),
-(6, 20, 20, 'Mana', 5),
-(6, 5, 50, 'Int', 5),
-(8, 1, 20, 'Hits', 1),
-(8, 1, 20, 'Strength', 1),
-(8, 1, 20, 'Dexterity', 1),
-(4, 5, 50, 'Strength', 5),
-(5, 5, 50, 'Strength', 5),
-(6, 5, 50, 'Strength', 5),
-(7, 5, 50, 'Strength', 5),
-(7, 5, 50, 'Dexterity', 5),
-(7, 10, 50, 'Hits', 5),
-(7, 5, 50, 'Int', 5),
-(7, 20, 20, 'Mana', 5),
-(8, 5, 50, 'Strength', 5),
-(8, 5, 50, 'Int', 5),
-(8, 20, 20, 'Mana', 5);
+INSERT INTO `stats` (`entityId`, `sValue`, `mValue`, `name`, `hardness`, `state`) VALUES
+(4, 5, 50, 'Strength', 5, 0),
+(4, 5, 50, 'Dexterity', 5, 0),
+(4, 1, 50, 'Hits', 5, 0),
+(4, 0, 20, 'Mana', 5, 0),
+(4, 5, 50, 'Int', 5, 0),
+(5, 5, 50, 'Strength', 5, 0),
+(5, 5, 50, 'Dexterity', 5, 0),
+(5, 12, 50, 'Hits', 5, 0),
+(5, 20, 20, 'Mana', 5, 0),
+(5, 5, 50, 'Int', 5, 0),
+(6, 5, 50, 'Strength', 5, 0),
+(6, 5, 50, 'Dexterity', 5, 0),
+(6, 8, 50, 'Hits', 5, 0),
+(6, 20, 20, 'Mana', 5, 0),
+(6, 5, 50, 'Int', 5, 0),
+(8, 11, 20, 'Hits', 5, 0),
+(8, 1, 20, 'Strength', 1, 0),
+(8, 1, 20, 'Dexterity', 1, 0),
+(4, 5, 50, 'Strength', 5, 0),
+(5, 5, 50, 'Strength', 5, 0),
+(6, 5, 50, 'Strength', 5, 0),
+(7, 5, 50, 'Strength', 5, 0),
+(7, 5, 50, 'Dexterity', 5, 0),
+(7, 10, 50, 'Hits', 5, 0),
+(7, 5, 50, 'Int', 5, 0),
+(7, 20, 20, 'Mana', 5, 0),
+(8, 5, 50, 'Strength', 5, 0),
+(8, 5, 50, 'Int', 5, 0),
+(8, 20, 20, 'Mana', 5, 0);
 
 -- --------------------------------------------------------
 

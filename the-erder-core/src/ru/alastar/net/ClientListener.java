@@ -63,7 +63,6 @@ public class ClientListener extends Listener {
         kryo.register(CreateCharacterRequest.class);
         kryo.register(InputRequest.class);
         kryo.register(MessagePacketRequest.class);
-        kryo.register(RegistrationPacketRequest.class);
         kryo.register(AddCharacterResponse.class);
         kryo.register(LoadWorldResponse.class);
         kryo.register(CharacterRemove.class);
@@ -93,11 +92,14 @@ public class ClientListener extends Listener {
 		 if (object instanceof SetData) {
 		     SetData r = (SetData)object;
 		     Client.id = r.id;
+             System.out.println("Dataset " + r.id + ". Our id now: " + Client.id);
 		 } 
 	     else if (object instanceof LoginResponse) {
 	         LoginResponse r = (LoginResponse)object;
+             System.out.println("LoginResponse " + r.succesful);
 	         if(r.succesful)
 	         {
+	           System.out.println("enabling choose gui");
 	           GUICore.enableOne("choose");  
 	         }
 	         else

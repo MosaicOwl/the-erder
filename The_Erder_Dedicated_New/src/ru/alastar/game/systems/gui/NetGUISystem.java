@@ -66,7 +66,7 @@ public class NetGUISystem
 
                 String t = "nothing";
                 Tile tile = c.controlledEntity.world.GetTile((int) r.x,
-                        (int) r.y, (int) c.controlledEntity.pos.z);
+                        (int) r.y, (int) c.controlledEntity.z);
                 if (tile != null)
                 {
                     t = tile.type.name();

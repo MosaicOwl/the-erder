@@ -1,0 +1,9 @@
+[2014-07-25_14-13-01][CONFIG]:Config loaded! 
+[2014-07-25_14-13-01][SERVER]:Game server version 1.0 starting
+[2014-07-25_14-13-01][SERVER]:Authors: 
+[2014-07-25_14-13-01][AUTHOR]:Fess (Artyom) - idea creator, scenarist
+[2014-07-25_14-13-01][AUTHOR]:Igor - game designer, scenarist
+[2014-07-25_14-13-01][AUTHOR]:Alastar(Michael) - programmer
+[2014-07-25_14-13-01][LOAD]:World files not found!
+[2014-07-25_14-13-01][AI]:AI loaded. class: ru.alastar.game.ai.npc.GuardAI. entityId: 7
+[2014-07-25_14-13-01][SERVER]:null

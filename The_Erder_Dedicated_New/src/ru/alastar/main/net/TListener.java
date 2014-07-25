@@ -56,14 +56,13 @@ public class TListener extends Listener
         registerPacket(AddSkillResponse.class, true);
         registerPacket(MessageResponse.class, true);
         registerPacket(AuthPacketRequest.class, false);
-        registerPacket(CharacterChooseRequest.class, true);
-        registerPacket(CreateCharacterRequest.class, true);
-        registerPacket(InputRequest.class, true);
+        registerPacket(CharacterChooseRequest.class, false);
+        registerPacket(CreateCharacterRequest.class, false);
+        registerPacket(InputRequest.class, false);
         registerPacket(MessagePacketRequest.class, true);
-        registerPacket(RegistrationPacketRequest.class, true);
         registerPacket(AddCharacterResponse.class, true);
         registerPacket(LoadWorldResponse.class, true);
-        registerPacket(CharacterRemove.class, true);
+        registerPacket(CharacterRemove.class, false);
         registerPacket(UpdatePlayerResponse.class, true);
         registerPacket(NetGUIInfo.class, true);
         registerPacket(NetGUIAnswer.class, true);
@@ -80,8 +79,6 @@ public class TListener extends Listener
         registerPacket(HitResponse.class, true);
         registerPacket(TargetResponse.class, true);
         registerPacket(TargetInfoResponse.class, true);
-
-        // Main.Log("[LISTENER]", "All packets registered!");
     }
 
     public void registerPacket(@SuppressWarnings("rawtypes") Class c, boolean filtering)
@@ -97,7 +94,6 @@ public class TListener extends Listener
             if(PacketFiltering.checkFilter(object.getClass(), connection)){
             if (object instanceof AuthPacketRequest)
             {                
-               // Main.Log("[Auth]", "auth request");
                 AuthPacketRequest r = (AuthPacketRequest) object;
                 Server.Login(r.login, r.pass, connection);
             }
@@ -155,7 +151,7 @@ public class TListener extends Listener
     @Override
     public void disconnected(Connection connection)
     {
-        connection.close();
         Server.removeClient(connection);
+        connection.close();
     }
 }

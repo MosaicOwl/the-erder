@@ -87,7 +87,7 @@ public class Entity extends Transform implements TexturedObject{
                 MainScreen.camera.position.y = Client.controlledEntity.position.y * GameManager.textureResolution;
              }
         }
-        int x = (int) (this.position.x * GameManager.textureResolution), y = (int) (this.position.y * GameManager.textureResolution);
+        float x = (this.position.x * GameManager.textureResolution), y = (this.position.y * GameManager.textureResolution);
         batch.draw(this.getTexture(), x, y);
         Vector3 vec = MainScreen.camera.project(new Vector3(x, y, 0));
         DrawEquip(batch, x, y);

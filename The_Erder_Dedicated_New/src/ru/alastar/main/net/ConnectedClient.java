@@ -9,7 +9,6 @@ import com.esotericsoftware.kryonet.Connection;
 
 public class ConnectedClient
 {
-    public boolean    logged = false;
 
     public Date       lastPacket;
 
