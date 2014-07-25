@@ -92,6 +92,7 @@ public class Entity extends Transform
 
         // Create our body in the world using our body definition
         body = world.getPhysic().createBody(bodyDef);
+        body.setUserData((int)this.z);
 
         // Create a circle shape and set its radius to 6
         circle = new CircleShape();
@@ -232,6 +233,8 @@ public class Entity extends Transform
         if (vel.x > -MAX_VELOCITY && vel.y > -MAX_VELOCITY && vel.x < MAX_VELOCITY && vel.y < MAX_VELOCITY) {
             this.body.applyLinearImpulse(x * speedMod, y * speedMod, pos.x + x, pos.y + y, true);
             CheckZ(pos, new Vector2(pos.x + x, pos.y + y));
+            CheckIfInAir(); 
+            body.setUserData((int)this.z);
             lastMoveTime = System.currentTimeMillis();
             return true;     
 
@@ -257,23 +260,25 @@ public class Entity extends Transform
             }
             if(obstacleHeight < 1)
             {
-                Main.Log("[ZCheck]", "New z! Its now " + z + " after " + toTile.position.z );
-                this.z = (int) toTile.position.z + 1;
+                if(toTile.passable){
+                  Main.Log("[ZCheck]", "New z! Its now " + z + " after " + (toTile.position.z + 1));
+                  this.z = (int) toTile.position.z + 1; 
+                }
             }
         }
 
-        CheckIfInAir();
     }
 
     private void CheckIfInAir()
     {
-        ServerTile t = world.GetTile(new Vector3((int)body.getPosition().x, (int)body.getPosition().y, z - 1));
-        for (int z = this.z; z > world.zMin; --z)
+        ServerTile t;
+        for (int z = this.z - 1; z > world.zMin; --z)
         {
             t = world.GetTile(new Vector3((int)body.getPosition().x, (int)body.getPosition().y, z));
             if (t == null)
             {
                 this.z = z;
+                Main.Log("[ZCheck]", "Fallen! now z is " + this.z);
             } else
                 break;
         }
