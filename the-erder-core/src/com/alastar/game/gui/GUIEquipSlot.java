@@ -13,30 +13,29 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 public class GUIEquipSlot implements GUIElement
 {
     private String name;
-    private Label label;
-    private Table table;
-    private Image image;
-    
+    private Label  label;
+    private Table  table;
+    private Image  image;
+
     public GUIEquipSlot()
     {
         this.name = "GenericSlot";
-        this.label = new Label(this.name, GameManager.getSkin(GameManager.selectedSkin), "label");
+        this.label = new Label(this.name,
+                GameManager.getSkin(GameManager.selectedSkin), "label");
         this.image = new Image(GameManager.getItemTexture(ItemType.Plant));
         this.table = new Table();
         table.add(image);
         table.add(label);
     }
-    
-    
+
     public void Update(String s)
     {
     }
-    
-    
+
     public void Update()
     {
     }
-    
+
     @Override
     public Actor getElementAsActor()
     {
@@ -54,7 +53,7 @@ public class GUIEquipSlot implements GUIElement
     {
         table.remove();
     }
-    
+
     @Override
     public void Hide()
     {
@@ -70,14 +69,14 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public String getHandledVariable()
     {
-      return "";
+        return "";
     }
 
     @Override
     public void setHandledVariable(String val)
     {
         ItemType type = ItemType.valueOf(val);
-        image  = new Image(GameManager.getItemTexture(type));
+        image = new Image(GameManager.getItemTexture(type));
     }
 
     @Override
@@ -89,7 +88,7 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public void setEventListener(EventListener val)
     {
-        
+
     }
 
     @Override
@@ -121,7 +120,7 @@ public class GUIEquipSlot implements GUIElement
     public void setWidth(float val)
     {
         this.label.setWidth(val / Vars.getInt("balancedScreenWidth"));
-        
+
     }
 
     @Override
@@ -133,8 +132,8 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        label.setX(val.x / Vars.getInt("balancedScreenWidth") );
-        label.setY(val.y / Vars.getInt("balancedScreenHeight") );
+        label.setX(val.x / Vars.getInt("balancedScreenWidth"));
+        label.setY(val.y / Vars.getInt("balancedScreenHeight"));
     }
 
     @Override
@@ -145,7 +144,7 @@ public class GUIEquipSlot implements GUIElement
 
     @Override
     public void setPadTB(Vector2 val)
-    {        
+    {
     }
 
     @Override
@@ -156,7 +155,7 @@ public class GUIEquipSlot implements GUIElement
 
     @Override
     public void setPadRL(Vector2 val)
-    {        
+    {
     }
 
     @Override
@@ -167,7 +166,7 @@ public class GUIEquipSlot implements GUIElement
 
     @Override
     public void setMinHW(Vector2 val)
-    {        
+    {
     }
 
     @Override
@@ -179,7 +178,7 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public void setMaxHW(Vector2 val)
     {
-        
+
     }
 
     @Override
@@ -198,7 +197,7 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public void addChild(GUIElement o)
     {
-        
+
     }
 
 }

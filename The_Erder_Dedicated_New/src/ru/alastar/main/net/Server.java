@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.net.InetSocketAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import java.util.concurrent.Executors;
 
 import com.alastar.game.Tile;
 import com.alastar.game.enums.ItemType;
-import com.alastar.game.enums.UpdateType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Connection;
@@ -35,6 +33,7 @@ import ru.alastar.game.Account;
 import ru.alastar.game.Attributes;
 import ru.alastar.game.Entity;
 import ru.alastar.game.Equip;
+import ru.alastar.game.IUpdate;
 import ru.alastar.game.Inventory;
 import ru.alastar.game.Item;
 import ru.alastar.game.PlantsType;
@@ -68,29 +67,28 @@ import ru.alastar.main.net.responses.MessageResponse;
 import ru.alastar.main.net.responses.ProcessLoginResponse;
 import ru.alastar.main.net.responses.SetData;
 import ru.alastar.main.net.responses.SpeechResponse;
-import ru.alastar.main.net.responses.UpdatePlayerResponse;
 import ru.alastar.world.ServerTile;
 import ru.alastar.world.ServerWorld;
 
 public class Server
 {
 
-    public static com.esotericsoftware.kryonet.Server           server;
-    public static int                                           port         = 25565;
+    public static com.esotericsoftware.kryonet.Server server;
+    public static int                                 port         = 25565;
     public static Hashtable<Integer, ConnectedClient> clients;
-    public static Hashtable<Integer, ServerWorld>               worlds;
-    public static Hashtable<Integer, Inventory>                 inventories;
-    public static Hashtable<Integer, Entity>                    entities;
-    public static Hashtable<String, Handler>                    commands;
-    public static Hashtable<String, Float>                      plantsGrowTime;
-    public static Hashtable<String, Handler>                    consoleCommands;
-    public static Hashtable<Integer, AI>                        ais;
-    public static Hashtable<Integer, Equip>                     equips;
+    public static Hashtable<Integer, ServerWorld>     worlds;
+    public static Hashtable<Integer, Inventory>       inventories;
+    public static Hashtable<Integer, Entity>          entities;
+    public static Hashtable<String, Handler>          commands;
+    public static Hashtable<String, Float>            plantsGrowTime;
+    public static Hashtable<String, Handler>          consoleCommands;
+    public static Hashtable<Integer, AI>              ais;
+    public static Hashtable<Integer, Equip>           equips;
 
-    public static Random                                        random;
-    public static float                                         syncDistance = 50;
-    private static Hashtable<Integer, Item>                     items;
-    public static ServerState                                   state = ServerState.Working;
+    public static Random                              random;
+    public static float                               syncDistance = 50;
+    private static Hashtable<Integer, Item>           items;
+    public static ServerState                         state        = ServerState.Working;
 
     public static void startServer()
     {
@@ -134,7 +132,9 @@ public class Server
                 SetupSpells();
                 FillCommands();
                 FillPlants();
-                FillCrafts();
+                FillCrafts(); 
+                LoadWorldsItems();
+
                 try
                 {
                     ServerRegistrator.StartClient();
@@ -229,12 +229,47 @@ public class Server
         }
     }
 
+    private static void LoadWorldsItems()
+    {
+        ResultSet rs = DatabaseClient.commandExecute("SELECT * FROM items WHERE entityId=-1;");
+        try
+        {
+            Item i;
+            while(rs.next())
+            {
+                    i = new Item(rs.getInt("id"),
+                        -1,
+                        rs.getString("caption"),
+                        rs.getInt("amount"),
+                        rs.getFloat("x"),
+                        rs.getFloat("y"),
+                        rs.getFloat("z"),
+                        EquipType.valueOf(rs.getString("equipType")),
+                        ItemType.valueOf(rs.getString("type")),
+                        getItemAttrs(rs.getInt("id")),
+                        rs.getInt("worldId"));
+                    
+                        i.setActive();
+                        
+                        i.getWorld().AddEntity(i); // AddEntity adds IUpdate!!!  
+                        items.put(i.id, i);
+
+                       // Main.Log("[DEBUG]","Item loaded...");
+
+            }
+            
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     private static AI LoadAI(Entity e)
     {
         try
         {
             ResultSet allAIs = DatabaseClient
-                    .commandExecute("SELECT * FROM ai WHERE entityId="+e.id);
+                    .commandExecute("SELECT * FROM ai WHERE entityId=" + e.id);
             AI ai = null;
             while (allAIs.next())
             {
@@ -265,9 +300,9 @@ public class Server
         attrs.addAttribute("Charges", 10);
         attrs.addAttribute("Durability", 100);
 
-     //   CraftSystem.registerCraft("wooden_totem", new CraftInfo(neededItems,
-     //           "Carpentry", 0, "Wooden Totem", EquipType.None,
-     //           ActionType.Cast, attrs));
+        // CraftSystem.registerCraft("wooden_totem", new CraftInfo(neededItems,
+        // "Carpentry", 0, "Wooden Totem", EquipType.None,
+        // ActionType.Cast, attrs));
     }
 
     private static void FillPlants()
@@ -403,8 +438,9 @@ public class Server
                         .getInt("entityId"), itemsRS.getString("caption"),
                         itemsRS.getInt("amount"), itemsRS.getInt("x"), itemsRS
                                 .getInt("y"), itemsRS.getInt("z"), EquipType
-                                .valueOf(itemsRS.getString("equipType")), ItemType.valueOf(itemsRS.getString("type")),
-                        attrs, itemsRS.getInt("worldId")));
+                                .valueOf(itemsRS.getString("equipType")),
+                        ItemType.valueOf(itemsRS.getString("type")), attrs,
+                        itemsRS.getInt("worldId")));
             }
         } catch (SQLException e)
         {
@@ -435,7 +471,6 @@ public class Server
 
                 skills = new Skills();
 
-
                 skillsRS = DatabaseClient
                         .commandExecute("SELECT * FROM skills WHERE entityId="
                                 + allEntities.getInt("id"));
@@ -451,7 +486,7 @@ public class Server
                                     .getInt("mValue"), skillsRS
                                     .getFloat("hardness"), skillsRS
                                     .getString("primaryStat"), skillsRS
-                                    .getString("secondaryStat"),skillsRS
+                                    .getString("secondaryStat"), skillsRS
                                     .getInt("state")));
                 }
 
@@ -466,7 +501,6 @@ public class Server
                                             .getInt("state")));
                 }
 
-
                 e = new Entity(allEntities.getInt("id"),
                         allEntities.getString("caption"),
                         EntityType.valueOf(allEntities.getString("type")),
@@ -476,11 +510,13 @@ public class Server
                 e.isAI = true;
                 e.AI = LoadAI(e);
                 LoadEquip(e);
+                // Alaways call BEFORE world.AddEntity()!!!!
+                e.setActive();
 
                 e.world.AddEntity(e);
                 e.world.UpdateNear(e);
                 entities.put(e.id, e);
-               // Main.Log("[DEBUG]", "Non-player entity loaded");
+                // Main.Log("[DEBUG]", "Non-player entity loaded");
 
             }
         } catch (SQLException e)
@@ -492,15 +528,18 @@ public class Server
 
     private static void LoadEquip(Entity e)
     {
-        ResultSet eqRS = DatabaseClient.commandExecute("SELECT * FROM equip WHERE entityId=" + e.id);
+        ResultSet eqRS = DatabaseClient
+                .commandExecute("SELECT * FROM equip WHERE entityId=" + e.id);
         try
         {
             Equip eq = new Equip(e);
-            while(eqRS.next())
+            while (eqRS.next())
             {
                 eq.addEquipSlot(eqRS.getString("slotName"));
-                if(eqRS.getInt("itemId") > -1){
-                eq.addToEquip(eqRS.getString("slotName"), Server.LoadItem(eqRS.getInt("itemId")));
+                if (eqRS.getInt("itemId") > -1)
+                {
+                    eq.addToEquip(eqRS.getString("slotName"),
+                            Server.LoadItem(eqRS.getInt("itemId")));
                 }
             }
             equips.put(e.id, eq);
@@ -512,16 +551,21 @@ public class Server
     }
 
     private static Item LoadItem(int int1)
-    {  
-       try
-       {
-        ResultSet rs = DatabaseClient.commandExecute("SELECT * FROM items WHERE id=" + int1);
+    {
+        try
+        {
+            ResultSet rs = DatabaseClient
+                    .commandExecute("SELECT * FROM items WHERE id=" + int1);
 
-            while(rs.next()){
-               // Main.Log("[DEBUG]","Loading item for equip id " + int1);
-                Item i = new Item(rs.getInt("id"), rs.getInt("entityId"), rs.getString("caption"),
-                        rs.getInt("amount"), rs.getFloat("x"), rs.getFloat("y"), rs.getFloat("z"), EquipType.valueOf(rs.getString("equipType")),
-                        ItemType.valueOf(rs.getString("type")), getItemAttrs(rs.getInt("id")), rs.getInt("worldId"));
+            while (rs.next())
+            {
+                // Main.Log("[DEBUG]","Loading item for equip id " + int1);
+                Item i = new Item(rs.getInt("id"), rs.getInt("entityId"),
+                        rs.getString("caption"), rs.getInt("amount"),
+                        rs.getFloat("x"), rs.getFloat("y"), rs.getFloat("z"),
+                        EquipType.valueOf(rs.getString("equipType")),
+                        ItemType.valueOf(rs.getString("type")),
+                        getItemAttrs(rs.getInt("id")), rs.getInt("worldId"));
                 items.put(rs.getInt("id"), i);
                 return i;
             }
@@ -529,16 +573,18 @@ public class Server
         {
             e.printStackTrace();
         }
-    return null;
+        return null;
     }
 
     private static Attributes getItemAttrs(int int1)
     {
         Attributes a = new Attributes();
-        ResultSet rs = DatabaseClient.commandExecute("SELECT * FROM attributes WHERE itemId="+int1);
+        ResultSet rs = DatabaseClient
+                .commandExecute("SELECT * FROM attributes WHERE itemId=" + int1);
         try
         {
-            while(rs.next()){
+            while (rs.next())
+            {
                 a.addAttribute(rs.getString("name"), rs.getInt("value"));
             }
         } catch (SQLException e)
@@ -576,8 +622,9 @@ public class Server
                     w = new ServerWorld(i, fileName, clientW.xMax,
                             clientW.xMin, clientW.yMax, clientW.yMin,
                             clientW.zMax, clientW.zMin);
-                    //Remapping Tile.class to ServerTile.clas
-                    for(Tile t: clientW.tiles.values()){
+                    // Remapping Tile.class to ServerTile.clas
+                    for (Tile t : clientW.tiles.values())
+                    {
                         w.tiles.put(t.position, new ServerTile(t, w));
                     }
                     w.id = clientW.id;
@@ -608,10 +655,10 @@ public class Server
 
     public static void addClient(Connection connection)
     {
-        ConnectedClient c = new ConnectedClient(
-                connection);
-        clients.put(connection.getID(), c); 
-      //  Main.Log("[Connection]","Client connected, id: "+connection.getID()+". Count: " + clients.size());
+        ConnectedClient c = new ConnectedClient(connection);
+        clients.put(connection.getID(), c);
+        // Main.Log("[Connection]","Client connected, id: "+connection.getID()+". Count: "
+        // + clients.size());
     }
 
     public static void removeClient(Connection connection)
@@ -619,62 +666,52 @@ public class Server
         ConnectedClient c = getClient(connection);
         if (c.controlledEntity != null)
         {
-          //  Main.Log("[LOGIN]", "Controlled entity is not null, saving it...");
+            // Main.Log("[LOGIN]",
+            // "Controlled entity is not null, saving it...");
             c.controlledEntity.RemoveYourself(c.getAccountId());
         } else
-           //Main.Log("[LOGIN]", "Controlled entity is null, skipping save");
-        
-        clients.remove(connection.getID());
+            // Main.Log("[LOGIN]", "Controlled entity is null, skipping save");
+
+            clients.remove(connection.getID());
         clients.remove(connection.getID());
         clients.remove(connection.getID());
 
-      //  Main.Log("[LOGIN]", "Client removed, id: "+connection.getID()+"! Clients count: " + clients.size());
+        // Main.Log("[LOGIN]",
+        // "Client removed, id: "+connection.getID()+"! Clients count: " +
+        // clients.size());
     }
 
     public static void Login(String login, String pass, Connection c)
     {
         try
         {
-          //  Main.HiddenLog("[SERVER]", "Process auth for " + login + " password: " + pass);
+            // Main.HiddenLog("[SERVER]", "Process auth for " + login +
+            // " password: " + pass);
             ServerRegistrator.getClient(login, pass);
             ConnectedClient client = getClient(c);
             client.awaitedLogin = login;
-            
-           /* ResultSet l = DatabaseClient
-                    .commandExecute("SELECT * FROM accounts WHERE login='"
-                            + login + "' AND password='" + Crypt.encrypt(pass)
-                            + "'");
-            if (l.next())
-            {
-                Main.HiddenLog("[SERVER]", "...auth succesful!");
 
-                LoginResponse r = new LoginResponse();
-                r.succesful = true;
-                SendTo(c, r);
-
-                ConnectedClient client = getClient(c);
-                if (!client.logged)
-                {
-                    client.account = new Account(l.getInt("id"),
-                            l.getString("login"), l.getString("password"),
-                            l.getString("mail"));
-                    client.logged = true;
-                    SendCharacters(client);
-                } else
-                {
-                    MessageResponse r1 = new MessageResponse();
-                    r1.msg = "This account is already logged in!";
-                    SendTo(c, r1);
-                }
-            } else
-            {
-                Main.HiddenLog("[SERVER]", "...auth unsuccesful(");
-
-                LoginResponse r = new LoginResponse();
-                r.succesful = false;
-                SendTo(c, r);
-            }
-            */
+            /*
+             * ResultSet l = DatabaseClient
+             * .commandExecute("SELECT * FROM accounts WHERE login='" + login +
+             * "' AND password='" + Crypt.encrypt(pass) + "'"); if (l.next()) {
+             * Main.HiddenLog("[SERVER]", "...auth succesful!");
+             * 
+             * LoginResponse r = new LoginResponse(); r.succesful = true;
+             * SendTo(c, r);
+             * 
+             * ConnectedClient client = getClient(c); if (!client.logged) {
+             * client.account = new Account(l.getInt("id"),
+             * l.getString("login"), l.getString("password"),
+             * l.getString("mail")); client.logged = true;
+             * SendCharacters(client); } else { MessageResponse r1 = new
+             * MessageResponse(); r1.msg = "This account is already logged in!";
+             * SendTo(c, r1); } } else { Main.HiddenLog("[SERVER]",
+             * "...auth unsuccesful(");
+             * 
+             * LoginResponse r = new LoginResponse(); r.succesful = false;
+             * SendTo(c, r); }
+             */
         } catch (Exception e)
         {
             handleError(e);
@@ -695,8 +732,8 @@ public class Server
             {
                 r.name = chars.getString("caption");
                 r.type = chars.getString("type");
-                 Main.Log("[DEBUG]","Sending character " +
-                 chars.getString("caption"));
+                Main.Log("[DEBUG]",
+                        "Sending character " + chars.getString("caption"));
                 SendTCPTo(c, r);
             }
         } catch (SQLException e)
@@ -717,7 +754,7 @@ public class Server
 
                 SetData sd = new SetData();
                 LoadWorldResponse lw = new LoadWorldResponse();
-                 Main.Log("[SERVER]", "Creating entity...");
+                Main.Log("[SERVER]", "Creating entity...");
                 Stats stats = new Stats();
                 Skills skills = new Skills();
 
@@ -737,7 +774,7 @@ public class Server
                                     .getInt("mValue"), skillsRS
                                     .getFloat("hardness"), skillsRS
                                     .getString("primaryStat"), skillsRS
-                                    .getString("secondaryStat"),skillsRS
+                                    .getString("secondaryStat"), skillsRS
                                     .getInt("state")));
                 }
 
@@ -752,14 +789,13 @@ public class Server
                                             .getInt("state")));
                 }
 
-
                 Entity entity = new Entity(e.getInt("id"),
                         e.getString("caption"), EntityType.valueOf(e
                                 .getString("type")), e.getFloat("x"),
                         e.getFloat("y"), e.getFloat("z"), skills, stats,
                         getWorld(e.getInt("worldId")));
-                 Main.Log("[SERVER]",
-                 "Assigning it as a controlled to the connected client...");
+                Main.Log("[SERVER]",
+                        "Assigning it as a controlled to the connected client...");
                 c.controlledEntity = entity;
                 sd.id = entity.id;
                 lw.name = entity.world.name;
@@ -769,10 +805,9 @@ public class Server
                 LoadInventory(entity);
                 LoadEquip(entity);
 
-
                 // Main.Log("[SERVER]", "Sending other entities to it...");
 
-                 Main.Log("[SERVER]", "Sending stats...");
+                Main.Log("[SERVER]", "Sending stats...");
                 AddStatResponse r = new AddStatResponse();
                 for (String s : entity.stats.vals.keySet())
                 {
@@ -781,7 +816,7 @@ public class Server
                     r.mValue = entity.stats.get(s).maxValue;
                     SendTCPTo(c.connection, r);
                 }
-                 Main.Log("[SERVER]", "Sending skills...");
+                Main.Log("[SERVER]", "Sending skills...");
                 AddSkillResponse sr = new AddSkillResponse();
                 for (String s : entity.skills.vals.keySet())
                 {
@@ -791,7 +826,7 @@ public class Server
                     SendTCPTo(c.connection, sr);
 
                 }
-                 Main.Log("[SERVER]", "Sending inventory...");
+                Main.Log("[SERVER]", "Sending inventory...");
                 CreateContainerResponse ccr = new CreateContainerResponse();
                 ccr.name = "inv";
                 ccr.max = getInventory(entity).maxItems;
@@ -800,7 +835,7 @@ public class Server
                 ir.name = "inv";
                 for (Item i1 : inventories.get(entity.id).items)
                 {
-                    
+
                     ir.id = i1.id;
                     ir.captiion = i1.caption;
                     ir.amount = i1.amount;
@@ -808,11 +843,13 @@ public class Server
                     ir.attrs = i1.attributes.values;
                     SendTCPTo(c.connection, ir);
                 }
-                
+                // Always call BEFORE world.AddEntity()!
+                entity.setActive();
+
                 entity.world.AddEntity(entity);
-                entity.world.UpdateNear(entity); 
+                entity.world.UpdateNear(entity);
                 entities.put(entity.id, entity);
-                
+
                 Main.Log("[SERVER]", "Data was sent to player. Fuf...");
 
                 NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("inv_button",
@@ -825,20 +862,20 @@ public class Server
                         new Vector2(250, 70), new Vector2(100, 50), "",
                         "com.alastar.game.gui.GUIButton", "", "peace"), c);
                 c.controlledEntity.AddGUIHandler("peace_button",
-                        new PeaceButtonGUIHandler()); 
-                
+                        new PeaceButtonGUIHandler());
+
                 NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("equip_button",
                         new Vector2(250, 130), new Vector2(100, 50), "",
                         "com.alastar.game.gui.GUIButton", "", "Equip"), c);
                 c.controlledEntity.AddGUIHandler("equip_button",
                         new EquipButtonGUIHandler());
-                
-                NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("skills_button",
-                        new Vector2(250, 190), new Vector2(100, 50), "",
-                        "com.alastar.game.gui.GUIButton", "", "Skills"), c);
+
+                NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(
+                        "skills_button", new Vector2(250, 190), new Vector2(
+                                100, 50), "", "com.alastar.game.gui.GUIButton",
+                        "", "Skills"), c);
                 c.controlledEntity.AddGUIHandler("skills_button",
                         new SkillsButtonGUIHandler());
-
             }
         } catch (SQLException e1)
         {
@@ -899,11 +936,13 @@ public class Server
     {
         try
         {
-            if(getClient(e) != null){
-            MessageResponse r = new MessageResponse();
-            r.msg = m;
-            r.type = type;
-            SendTo(getClient(e).connection, r);}
+            if (getClient(e) != null)
+            {
+                MessageResponse r = new MessageResponse();
+                r.msg = m;
+                r.type = type;
+                SendTo(getClient(e).connection, r);
+            }
         } catch (Exception er)
         {
             handleError(er);
@@ -958,9 +997,9 @@ public class Server
                 DatabaseClient.commandExecute("UPDATE entities SET caption='"
                         + entity.caption + "', type='" + entity.type.name()
                         + "', worldId=" + entity.world.id + ", x="
-                        + entity.body.getPosition().x + ", y=" + entity.body.getPosition().y + ", z="
-                        + entity.z + ", accountId=" + id + " WHERE id="
-                        + entity.id);
+                        + entity.getCurrentPosition().x + ", y="
+                        + entity.getCurrentPosition().y + ", z=" + entity.z
+                        + ", accountId=" + id + " WHERE id=" + entity.id);
             else
                 DatabaseClient
                         .commandExecute("INSERT INTO entities(id, accountId, caption, type, worldId, x, y, z) VALUES("
@@ -974,9 +1013,11 @@ public class Server
                                 + "',"
                                 + entity.world.id
                                 + ", "
-                                + entity.body.getPosition().x
+                                + entity.getCurrentPosition().x
                                 + ","
-                                + entity.body.getPosition().y + "," + entity.z + ")");
+                                + entity.getCurrentPosition().y
+                                + ","
+                                + entity.z + ")");
             // Main.Log("[SAVE]", "Saving stats...");
 
             // Stats
@@ -990,8 +1031,9 @@ public class Server
                 if (statEqRS.next())
                     DatabaseClient.commandExecute("UPDATE stats SET sValue="
                             + s.value + ", mValue=" + s.maxValue
-                            + ", hardness=" + s.hardness + ", state="+s.state+" WHERE entityId="
-                            + entity.id + " AND name='" + s.name + "'");
+                            + ", hardness=" + s.hardness + ", state=" + s.state
+                            + " WHERE entityId=" + entity.id + " AND name='"
+                            + s.name + "'");
                 else
                     DatabaseClient
                             .commandExecute("INSERT INTO stats (sValue, mValue, hardness, entityId, name, state) VALUES("
@@ -1003,10 +1045,7 @@ public class Server
                                     + ","
                                     + entity.id
                                     + ",'"
-                                    + s.name
-                                    + "',"
-                                    + s.state
-                                    + ")");
+                                    + s.name + "'," + s.state + ")");
 
             }
             // Main.Log("[SAVE]", "Saving skills...");
@@ -1024,8 +1063,9 @@ public class Server
                             + s.value + ", mValue=" + s.maxValue
                             + ", hardness=" + s.hardness + ", primaryStat='"
                             + s.primaryStat + "', secondaryStat='"
-                            + s.secondaryStat + "', state="+s.state+" WHERE entityId=" + entity.id
-                            + " AND name='" + s.name + "'");
+                            + s.secondaryStat + "', state=" + s.state
+                            + " WHERE entityId=" + entity.id + " AND name='"
+                            + s.name + "'");
                 else
                     DatabaseClient
                             .commandExecute("INSERT INTO skills (sValue, mValue, hardness, entityId, name, primaryStat, secondaryStat, state) VALUES("
@@ -1041,10 +1081,7 @@ public class Server
                                     + "','"
                                     + s.primaryStat
                                     + "','"
-                                    + s.secondaryStat
-                                    + "',"
-                                    + s.state
-                                    + ")");
+                                    + s.secondaryStat + "'," + s.state + ")");
             }
             // Main.Log("[SAVE]", "Saving inventory...");
 
@@ -1054,7 +1091,7 @@ public class Server
             {
                 saveInventory(inv);
             }
-            
+
         } catch (SQLException e)
         {
             handleError(e);
@@ -1064,12 +1101,13 @@ public class Server
     public static void CreateCharacter(String name, EntityType type,
             ConnectedClient client)
     {
-        Entity e = new Entity(getFreeId(), name, type, 0, 0, 0,
+        Entity e = new Entity(getFreeId(), name, type, 2, 2, 2,
                 Server.getStandardSkillsSet(), Server.getStandardStatsSet(),
                 getWorld(1));
         client.controlledEntity = e;
         AddCharacterResponse r = new AddCharacterResponse();
         r.name = name;
+        r.type = type.name();
         SendTo(client.connection, r);
         // entities.put(e.id, e);
         createInventory(e.id);
@@ -1128,8 +1166,9 @@ public class Server
                         + ", amount=" + item.amount + ", caption='"
                         + item.caption + "', equipType='" + item.eqType.name()
                         + "', type='" + item.type.name() + "', x="
-                        + item.body.getPosition().x + ", y=" + item.body.getPosition().y + ", z="
-                        + item.z + " WHERE id=" + item.id);
+                        + item.getPosition().x + ", y="
+                        + item.getPosition().y + ", z=" + item.z
+                        + " WHERE id=" + item.id);
 
             } else
             {
@@ -1149,8 +1188,12 @@ public class Server
                                 + "','"
                                 + item.type.name()
                                 + "',"
-                                + item.body.getPosition().x
-                                + ", " + item.body.getPosition().y + ", " + item.z + ")");
+                                + item.getPosition().x
+                                + ", "
+                                + item.getPosition().y
+                                + ", "
+                                + item.z
+                                + ")");
             }
             SaveAttributes(item);
         } catch (SQLException e)
@@ -1266,20 +1309,22 @@ public class Server
     private static Skills getStandardSkillsSet()
     {
         Skills sks = new Skills();
-        sks.put("Swords",
-                new Skill("Swords", 0, 50, 5, "Strength", "Dexterity", 2));
-        sks.put("Chivalry", new Skill("Chivalry", 0, 50, 5, "Strength", "Int", 2));
+        sks.put("Swords", new Skill("Swords", 0, 50, 5, "Strength",
+                "Dexterity", 2));
+        sks.put("Chivalry", new Skill("Chivalry", 0, 50, 5, "Strength", "Int",
+                2));
         sks.put("Magery", new Skill("Magery", 0, 50, 5, "Int", "Int", 2));
         sks.put("Lumberjacking", new Skill("Lumberjacking", 0, 50, 5,
                 "Strength", "Dexterity", 2));
         sks.put("Mining", new Skill("Mining", 0, 50, 5, "Strength", "Int", 2));
         sks.put("Taming", new Skill("Taming", 0, 50, 5, "Int", "Strength", 2));
-        sks.put("Necromancy", new Skill("Necromancy", 0, 50, 5, "Int", "Int", 2));
+        sks.put("Necromancy",
+                new Skill("Necromancy", 0, 50, 5, "Int", "Int", 2));
         sks.put("Parrying", new Skill("Parrying", 0, 50, 5, "Dexterity",
                 "Strength", 2));
         sks.put("Herding", new Skill("Herding", 0, 50, 5, "Int", "Int", 2));
-        sks.put("Carpentry",
-                new Skill("Carpentry", 0, 50, 5, "Int", "Strength", 2));
+        sks.put("Carpentry", new Skill("Carpentry", 0, 50, 5, "Int",
+                "Strength", 2));
 
         return sks;
     }
@@ -1329,11 +1374,11 @@ public class Server
         try
         {
             Entity e = c.controlledEntity;
-            
-            if(e.haveGUI("dropdown"))
+
+            if (e.haveGUI("dropdown"))
                 e.closeGUI("dropdown");
-            
-            e.tryMove((float)x / 10, (float)y / 10);
+
+            e.tryMove((float) x / 10, (float) y / 10);
         } catch (Exception e)
         {
             handleError(e);
@@ -1345,22 +1390,22 @@ public class Server
         e.body.localVector.x = vector3.x;
         e.body.localVector.y = vector3.y;
         e.z = (int) vector3.z;
-        Server.UpdateEntityPosition(e);
+        Server.UpdatePosition(e);
 
     }
 
-   // public static void HandleCast(String spellName, int eId,
-   //         Connection connection)
-   // {
-   //     try
-   //     {
-   //         ConnectedClient c = getClient(connection);
-   //         // c.controlledEntity.tryCast(spellName.toLowerCase(), eId);
-   //     } catch (Exception e)
-   //     {
-   //         handleError(e);
-   //     }
-   // }
+    // public static void HandleCast(String spellName, int eId,
+    // Connection connection)
+    // {
+    // try
+    // {
+    // ConnectedClient c = getClient(connection);
+    // // c.controlledEntity.tryCast(spellName.toLowerCase(), eId);
+    // } catch (Exception e)
+    // {
+    // handleError(e);
+    // }
+    // }
 
     public static void HandleChat(String msg, Connection connection)
     {
@@ -1380,16 +1425,16 @@ public class Server
          * Handling entitys death
          */
 
-        if(isAI(from))
+        if (isAI(from))
         {
             getAI(from).OnKill(entity);
         }
-        
-        if(isAI(entity))
+
+        if (isAI(entity))
         {
             getAI(entity).OnDeath(from);
         }
-        
+
         from.tryStopAttack();
 
         entity.tryStopAttack();
@@ -1401,9 +1446,9 @@ public class Server
 
         TravelEntity(entity, new Vector3(3, 2, 2));
 
-        if(entity.isAI)
+        if (entity.isAI)
             entity.AI.OnTick();
-        
+
         entity.setRebirthHitsAmount();
         entity.invul = true;
         warnEntity(entity, "You cannot be hurt by anyone", 0x01);
@@ -1450,7 +1495,7 @@ public class Server
     {
         return inventories.get(id.id);
     }
-    
+
     public static Entity getEntity(int entityId)
     {
         return entities.get(entityId);
@@ -1660,29 +1705,11 @@ public class Server
                 + id + " AND caption='" + nick + "';");
     }
 
-    public static void UpdateEntityPosition(Entity entity)
-    {    
-        entity.world.UpdateNear(entity);
-
+    public static void UpdatePosition(IUpdate e)
+    {
+        e.getWorld().UpdateNear(e);
+        e.UpdateAround();
         // Main.Log("[DEBUG]", "Update entity position");
-        ConnectedClient c;
-        
-        UpdatePlayerResponse r = new UpdatePlayerResponse();
-        r.id = entity.id;
-        r.updType = UpdateType.Position;
-        r.x =  entity.body.getPosition().x;
-        r.y =  entity.body.getPosition().y;
-        r.z =  entity.z;
-        if(getClient(entity) != null)
-        SendTo(getClient(entity).connection, r);
-        
-        for (Entity ent : entity.entitiesAround)
-        {
-            c = getClient(ent);
-
-            if (c != null)
-               SendTo(c.connection, r);
-        }
     }
 
     public static void HandleTarget(int id, Entity e1)
@@ -1709,13 +1736,17 @@ public class Server
     public static void sendSpeech(Entity entity, String msg)
     {
         SpeechResponse r = new SpeechResponse();
-
-        for (Entity e : entity.world.entities)
+        r.msg = msg;
+        r.id = entity.id;
+        for (IUpdate e : entity.world.entities)
         {
-            r.msg = msg;
-            r.id = entity.id;
-            if(!e.isAI)
-            SendTo(getClient(e).connection, r);
+            if (e.getType() == 0)
+            {
+                if (!((Entity) e).isAI)
+                    SendTo(getClient((Entity) e).connection, r);
+                // else
+                // ((Entity)e).AI.OnHear(entity, msg);
+            }
         }
     }
 
@@ -1750,8 +1781,8 @@ public class Server
 
     public static boolean isAI(Entity e)
     {
-        if(ais.get(e.id) != null)
-        return true;
+        if (ais.get(e.id) != null)
+            return true;
         else
             return false;
     }
@@ -1765,18 +1796,18 @@ public class Server
     {
         return equips.get(controlledEntity.id);
     }
-    
+
     public static Equip getEquip(int id)
     {
         return equips.get(id);
     }
-    
+
     public static void unloadInventory(int id)
     {
         Inventory inv = getInventory(id);
-        if(inv != null)
+        if (inv != null)
         {
-            for(Item i: inv.items)
+            for (Item i : inv.items)
             {
                 Server.SaveItem(i);
                 Server.items.remove(i);
@@ -1788,60 +1819,58 @@ public class Server
     {
         Equip eq = getEquip(id);
         int itemId = -1;
-        if(eq != null)
+        if (eq != null)
         {
-            for(String slotName: eq.contents.keySet())
+            for (String slotName : eq.contents.keySet())
             {
-                if(eq.contents.get(slotName).item == null)
+                if (eq.contents.get(slotName).item == null)
                     itemId = -1;
                 else
                     itemId = eq.contents.get(slotName).item.id;
-                
+
                 eq.SaveSlot(id, slotName, itemId);
             }
-        }        
+        }
     }
 
     public static void ProcessLogin(ProcessLoginResponse object)
     {
 
-            for(ConnectedClient client: clients.values())
+        for (ConnectedClient client : clients.values())
+        {
+            if (client.awaitedLogin.equals(object.login))
             {
-                if(client.awaitedLogin.equals(object.login))
+                if (object.allow)
                 {
-                    if(object.allow)
-                    {
-                   //     Main.Log("[DEBUG]", "Auth allowed");
-                        
-                        LoginResponse r = new LoginResponse();
-                        r.succesful = true;
-                        SendTCPTo(client, r);
-                        
-                        client.account = new Account(object.id,
-                                    object.login, object.pass,
-                                    object.mail);
-                         SendCharacters(client);
-                        break;
-                    }
-                    else
-                    {
-                        LoginResponse r = new LoginResponse();
-                        r.succesful = false;
-                        SendTo(client, r);
-                        break;
-                    }
+                    // Main.Log("[DEBUG]", "Auth allowed");
+
+                    LoginResponse r = new LoginResponse();
+                    r.succesful = true;
+                    SendTCPTo(client, r);
+
+                    client.account = new Account(object.id, object.login,
+                            object.pass, object.mail);
+                    SendCharacters(client);
+                    break;
+                } else
+                {
+                    LoginResponse r = new LoginResponse();
+                    r.succesful = false;
+                    SendTo(client, r);
+                    break;
                 }
             }
-        
+        }
+
     }
 
     private static void SendTCPTo(ConnectedClient client, Object r)
     {
         client.connection.sendTCP(r);
-       // Main.Log("[DEBUG]","TCP sended");
+        // Main.Log("[DEBUG]","TCP sended");
     }
 
-    private static void SendTo(ConnectedClient client, Object r)
+    public static void SendTo(ConnectedClient client, Object r)
     {
         client.connection.sendUDP(r);
     }

@@ -21,18 +21,22 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 public class ChatGUI extends BaseConstructed
 {
     private GUIChatWindow window;
-    private GUITextField field;
-    private GUIButton sendMsg;
-    
+    private GUITextField  field;
+    private GUIButton     sendMsg;
+
     public ChatGUI(Stage s)
     {
         super(s, "Chat");
-        field = new GUITextField("", new TextField("", GameManager.getSkin(GameManager.selectedSkin), "textField"));
+        field = new GUITextField("", new TextField("",
+                GameManager.getSkin(GameManager.selectedSkin), "textField"));
         field.setWidth(250);
-        field.setPosition(new Vector2(10,1800));
-        window = new GUIChatWindow("Chat", new Window("Chat", GameManager.getSkin(GameManager.selectedSkin), "window"), new Vector2(10,1850), new Vector2(900, 250), 10, 10, 0, 0);
-        
-        ChangeListener e = new ChangeListener(){
+        field.setPosition(new Vector2(10, 1800));
+        window = new GUIChatWindow("Chat", new Window("Chat",
+                GameManager.getSkin(GameManager.selectedSkin), "window"),
+                new Vector2(10, 1850), new Vector2(900, 250), 10, 10, 0, 0);
+
+        ChangeListener e = new ChangeListener()
+        {
 
             @Override
             public void changed(ChangeEvent event, Actor actor)
@@ -40,42 +44,49 @@ public class ChatGUI extends BaseConstructed
                 ChatSendResponse r = new ChatSendResponse();
                 r.msg = field.getText();
                 field.clear();
-                
+
                 Client.Send(r);
             }
-            
-        };
-        
-        FocusListener fl = new FocusListener(){
-            @Override
-            public void keyboardFocusChanged (FocusEvent event, Actor actor, boolean focused) {
-                focusChanged(event);
-            }
-            @Override
-            public void scrollFocusChanged (FocusEvent event, Actor actor, boolean focused) {
-                focusChanged(event);
-            }
-            
-            private void focusChanged (FocusEvent event) {
-                 if(event.isFocused())
-                 {
-                     System.out.println("focus");
-                     ErderGame.canMove = false;
 
-                 }
-                 else
-                 {
-                     System.out.println("Unfocus");
-                     ErderGame.canMove = true;
-                 }
-            }
-            
         };
-         field.setEventListener(fl);
-        
-        sendMsg = new GUIButton("send_to_chat", new TextButton("^",GameManager.getSkin(GameManager.selectedSkin), "button"), e);
+
+        FocusListener fl = new FocusListener()
+        {
+            @Override
+            public void keyboardFocusChanged(FocusEvent event, Actor actor,
+                    boolean focused)
+            {
+                focusChanged(event);
+            }
+
+            @Override
+            public void scrollFocusChanged(FocusEvent event, Actor actor,
+                    boolean focused)
+            {
+                focusChanged(event);
+            }
+
+            private void focusChanged(FocusEvent event)
+            {
+                if (event.isFocused())
+                {
+                    System.out.println("focus");
+                    ErderGame.canMove = false;
+
+                } else
+                {
+                    System.out.println("Unfocus");
+                    ErderGame.canMove = true;
+                }
+            }
+
+        };
+        field.setEventListener(fl);
+
+        sendMsg = new GUIButton("send_to_chat", new TextButton("^",
+                GameManager.getSkin(GameManager.selectedSkin), "button"), e);
         sendMsg.setPosition(new Vector2(270, 1800));
-        
+
         actors.add(window);
         actors.add(field);
         actors.add(sendMsg);
@@ -86,12 +97,12 @@ public class ChatGUI extends BaseConstructed
 
         window.Show();
     }
-    
+
     public void addEntry(String name, String msg)
     {
         window.addEntry(name, msg);
     }
-    
+
     @Override
     public void Destroy()
     {
@@ -99,5 +110,5 @@ public class ChatGUI extends BaseConstructed
         field.Destroy();
         sendMsg.Destroy();
     }
-    
+
 }

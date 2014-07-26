@@ -11,8 +11,8 @@ public class Skill
     public float  hardness;
     public String primaryStat;
     public String secondaryStat;
-    public int state; // 0 - down, 1 - locked, 2 - raise
-    
+    public int    state;        // 0 - down, 1 - locked, 2 - raise
+
     public Skill(String n, int v, int mV, float h, String pS, String sS, int s)
     {
         this.name = n;
@@ -26,20 +26,23 @@ public class Skill
 
     public void raise(int how, Entity e)
     {
-        if(state == 2){
-        value += how;
-          if(Server.getClient(e) != null){
-            try
+        if (state == 2)
+        {
+            value += how;
+            if (Server.getClient(e) != null)
             {
-                AddStatResponse r = new AddStatResponse();
-                r.name = name;
-                r.sValue = value;
-                r.mValue = maxValue;
-                Server.SendTo(Server.getClient(e).connection, r);
-            } catch (Exception e1)
-            {
-                Server.handleError(e1);
+                try
+                {
+                    AddStatResponse r = new AddStatResponse();
+                    r.name = name;
+                    r.sValue = value;
+                    r.mValue = maxValue;
+                    Server.SendTo(Server.getClient(e).connection, r);
+                } catch (Exception e1)
+                {
+                    Server.handleError(e1);
+                }
             }
-          }
-    }}
+        }
+    }
 }

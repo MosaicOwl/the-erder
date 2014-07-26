@@ -28,7 +28,6 @@ public class TListener extends Listener
     public TListener(EndPoint e)
     {
         kryo = e.getKryo();
-        
 
         // –егистраци€ пакетов. *ƒолжна выполн€тьс€ в такой же
         // последовательности, что и на сервере!*
@@ -45,12 +44,12 @@ public class TListener extends Listener
         registerPacket(UpdateType.class, true);
         registerPacket(Vector2.class, true);
         registerPacket(ItemType.class, true);
+        kryo.register(UpdateItemType.class);
 
         registerPacket(LoginResponse.class, true);
         registerPacket(AddEntityResponse.class, true);
         registerPacket(SetData.class, true);
         registerPacket(ChatSendResponse.class, true);
-        registerPacket(RemoveEntityResponse.class, true);
         registerPacket(RegisterResponse.class, true);
         registerPacket(AddStatResponse.class, true);
         registerPacket(AddSkillResponse.class, true);
@@ -79,9 +78,15 @@ public class TListener extends Listener
         registerPacket(HitResponse.class, true);
         registerPacket(TargetResponse.class, true);
         registerPacket(TargetInfoResponse.class, true);
+        registerPacket(AddItemResponse.class, true);
+        registerPacket(UpdateItemResponse.class, true);
+        registerPacket(AddProjectileResponse.class, true);
+        registerPacket(UpdateProjectileResponse.class, true);
+        registerPacket(RemovePacket.class, true);
     }
 
-    public void registerPacket(@SuppressWarnings("rawtypes") Class c, boolean filtering)
+    public void registerPacket(@SuppressWarnings("rawtypes") Class c,
+            boolean filtering)
     {
         kryo.register(c);
         PacketFiltering.addFilterFor(c, filtering);
@@ -91,47 +96,48 @@ public class TListener extends Listener
     {
         try
         {
-            if(PacketFiltering.checkFilter(object.getClass(), connection)){
-            if (object instanceof AuthPacketRequest)
-            {                
-                AuthPacketRequest r = (AuthPacketRequest) object;
-                Server.Login(r.login, r.pass, connection);
+            if (PacketFiltering.checkFilter(object.getClass(), connection))
+            {
+                if (object instanceof AuthPacketRequest)
+                {
+                    AuthPacketRequest r = (AuthPacketRequest) object;
+                    Server.Login(r.login, r.pass, connection);
+                }
+                if (object instanceof CharacterChooseRequest)
+                {
+                    CharacterChooseRequest r = (CharacterChooseRequest) object;
+                    Server.HandleCharacterChoose(r.nick, connection);
+                } else if (object instanceof CreateCharacterRequest)
+                {
+                    CreateCharacterRequest r = (CreateCharacterRequest) object;
+                    Server.HandleCharacterCreate(r.nick, r.type, connection);
+                } else if (object instanceof CharacterRemove)
+                {
+                    CharacterRemove r = (CharacterRemove) object;
+                    Server.HandleCharacterRemove(r.nick, connection);
+                } else if (object instanceof InputRequest)
+                {
+                    InputRequest r = (InputRequest) object;
+                    Server.HandleMove(r.x, r.y, connection);
+                } else if (object instanceof NetGUIAnswer)
+                {
+                    NetGUIAnswer r = (NetGUIAnswer) object;
+                    NetGUISystem.handleAnswer(r, connection);
+                } else if (object instanceof DropdownMenuRequest)
+                {
+                    DropdownMenuRequest r = (DropdownMenuRequest) object;
+                    NetGUISystem.handleDropRequest(r, connection);
+                } else if (object instanceof ChatSendResponse)
+                {
+                    ChatSendResponse r = (ChatSendResponse) object;
+                    Server.HandleChat(r.msg, connection);
+                } else if (object instanceof TargetRequest)
+                {
+                    TargetRequest r = (TargetRequest) object;
+                    Server.HandleTarget(r.id,
+                            Server.getClient(connection).controlledEntity);
+                }
             }
-            if (object instanceof CharacterChooseRequest)
-            {
-                CharacterChooseRequest r = (CharacterChooseRequest) object;
-                Server.HandleCharacterChoose(r.nick, connection);
-            } else if (object instanceof CreateCharacterRequest)
-            {
-                CreateCharacterRequest r = (CreateCharacterRequest) object;
-                Server.HandleCharacterCreate(r.nick, r.type, connection);
-            } else if (object instanceof CharacterRemove)
-            {
-                CharacterRemove r = (CharacterRemove) object;
-                Server.HandleCharacterRemove(r.nick, connection);
-            } else if (object instanceof InputRequest)
-            {
-                InputRequest r = (InputRequest) object;
-                Server.HandleMove(r.x, r.y, connection);
-            } else if (object instanceof NetGUIAnswer)
-            {
-                NetGUIAnswer r = (NetGUIAnswer) object;
-                NetGUISystem.handleAnswer(r, connection);
-            } else if (object instanceof DropdownMenuRequest)
-            {
-                DropdownMenuRequest r = (DropdownMenuRequest) object;
-                NetGUISystem.handleDropRequest(r, connection);
-            } else if (object instanceof ChatSendResponse)
-            {
-                ChatSendResponse r = (ChatSendResponse) object;
-                Server.HandleChat(r.msg, connection);
-            } else if (object instanceof TargetRequest)
-            {
-                TargetRequest r = (TargetRequest) object;
-                Server.HandleTarget(r.id,
-                        Server.getClient(connection).controlledEntity);
-            }
-         }
         } catch (Exception e)
         {
             Main.Log("[SERVER]", e.getMessage());

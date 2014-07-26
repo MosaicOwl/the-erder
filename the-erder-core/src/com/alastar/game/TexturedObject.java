@@ -8,12 +8,22 @@ import com.badlogic.gdx.math.Rectangle;
 public interface TexturedObject
 {
     public Texture getTexture();
+
     public void setTexture();
+
     public Transform getTransform();
+
     public TextureRegion getTextureRegion();
+
     public void Draw(SpriteBatch batch, float x, float y);
+
     public int getType();
+
     public int getId();
+
     public Rectangle getWindowRectangle();
+
     public int getZ();
+
+    public void Remove();
 }

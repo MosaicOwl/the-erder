@@ -131,8 +131,8 @@ public class Location
         Item item = new Item(Server.getFreeItemId(), entity.id,
                 alloweditems.get(Server.random.nextInt(alloweditems.size())),
                 Server.random.nextInt(4) + 1, entity.body.getPosition().x,
-                entity.body.getPosition().y, entity.z, EquipType.None,
-                t, new Attributes(), entity.world.id);
+                entity.body.getPosition().y, entity.z, EquipType.None, t,
+                new Attributes(), entity.world.id);
         Inventory inv = Server.getInventory(entity);
         if (inv != null)
             inv.AddItem(item);

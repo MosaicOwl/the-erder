@@ -35,15 +35,15 @@ public interface AI
     public void OnDropdownRequest(Entity from);
 
     public void Save();
-    
+
     public void OnDeath(Entity from);
-    
+
     public void OnKill(Entity who);
 
     public String getClassPath();
-    
+
     public void OnLostEntity(Entity who);
 
     Timer getReactionTimer();
-    
+
 }

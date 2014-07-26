@@ -11,14 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
 public class GUIServerList implements GUIElement
 {
-    public Window window;
-    public Table table;
+    public Window     window;
+    public Table      table;
     public ScrollPane scroll;
-    public Table mainTable;
+    public Table      mainTable;
 
     public GUIServerList()
     {
-        this.window = new Window("servers_list", GameManager.getSkin(GameManager.selectedSkin), "window");
+        this.window = new Window("servers_list",
+                GameManager.getSkin(GameManager.selectedSkin), "window");
         this.window.setHeight(1000 / Vars.getInt("balancedScreenHeight"));
         this.window.setWidth(1000 / Vars.getInt("balancedScreenWidth"));
         window.defaults().padLeft(10);
@@ -26,38 +27,37 @@ public class GUIServerList implements GUIElement
         window.defaults().padTop(10);
         window.defaults().padBottom(10);
         window.defaults().prefWidth(1000 / Vars.getInt("balancedScreenWidth"));
-        window.defaults().prefHeight(1000 / Vars.getInt("balancedScreenHeight"));
+        window.defaults()
+                .prefHeight(1000 / Vars.getInt("balancedScreenHeight"));
 
-        table = new 
-                Table();
+        table = new Table();
         table.defaults().padLeft(10);
         table.defaults().padRight(10);
         table.defaults().padTop(10);
-        table.defaults().padBottom(10);  
+        table.defaults().padBottom(10);
         table.setFillParent(true);
         table.setWidth(980);
         table.setHeight(980);
         table.left();
         table.bottom();
-        
+
         scroll = new ScrollPane(table);
         scroll.setScrollBarPositions(false, true);
         scroll.setScrollingDisabled(true, true);
-        scroll.setScrollbarsOnTop(true); 
+        scroll.setScrollbarsOnTop(true);
         scroll.setFadeScrollBars(false);
         scroll.setFillParent(true);
         scroll.setSmoothScrolling(false);
         scroll.setWidth(990);
         scroll.setHeight(990);
 
-        window.add(scroll).fill(); 
+        window.add(scroll).fill();
         window.setTitle("Pick a server");
         mainTable = new Table();
         mainTable.setFillParent(true);
         mainTable.add(window);
     }
-    
-    
+
     @Override
     public Actor getElementAsActor()
     {
@@ -73,7 +73,7 @@ public class GUIServerList implements GUIElement
     @Override
     public void setName(String s)
     {
-        
+
     }
 
     @Override
@@ -91,13 +91,13 @@ public class GUIServerList implements GUIElement
     @Override
     public void Show()
     {
-        mainTable.setVisible(true);   
+        mainTable.setVisible(true);
     }
 
     @Override
     public void Update(String val)
     {
-        
+
     }
 
     @Override
@@ -109,7 +109,7 @@ public class GUIServerList implements GUIElement
     @Override
     public void setHandledVariable(String val)
     {
-        
+
     }
 
     @Override
@@ -120,7 +120,7 @@ public class GUIServerList implements GUIElement
 
     @Override
     public void setEventListener(EventListener val)
-    {        
+    {
     }
 
     @Override
@@ -131,18 +131,18 @@ public class GUIServerList implements GUIElement
 
     @Override
     public void setHeight(float val)
-    {        
+    {
     }
 
     @Override
     public Float getWidth()
-    {     
+    {
         return null;
     }
 
     @Override
     public void setWidth(float val)
-    {        
+    {
     }
 
     @Override
@@ -153,7 +153,7 @@ public class GUIServerList implements GUIElement
 
     @Override
     public void setPosition(Vector2 val)
-    {        
+    {
     }
 
     @Override
@@ -165,7 +165,7 @@ public class GUIServerList implements GUIElement
     @Override
     public void setPadTB(Vector2 val)
     {
-        
+
     }
 
     @Override
@@ -176,7 +176,7 @@ public class GUIServerList implements GUIElement
 
     @Override
     public void setPadRL(Vector2 val)
-    {        
+    {
     }
 
     @Override
@@ -187,7 +187,7 @@ public class GUIServerList implements GUIElement
 
     @Override
     public void setMinHW(Vector2 val)
-    {        
+    {
     }
 
     @Override
@@ -198,12 +198,12 @@ public class GUIServerList implements GUIElement
 
     @Override
     public void setMaxHW(Vector2 val)
-    {        
+    {
     }
 
     @Override
     public void setText(String text)
-    {        
+    {
     }
 
     @Override

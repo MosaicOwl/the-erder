@@ -9,12 +9,11 @@ public class Orc extends BaseHostileAI
     {
 
     }
-    
+
     @Override
     public void OnSeeEntity(final Entity y)
     {
         super.OnSeeEntity(y);
-    } 
-    
+    }
 
 }

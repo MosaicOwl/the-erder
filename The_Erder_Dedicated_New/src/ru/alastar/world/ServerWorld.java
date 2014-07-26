@@ -6,6 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ru.alastar.game.Entity;
+import ru.alastar.game.IUpdate;
 import ru.alastar.game.Stats;
 import ru.alastar.main.Main;
 import ru.alastar.main.net.ConnectedClient;
@@ -28,26 +29,26 @@ import com.badlogic.gdx.physics.box2d.World;
 public class ServerWorld
 {
 
-    public int                    id        = 0;
-    public String                 name      = "GenericWorld";
+    public int                          id        = 0;
+    public String                       name      = "GenericWorld";
 
-    public int                    chunkSize = 16;
+    public int                          chunkSize = 16;
     public HashMap<Vector3, ServerTile> tiles;
-    public ArrayList<Entity>      entities;
-    public int                    version   = 0;
+    public ArrayList<IUpdate>           entities;
+    public int                          version   = 0;
 
-    public int                    zMin      = -1;
-    public int                    zMax      = 10;
+    public int                          zMin      = -1;
+    public int                          zMax      = 10;
 
-    public int                    xMin      = -1;
-    public int                    xMax      = 10;
+    public int                          xMin      = -1;
+    public int                          xMax      = 10;
 
-    public int                    yMax      = 10;
-    public int                    yMin      = -1;
-    
-    World                         pWorld; 
-    Timer                         physicsTimer;
-    
+    public int                          yMax      = 10;
+    public int                          yMin      = -1;
+
+    World                               pWorld;
+    Timer                               physicsTimer;
+
     public ServerWorld(int i, String n, int xMx, int xMn, int yMx, int yMn,
             int zMx, int zMn)
     {
@@ -60,21 +61,23 @@ public class ServerWorld
         this.zMax = zMx;
         this.zMin = zMn;
         tiles = new HashMap<Vector3, ServerTile>();
-        pWorld = new World(new Vector2(0, 0), true); 
-        entities = new ArrayList<Entity>();
+        pWorld = new World(new Vector2(0, 0), true);
+        entities = new ArrayList<IUpdate>();
         physicsTimer = new Timer();
         pWorld.setContactListener(new CollisionListener());
-        physicsTimer.scheduleAtFixedRate(new TimerTask(){
+        physicsTimer.scheduleAtFixedRate(new TimerTask()
+        {
 
             @Override
             public void run()
             {
-               if(pWorld != null)
-                pWorld.step(1/45f, 6, 2);
-               else
-                 cancel();
-            }}, 10, 10);
-        
+                if (pWorld != null)
+                    pWorld.step(1 / 45f, 6, 2);
+                else
+                    cancel();
+            }
+        }, 10, 10);
+
     }
 
     public void CreateTile(int x, int y, int z, TileType type, boolean p)
@@ -87,32 +90,40 @@ public class ServerWorld
         AddTileResponse r = new AddTileResponse();
         ConnectedClient c;
         tiles.put(t.position, t);
+        IUpdate upd;
         for (int i = 0; i < entities.size(); ++i)
         {
-            c = Server.getClient(entities.get(i));
-            if (c != null)
+            upd = entities.get(i);
+            if (upd.getType() == 0)
             {
-                r.x = (int) t.position.x;
-                r.y = (int) t.position.y;
-                r.z = (int) t.position.z;
-                r.type = t.type;
-                Server.SendTo(c.connection, r);
+                c = Server.getClient((Entity) entities.get(i));
+                if (c != null)
+                {
+                    r.x = (int) t.position.x;
+                    r.y = (int) t.position.y;
+                    r.z = (int) t.position.z;
+                    r.type = t.type;
+                    Server.SendTo(c.connection, r);
+                }
             }
         }
     }
-
-    public void AddEntity(Entity e)
+    ////
+    //This function adds IUpdate!
+    ////
+    public void AddEntity(IUpdate i)
     {
-        entities.add(e);
-        for (Entity ent : entities)
+        entities.add(i);
+        for (IUpdate ent : entities)
         {
-            if (ent.body.getPosition().dst(e.body.getPosition()) <= Server.syncDistance)
+            if (ent.getPosition().dst(i.getPosition()) <= Server.syncDistance)
             {
-                ent.tryAddToNear(e);
-                e.tryAddToNear(ent);
+                ent.tryAddToNear(i);
+                i.tryAddToNear(ent);
             }
-        }  
-       // Main.Log("[DEBUG]","Add " + e.caption + " to ServerWorld.entities. Count:  " + entities.size());
+        }
+        // Main.Log("[DEBUG]","Add " + e.caption +
+        // " to ServerWorld.entities. Count:  " + entities.size());
 
     }
 
@@ -121,38 +132,49 @@ public class ServerWorld
         RemoveEntityResponse r = new RemoveEntityResponse();
         ConnectedClient c;
         int index = 0;
+        IUpdate upd;
         for (int i = 0; i < entities.size(); ++i)
         {
-            if(entity.id != entities.get(i).id){
-            c = Server.getClient(entities.get(i));
-            if (c != null)
+            upd = entities.get(i);
+            if (upd.getType() == 0)
             {
-                r.id = entity.id;
-                Server.SendTo(c.connection, r);
+                if (entity.id != ((Entity) upd).id)
+                {
+                    c = Server.getClient(((Entity) upd));
+                    if (c != null)
+                    {
+                        r.id = entity.id;
+                        Server.SendTo(c.connection, r);
+                    }
+                } else
+                    index = i;
             }
-            }
-            else
-                index = i;
         }
         entities.remove(index);
-        
-      //  Main.Log("[DEBUG]","World entitys count: " + entities.size());
+
+        // Main.Log("[DEBUG]","World entitys count: " + entities.size());
     }
 
     public void RemoveTile(Tile t)
     {
         RemoveTileResponse r = new RemoveTileResponse();
         ConnectedClient c;
+        IUpdate upd;
+
         for (int i = 0; i < entities.size(); ++i)
         {
-            if (Server.getClient(entities.get(i)) != null)
+            upd = entities.get(i);
+            if (upd.getType() == 0)
             {
-                c = Server.getClient(entities.get(i));
-                r.x = (int) t.position.x;
-                r.y = (int) t.position.y;
-                r.z = (int) t.position.z;
-                if (c != null)
-                    Server.SendTo(c.connection, r);
+                if (Server.getClient((Entity) upd) != null)
+                {
+                    c = Server.getClient((Entity) upd);
+                    r.x = (int) t.position.x;
+                    r.y = (int) t.position.y;
+                    r.z = (int) t.position.z;
+                    if (c != null)
+                        Server.SendTo(c.connection, r);
+                }
             }
         }
         try
@@ -177,54 +199,38 @@ public class ServerWorld
     {
     }
 
-    /*
-     * public void SendEntities(ConnectedClient c) { Entity e; AddEntityResponse
-     * r = new AddEntityResponse(); for (int i = 0; i < entities.size(); ++i) {
-     * 
-     * e = entities.get(i);
-     * 
-     * if (e.pos.dst2(c.controlledEntity.pos) <= Server.syncDistance) {
-     * 
-     * Main.Log("[DEBUG]", "Distance is less than " + Server.syncDistance +
-     * " it's " + e.pos.dst2(c.controlledEntity.pos) + " caption " + e.caption);
-     * 
-     * r.caption = e.caption; r.id = e.id; r.x = (int) e.pos.x; r.y = (int)
-     * e.pos.y; r.z = (int) e.pos.z; r.type = e.type; r.warMode = e.warMode;
-     * r.mode = ModeType.World; Main.Log("[DEBUG]", "Send entity id: " + e.id +
-     * " caption: " + e.caption + " pos: " + e.pos.toString()); if (c != null)
-     * Server.SendTo(c.connection, r); } else { Main.Log("[DEBUG]",
-     * "Distance is more than " + Server.syncDistance + " it's " +
-     * e.pos.dst2(c.controlledEntity.pos) + " dont sync"+ " caption " +
-     * e.caption); } } }
-     */
-
     public void sendAll(String msg, String caption)
     {
         ChatSendResponse r = new ChatSendResponse();
         r.msg = "\'" + msg + "\'";
         r.sender = caption;
         ConnectedClient c;
-        for (Entity e1 : entities)
+
+        for (IUpdate e1 : entities)
         {
-            c = Server.getClient(e1);
-            if (c != null)
-                Server.SendTo(c.connection, r);
+            if (e1.getType() == 0)
+            {
+                c = Server.getClient((Entity) e1);
+                if (c != null)
+                    Server.SendTo(c.connection, r);
+            }
         }
         Main.Log("[CHAT]", "(" + this.name + ")" + caption + ":" + msg);
     }
 
     public void sendAll(String msg, Entity e)
     {
-        for (Entity e1 : e.entitiesAround)
+        for (IUpdate e1 : e.allAround)
         {
-            e1.handleSpeech(msg, e);
+            if (e1.getType() == 0)
+                ((Entity) e1).handleSpeech(msg, e);
         }
     }
 
     // Updates warmode
-   public void UpdateEntity(Entity entity)
+    public void UpdateEntity(Entity entity)
     {
-        Entity ent;
+        IUpdate ent;
         ConnectedClient c;
         UpdatePlayerResponse r = new UpdatePlayerResponse();
         r.updType = UpdateType.Mode;
@@ -233,33 +239,36 @@ public class ServerWorld
         for (int i = 0; i < entities.size(); ++i)
         {
             ent = entities.get(i);
-            c = Server.getClient(ent);
-            if (c != null)
-                Server.SendTo(c.connection, r);
+            if (ent.getType() == 0)
+            {
+                c = Server.getClient((Entity) ent);
+                if (c != null)
+                    Server.SendTo(c.connection, r);
+            }
         }
     }
 
-    public void UpdateNear(Entity ent)
+    public void UpdateNear(IUpdate e2)
     {
 
         // Main.Log("[DEBUG]","UpdateNear");
-        for (Entity e : ent.entitiesAround)
+        for (IUpdate e : e2.getAround())
         {
-            if (e.body.getPosition().dst(ent.body.getPosition()) > Server.syncDistance)
+            if (e.getPosition().dst(e2.getPosition()) > Server.syncDistance)
             {
-                e.tryRemoveNearEntity(ent);
-                ent.tryRemoveNearEntity(e);
-                UpdateNear(ent);
+                e.tryRemoveNear(e2);
+                e2.tryRemoveNear(e);
+                UpdateNear(e2);
                 break;
             }
         }
 
-        for (Entity e : entities)
+        for (IUpdate e : entities)
         {
-            if (e.body.getPosition().dst(ent.body.getPosition()) <= Server.syncDistance)
+            if (e.getPosition().dst(e2.getPosition()) <= Server.syncDistance)
             {
-                e.tryAddToNear(ent);
-                ent.tryAddToNear(e);
+                e.tryAddToNear(e2);
+                e2.tryAddToNear(e);
             }
         }
     }
@@ -270,12 +279,16 @@ public class ServerWorld
         r.id = entity.id;
         r.hits = stats.get("Hits").value;
         r.mhits = stats.get("Hits").maxValue;
-        for(Entity e: entity.entitiesAround)
+        for (IUpdate e : entity.allAround)
         {
-            if(!e.isAI)
+            if (e.getType() == 0)
             {
-                if(e.target == entity)
-                    Server.SendTo(Server.getClient(e).connection, r);
+                if (!((Entity) e).isAI)
+                {
+                    if (((Entity) e).target == entity)
+                        Server.SendTo(Server.getClient((Entity) e).connection,
+                                r);
+                }
             }
         }
     }
@@ -284,5 +297,5 @@ public class ServerWorld
     {
         return pWorld;
     }
-    
+
 }

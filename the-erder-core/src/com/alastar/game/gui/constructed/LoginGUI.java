@@ -18,13 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 public class LoginGUI extends BaseConstructed
 {
 
-    public Table table;    
-    
+    public Table table;
+
     public LoginGUI(Stage s, String name)
     {
-        super(s, name); 
+        super(s, name);
         final int bsw = Vars.getInt("balancedScreenWidth");
-
 
         final TextButton btn = new TextButton(
                 GameManager.getLocalizedMessage("Login"),
@@ -36,7 +35,7 @@ public class LoginGUI extends BaseConstructed
                 GameManager.getLocalizedMessage("Reg"), GameManager.txtBtnStyle);
         btnToReg.setWidth(175 / bsw);
         btnToReg.padLeft(5);
-        
+
         Label nameLabel = new Label(GameManager.getLocalizedMessage("Login")
                 + ":", GameManager.labelStyle);
 
@@ -48,19 +47,18 @@ public class LoginGUI extends BaseConstructed
         Label addressLabel = new Label(
                 GameManager.getLocalizedMessage("Password") + ":",
                 GameManager.labelStyle);
-        
+
         final TextField passwordText = new TextField("123",
                 GameManager.txtFieldStyle);
- 
-        
+
         passwordText.setWidth(175 / bsw);
         passwordText.setMessageText("password");
         passwordText.setPasswordCharacter('*');
         passwordText.setPasswordMode(true);
-        
+
         table = new Table();
         table.setFillParent(true);
-        
+
         table.add(nameLabel);
         table.row();
         table.add(nameText);
@@ -73,35 +71,40 @@ public class LoginGUI extends BaseConstructed
         table.row();
         table.add(btnToReg);
 
-        btn.addListener(new ChangeListener() {
+        btn.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 AuthPacketRequest r = new AuthPacketRequest();
                 r.login = nameText.getText();
                 r.pass = passwordText.getText();
                 Client.login = r.login;
                 Client.pass = r.pass;
                 LoginClient.Send(r);
-                ((LoadingScreenGUI)GUICore.getConstructedByName("loading_screen")).Show();
+                ((LoadingScreenGUI) GUICore
+                        .getConstructedByName("loading_screen")).Show();
             }
         });
 
-        btnToReg.addListener(new ChangeListener() {
+        btnToReg.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 GUICore.getConstructedByName("register").Show();
                 Hide();
             }
         });
         this.register(table);
     }
-    
+
     @Override
     public void Hide()
     {
         table.setVisible(false);
     }
-    
+
     @Override
     public void Show()
     {

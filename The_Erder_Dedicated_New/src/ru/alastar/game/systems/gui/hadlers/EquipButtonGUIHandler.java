@@ -13,24 +13,27 @@ public class EquipButtonGUIHandler implements GUIHandler
     @Override
     public void handle(String[] args, ConnectedClient c)
     {
-        if(c.controlledEntity.haveGUI("equip"))
+        if (c.controlledEntity.haveGUI("equip"))
         {
             c.controlledEntity.closeGUI("equip");
-        }
-        else
+        } else
         {
-            NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(
-                    "equip", new Vector2(300, 300), new Vector2(
-                            500, 500), "", "com.alastar.game.gui.GUIWindow",
-                    "", "Equip"), c);
+            NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("equip",
+                    new Vector2(300, 300), new Vector2(500, 500), "",
+                    "com.alastar.game.gui.GUIWindow", "", "Equip"), c);
             Equip equip = Server.getEquip(c.controlledEntity);
-            for(String s: equip.contents.keySet())
+            for (String s : equip.contents.keySet())
             {
-                if(equip.contents.get(s).item != null)
-             NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(s, new Vector2(), new Vector2(), "equip", "com.alastar.game.gui.GUIEquipSlot", equip.contents.get(s).item.type.name(), s), c);
+                if (equip.contents.get(s).item != null)
+                    NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(s,
+                            new Vector2(), new Vector2(), "equip",
+                            "com.alastar.game.gui.GUIEquipSlot",
+                            equip.contents.get(s).item.type.name(), s), c);
                 else
-             NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(s, new Vector2(), new Vector2(), "equip", "com.alastar.game.gui.GUIEquipSlot", "None", s), c);
-                
+                    NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(s,
+                            new Vector2(), new Vector2(), "equip",
+                            "com.alastar.game.gui.GUIEquipSlot", "None", s), c);
+
             }
         }
     }

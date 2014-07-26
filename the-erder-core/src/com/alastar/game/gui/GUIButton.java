@@ -9,28 +9,29 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 public class GUIButton implements GUIElement
 {
-    private String name;
+    private String     name;
     private TextButton button;
 
     public GUIButton()
     {
         this.name = "GenericButton";
-        this.button = new TextButton(name, GameManager.getSkin(GameManager.selectedSkin), "button");
+        this.button = new TextButton(name,
+                GameManager.getSkin(GameManager.selectedSkin), "button");
     }
-    
+
     public GUIButton(String n, TextButton l, EventListener e)
     {
         this.name = n;
         this.button = l;
         this.button.addListener(e);
     }
-    
+
     @Override
     public Actor getElementAsActor()
     {
         return button;
     }
-    
+
     @Override
     public String getName()
     {
@@ -42,7 +43,7 @@ public class GUIButton implements GUIElement
     {
         button.remove();
     }
-    
+
     @Override
     public void Hide()
     {
@@ -58,7 +59,7 @@ public class GUIButton implements GUIElement
     @Override
     public void Update(String s)
     {
-        
+
     }
 
     @Override
@@ -69,7 +70,7 @@ public class GUIButton implements GUIElement
 
     @Override
     public void setHandledVariable(String val)
-    {        
+    {
     }
 
     @Override
@@ -113,7 +114,7 @@ public class GUIButton implements GUIElement
     public void setWidth(float val)
     {
         this.button.setWidth(val / Vars.getInt("balancedScreenWidth"));
-        
+
     }
 
     @Override
@@ -125,8 +126,8 @@ public class GUIButton implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        button.setX(val.x / Vars.getInt("balancedScreenWidth") );
-        button.setY(val.y / Vars.getInt("balancedScreenHeight") );
+        button.setX(val.x / Vars.getInt("balancedScreenWidth"));
+        button.setY(val.y / Vars.getInt("balancedScreenHeight"));
     }
 
     @Override
@@ -140,7 +141,7 @@ public class GUIButton implements GUIElement
     public void setPadTB(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -154,7 +155,7 @@ public class GUIButton implements GUIElement
     public void setPadRL(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -168,7 +169,7 @@ public class GUIButton implements GUIElement
     public void setMinHW(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -182,7 +183,7 @@ public class GUIButton implements GUIElement
     public void setMaxHW(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -201,6 +202,6 @@ public class GUIButton implements GUIElement
     public void addChild(GUIElement o)
     {
         // TODO Auto-generated method stub
-        
+
     }
 }

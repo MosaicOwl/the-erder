@@ -10,21 +10,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 public class GUITextField implements GUIElement
 {
 
-    private String name;
+    private String    name;
     private TextField field;
-    
+
     public GUITextField()
     {
         this.name = "GenericField";
-        this.field = new TextField(this.name, GameManager.getSkin(GameManager.selectedSkin), "textField");
+        this.field = new TextField(this.name,
+                GameManager.getSkin(GameManager.selectedSkin), "textField");
     }
-    
+
     public GUITextField(String n, TextField l)
     {
         this.name = n;
         this.field = l;
     }
-    
+
     @Override
     public Actor getElementAsActor()
     {
@@ -42,7 +43,7 @@ public class GUITextField implements GUIElement
     {
         field.remove();
     }
-    
+
     @Override
     public void Hide()
     {
@@ -57,7 +58,7 @@ public class GUITextField implements GUIElement
 
     @Override
     public void Update(String s)
-    {        
+    {
     }
 
     @Override
@@ -68,7 +69,7 @@ public class GUITextField implements GUIElement
 
     @Override
     public void setHandledVariable(String val)
-    {        
+    {
     }
 
     @Override
@@ -79,7 +80,7 @@ public class GUITextField implements GUIElement
 
     @Override
     public void setEventListener(EventListener val)
-    {        
+    {
         this.field.addListener(val);
     }
 
@@ -112,7 +113,7 @@ public class GUITextField implements GUIElement
     public void setWidth(float val)
     {
         this.field.setWidth(val / Vars.getInt("balancedScreenWidth"));
-        
+
     }
 
     @Override
@@ -124,10 +125,10 @@ public class GUITextField implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        field.setX(val.x / Vars.getInt("balancedScreenWidth") );
-        field.setY(val.y / Vars.getInt("balancedScreenHeight") );
+        field.setX(val.x / Vars.getInt("balancedScreenWidth"));
+        field.setY(val.y / Vars.getInt("balancedScreenHeight"));
     }
-    
+
     @Override
     public Vector2 getPadTB()
     {
@@ -139,7 +140,7 @@ public class GUITextField implements GUIElement
     public void setPadTB(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -153,7 +154,7 @@ public class GUITextField implements GUIElement
     public void setPadRL(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -167,7 +168,7 @@ public class GUITextField implements GUIElement
     public void setMinHW(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -181,9 +182,9 @@ public class GUITextField implements GUIElement
     public void setMaxHW(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     @Override
     public void setText(String text)
     {
@@ -200,7 +201,7 @@ public class GUITextField implements GUIElement
     public void addChild(GUIElement o)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void clear()

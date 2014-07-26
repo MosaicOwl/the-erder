@@ -11,16 +11,18 @@ public class GUILabel implements GUIElement
 {
     private String text;
     private String name;
-    private Label label;
+    private Label  label;
     private String variable = "";
-    
+
     public GUILabel()
     {
         this.name = "";
-        this.label = new Label(this.name, GameManager.getSkin(GameManager.selectedSkin), "label");;
+        this.label = new Label(this.name,
+                GameManager.getSkin(GameManager.selectedSkin), "label");
+        ;
         this.variable = "";
     }
-    
+
     public GUILabel(String n, Label l, String var, int h)
     {
         this.name = n;
@@ -30,23 +32,22 @@ public class GUILabel implements GUIElement
         this.label.setName(n);
         this.label.setHeight(h);
     }
-    
+
     public void Update(String s)
     {
         System.out.println("Updating variable");
-        this.label.setText(text+s);
+        this.label.setText(text + s);
     }
-    
-    
+
     public void Update()
     {
         System.out.println("Updating variable");
-        if(!getHandledVariable().isEmpty())
-        this.label.setText(text+Vars.getVar(getHandledVariable()));
+        if (!getHandledVariable().isEmpty())
+            this.label.setText(text + Vars.getVar(getHandledVariable()));
         else
-        this.label.setText(text);
+            this.label.setText(text);
     }
-    
+
     @Override
     public Actor getElementAsActor()
     {
@@ -64,7 +65,7 @@ public class GUILabel implements GUIElement
     {
         label.remove();
     }
-    
+
     @Override
     public void Hide()
     {
@@ -98,7 +99,7 @@ public class GUILabel implements GUIElement
     @Override
     public void setEventListener(EventListener val)
     {
-        
+
     }
 
     @Override
@@ -130,7 +131,7 @@ public class GUILabel implements GUIElement
     public void setWidth(float val)
     {
         this.label.setWidth(val / Vars.getInt("balancedScreenWidth"));
-        
+
     }
 
     @Override
@@ -142,8 +143,8 @@ public class GUILabel implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        label.setX(val.x / Vars.getInt("balancedScreenWidth") );
-        label.setY(val.y / Vars.getInt("balancedScreenHeight") );
+        label.setX(val.x / Vars.getInt("balancedScreenWidth"));
+        label.setY(val.y / Vars.getInt("balancedScreenHeight"));
     }
 
     @Override
@@ -157,7 +158,7 @@ public class GUILabel implements GUIElement
     public void setPadTB(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -171,7 +172,7 @@ public class GUILabel implements GUIElement
     public void setPadRL(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -185,7 +186,7 @@ public class GUILabel implements GUIElement
     public void setMinHW(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -199,7 +200,7 @@ public class GUILabel implements GUIElement
     public void setMaxHW(Vector2 val)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -220,7 +221,7 @@ public class GUILabel implements GUIElement
     public void addChild(GUIElement o)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

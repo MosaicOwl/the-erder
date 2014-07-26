@@ -17,7 +17,7 @@ public class ConnectedClient
     public Entity     controlledEntity;
     public Account    account;
 
-    public String awaitedLogin;
+    public String     awaitedLogin;
 
     public ConnectedClient(Connection c)
     {

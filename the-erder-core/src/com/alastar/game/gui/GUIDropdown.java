@@ -15,17 +15,19 @@ import com.badlogic.gdx.utils.Array;
 
 public class GUIDropdown implements GUIElement
 {
-    private String name;
+    private String            name;
     private SelectBox<String> box;
-    
+
     public GUIDropdown()
     {
         this.name = "GenericBox";
-        this.box = new SelectBox<String>(GameManager.getSkin(GameManager.selectedSkin), "box");
-        this.box.setItems("Close"); 
+        this.box = new SelectBox<String>(
+                GameManager.getSkin(GameManager.selectedSkin), "box");
+        this.box.setItems("Close");
         this.box.setSelectedIndex(0);
-        
-        ChangeListener listener = new ChangeListener(){
+
+        ChangeListener listener = new ChangeListener()
+        {
 
             @Override
             public void changed(ChangeEvent event, Actor actor)
@@ -37,10 +39,10 @@ public class GUIDropdown implements GUIElement
                 Client.Send(r);
             }
         };
-        
+
         this.box.addListener(listener);
     }
-    
+
     public GUIDropdown(final String n, SelectBox<String> l, EventListener e)
     {
         this.name = n;
@@ -49,7 +51,7 @@ public class GUIDropdown implements GUIElement
         this.box.setItems("Close");
         this.box.setSelectedIndex(0);
     }
-    
+
     @Override
     public Actor getElementAsActor()
     {
@@ -83,13 +85,13 @@ public class GUIDropdown implements GUIElement
     @Override
     public void Show()
     {
-        box.setVisible(true);        
+        box.setVisible(true);
     }
 
     @Override
     public void Update(String val)
     {
-        
+
     }
 
     @Override
@@ -101,7 +103,7 @@ public class GUIDropdown implements GUIElement
     @Override
     public void setHandledVariable(String val)
     {
-        
+
     }
 
     @Override
@@ -113,7 +115,7 @@ public class GUIDropdown implements GUIElement
     @Override
     public void setEventListener(EventListener val)
     {
-        
+
     }
 
     @Override
@@ -149,7 +151,9 @@ public class GUIDropdown implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        Vector3 vec = MainScreen.camera.project(new Vector3((float)(val.x + 0.5) * GameManager.textureResolution, (float)(val.y - 0.5) * GameManager.textureResolution, 0));
+        Vector3 vec = MainScreen.camera.project(new Vector3(
+                (float) (val.x + 0.5) * GameManager.textureResolution,
+                (float) (val.y - 0.5) * GameManager.textureResolution, 0));
         box.setX(vec.x);
         box.setY(vec.y);
     }
@@ -163,18 +167,20 @@ public class GUIDropdown implements GUIElement
     @Override
     public void setPadTB(Vector2 val)
     {
-        
+
     }
 
     @Override
     public Vector2 getPadRL()
     {
         return null;
-        
+
     }
 
     @Override
-    public void setPadRL(Vector2 val){}
+    public void setPadRL(Vector2 val)
+    {
+    }
 
     @Override
     public Vector2 getMinHW()
@@ -183,7 +189,9 @@ public class GUIDropdown implements GUIElement
     }
 
     @Override
-    public void setMinHW(Vector2 val){}
+    public void setMinHW(Vector2 val)
+    {
+    }
 
     @Override
     public Vector2 getMaxHW()
@@ -192,10 +200,14 @@ public class GUIDropdown implements GUIElement
     }
 
     @Override
-    public void setMaxHW(Vector2 val){}
+    public void setMaxHW(Vector2 val)
+    {
+    }
 
     @Override
-    public void setText(String text){}
+    public void setText(String text)
+    {
+    }
 
     @Override
     public String getText()
@@ -208,7 +220,7 @@ public class GUIDropdown implements GUIElement
     {
         System.out.println("Adding " + o.getText() + " to selectBox");
         Array<String> a = new Array<String>();
-        for(String old: box.getItems())
+        for (String old : box.getItems())
         {
             a.add(old);
         }

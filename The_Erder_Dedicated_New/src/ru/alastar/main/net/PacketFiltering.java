@@ -10,8 +10,8 @@ import com.esotericsoftware.kryonet.Connection;
 @SuppressWarnings("rawtypes")
 public class PacketFiltering
 {
-    public static Hashtable<Class, Boolean> filters = new Hashtable<Class, Boolean>();
-    public static float packetDelay = 100F;
+    public static Hashtable<Class, Boolean> filters     = new Hashtable<Class, Boolean>();
+    public static float                     packetDelay = 100F;
 
     public static void addFilterFor(Class c, boolean f)
     {
@@ -21,30 +21,30 @@ public class PacketFiltering
     @SuppressWarnings("unused")
     public static boolean checkFilter(Class c, Connection conn)
     {
-     for(Class cls: filters.keySet()){
-         if(c.getEnclosingClass() == cls.getEnclosingClass())
-         {
-            if(filters.get(c) == true)
+        for (Class cls : filters.keySet())
+        {
+            if (c.getEnclosingClass() == cls.getEnclosingClass())
             {
-                ConnectedClient client = Server.getClient(conn);
-                if (c != null)
+                if (filters.get(c) == true)
                 {
-                    if ((new Date().getTime() - client.lastPacket.getTime()) > packetDelay)
+                    ConnectedClient client = Server.getClient(conn);
+                    if (c != null)
                     {
-                        client.lastPacket = new Date();
-                        return true;
+                        if ((new Date().getTime() - client.lastPacket.getTime()) > packetDelay)
+                        {
+                            client.lastPacket = new Date();
+                            return true;
+                        } else
+                            return false;
+                    } else
+                    {
+                        Main.Log("[ERROR]", "Connected client is null");
+                        return false;
                     }
-                    else
-                       return false;
-                } else{
-                    Main.Log("[ERROR]", "Connected client is null");
-                    return false;
-                }
+                } else
+                    return true;
             }
-            else
-                return true; 
-       }
-     }
-     return false;
+        }
+        return false;
     }
 }

@@ -1,6 +1,5 @@
 package com.alastar.game.gui;
 
-
 import com.alastar.game.ContainersInfo;
 import com.alastar.game.GameManager;
 import com.alastar.game.Vars;
@@ -14,26 +13,29 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
 public class GUIContainer implements GUIElement
 {
-    public String name;
-    public Window modal;
+    public String        name;
+    public Window        modal;
     public ContainerType type;
-    private Table table;
-    private ScrollPane scroll;
-    public String containerArrayName;
-    
+    private Table        table;
+    private ScrollPane   scroll;
+    public String        containerArrayName;
+
     public GUIContainer()
     {
         this.name = "GenericContainer";
         type = ContainerType.Bag;
-        modal = new Window(this.name,GameManager.getSkin(GameManager.selectedSkin), "window");
+        modal = new Window(this.name,
+                GameManager.getSkin(GameManager.selectedSkin), "window");
     }
-    
-    public GUIContainer(String n, Window w, ContainerType type, Vector2 vector2, Vector2 vector22, int j, int i, int k, int l)
+
+    public GUIContainer(String n, Window w, ContainerType type,
+            Vector2 vector2, Vector2 vector22, int j, int i, int k, int l)
     {
         this.name = n;
         this.type = type;
         modal = w;
-        this.modal.setPosition(vector2.x / Vars.getInt("balancedScreenWidth"), vector2.y / Vars.getInt("balancedScreenHeight"));
+        this.modal.setPosition(vector2.x / Vars.getInt("balancedScreenWidth"),
+                vector2.y / Vars.getInt("balancedScreenHeight"));
         this.modal.setHeight(vector22.y / Vars.getInt("balancedScreenHeight"));
         this.modal.setWidth(vector22.x / Vars.getInt("balancedScreenWidth"));
         modal.defaults().padLeft(i);
@@ -43,32 +45,31 @@ public class GUIContainer implements GUIElement
         modal.defaults().minWidth(100);
         modal.defaults().minHeight(30);
         modal.setMovable(true);
-        
-        table = new 
-                Table();
+
+        table = new Table();
         table.defaults().padLeft(i);
         table.defaults().padRight(j);
         table.defaults().padTop(k);
-        table.defaults().padBottom(l);  
+        table.defaults().padBottom(l);
         table.setFillParent(true);
         table.setWidth(vector22.x - i - j);
         table.setHeight(vector22.y - k - l);
         table.left();
         table.bottom();
-        
+
         scroll = new ScrollPane(table);
         scroll.setScrollBarPositions(false, true);
         scroll.setScrollingDisabled(true, false);
-        scroll.setScrollbarsOnTop(true); 
+        scroll.setScrollbarsOnTop(true);
         scroll.setFadeScrollBars(false);
         scroll.setFillParent(true);
         scroll.setSmoothScrolling(false);
         scroll.setWidth(vector22.x - 10);
         scroll.setHeight(vector22.y - 10);
-        
+
         modal.add(table).fill();
     }
-    
+
     @Override
     public Actor getElementAsActor()
     {
@@ -92,7 +93,7 @@ public class GUIContainer implements GUIElement
         modal.add(element.getElementAsActor());
         modal.pack();
     }
-    
+
     @Override
     public void Hide()
     {
@@ -108,7 +109,7 @@ public class GUIContainer implements GUIElement
     @Override
     public void Update(String s)
     {
-        
+
     }
 
     @Override
@@ -119,7 +120,7 @@ public class GUIContainer implements GUIElement
 
     @Override
     public void setHandledVariable(String val)
-    {        
+    {
         this.containerArrayName = val;
         ContainersInfo.fillContainer(this, containerArrayName);
     }
@@ -132,7 +133,7 @@ public class GUIContainer implements GUIElement
 
     @Override
     public void setEventListener(EventListener val)
-    {        
+    {
     }
 
     @Override
@@ -164,7 +165,7 @@ public class GUIContainer implements GUIElement
     public void setWidth(float val)
     {
         this.modal.setWidth(val / Vars.getInt("balancedScreenWidth"));
-        
+
     }
 
     @Override
@@ -176,8 +177,8 @@ public class GUIContainer implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        modal.setX(val.x / Vars.getInt("balancedScreenWidth") );
-        modal.setY(val.y / Vars.getInt("balancedScreenHeight") );
+        modal.setX(val.x / Vars.getInt("balancedScreenWidth"));
+        modal.setY(val.y / Vars.getInt("balancedScreenHeight"));
     }
 
     @Override
@@ -190,7 +191,7 @@ public class GUIContainer implements GUIElement
     public void setPadTB(Vector2 val)
     {
         modal.defaults().padTop(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.defaults().padBottom(val.y/ Vars.getInt("balancedScreenHeight"));
+        modal.defaults().padBottom(val.y / Vars.getInt("balancedScreenHeight"));
     }
 
     @Override
@@ -203,7 +204,7 @@ public class GUIContainer implements GUIElement
     public void setPadRL(Vector2 val)
     {
         modal.defaults().padRight(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.defaults().padLeft(val.y/ Vars.getInt("balancedScreenHeight"));
+        modal.defaults().padLeft(val.y / Vars.getInt("balancedScreenHeight"));
     }
 
     @Override
@@ -216,7 +217,7 @@ public class GUIContainer implements GUIElement
     public void setMinHW(Vector2 val)
     {
         modal.defaults().minWidth(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.defaults().minHeight(val.y/ Vars.getInt("balancedScreenHeight"));
+        modal.defaults().minHeight(val.y / Vars.getInt("balancedScreenHeight"));
     }
 
     @Override
@@ -229,9 +230,9 @@ public class GUIContainer implements GUIElement
     public void setMaxHW(Vector2 val)
     {
         modal.defaults().maxWidth(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.defaults().maxHeight(val.y/ Vars.getInt("balancedScreenHeight"));        
+        modal.defaults().maxHeight(val.y / Vars.getInt("balancedScreenHeight"));
     }
-    
+
     @Override
     public void setText(String text)
     {
@@ -249,5 +250,5 @@ public class GUIContainer implements GUIElement
     {
         modal.add(o.getElementAsActor());
     }
-    
+
 }

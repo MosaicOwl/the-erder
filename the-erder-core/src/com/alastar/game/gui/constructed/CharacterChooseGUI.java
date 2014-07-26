@@ -17,13 +17,13 @@ public class CharacterChooseGUI extends BaseConstructed
 {
 
     public Table table;
-    private int id = 0;
+    private int  id = 0;
 
     public CharacterChooseGUI(Stage s, String name)
     {
         super(s, name);
         final int bsw = Vars.getInt("balancedScreenWidth");
-        
+
         String n = "";
 
         final Label nameLabel1 = new Label(n, GameManager.labelStyle);
@@ -31,7 +31,6 @@ public class CharacterChooseGUI extends BaseConstructed
         final TextButton btnN = new TextButton(">", GameManager.txtBtnStyle);
 
         final TextButton btnP = new TextButton("<", GameManager.txtBtnStyle);
-
 
         final TextButton btnCh = new TextButton(
                 GameManager.getLocalizedMessage("Choose"),
@@ -56,25 +55,28 @@ public class CharacterChooseGUI extends BaseConstructed
         table.add(nameLabel1);
         table.row();
 
-        table.add(nameLabel1);      
+        table.add(nameLabel1);
         table.row();
-        
+
         table.add(btnP);
         table.add(btnN);
         table.row();
 
-        table.add(btnCr); 
+        table.add(btnCr);
         table.row();
 
-        table.add(btnDel); 
+        table.add(btnDel);
         table.row();
 
         table.add(btnCh);
 
-        btnCh.addListener(new ChangeListener() {
+        btnCh.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (Client.characters.size() > 0) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
+                if (Client.characters.size() > 0)
+                {
                     CharacterChooseRequest r = new CharacterChooseRequest();
                     r.nick = nameLabel1.getText().toString();
                     Client.Send(r);
@@ -83,41 +85,55 @@ public class CharacterChooseGUI extends BaseConstructed
             }
         });
 
-        btnP.addListener(new ChangeListener() {
+        btnP.addListener(new ChangeListener()
+        {
 
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (Client.characters.size() > 0) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
+                if (Client.characters.size() > 0)
+                {
 
-                    if ((id - 1) < 0) {
+                    if ((id - 1) < 0)
+                    {
                         id = Client.characters.size() - 1;
-                    } else {
+                    } else
+                    {
                         --id;
                     }
 
-                    nameLabel1.setText((String)Client.characters.keySet().toArray()[id]);
+                    nameLabel1.setText((String) Client.characters.keySet()
+                            .toArray()[id]);
                 }
             }
         });
 
-        btnN.addListener(new ChangeListener() {
+        btnN.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (Client.characters.size() > 0) {
-                    if ((id + 1) >= Client.characters.size()) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
+                if (Client.characters.size() > 0)
+                {
+                    if ((id + 1) >= Client.characters.size())
+                    {
                         id = 0;
-                    } else {
+                    } else
+                    {
                         ++id;
                     }
 
-                    nameLabel1.setText((String)Client.characters.keySet().toArray()[id]);
+                    nameLabel1.setText((String) Client.characters.keySet()
+                            .toArray()[id]);
                 }
             }
         });
 
-        btnCr.addListener(new ChangeListener() {
+        btnCr.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 GUICore.getConstructedByName("create").Show();
                 Hide();
             }
@@ -125,12 +141,13 @@ public class CharacterChooseGUI extends BaseConstructed
         this.register(table);
 
     }
+
     @Override
     public void Hide()
     {
         table.setVisible(false);
     }
-    
+
     @Override
     public void Show()
     {
