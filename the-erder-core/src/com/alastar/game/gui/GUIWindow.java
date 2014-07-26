@@ -94,7 +94,9 @@ public class GUIWindow implements GUIElement
     @Override
     public void Destroy()
     {
-        mainActor.remove();
+      //  mainActor.remove();
+        Hide();
+        mainActor.clear();
     }
 
     public void AddControl(GUIElement element)

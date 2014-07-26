@@ -41,7 +41,9 @@ public class GUITextField implements GUIElement
     @Override
     public void Destroy()
     {
-        field.remove();
+       // field.remove();
+        Hide();
+        field.clear();
     }
 
     @Override

@@ -22,7 +22,7 @@ public class GUIEquipSlot implements GUIElement
         this.name = "GenericSlot";
         this.label = new Label(this.name,
                 GameManager.getSkin(GameManager.selectedSkin), "label");
-        this.image = new Image(GameManager.getItemTexture(ItemType.Plant));
+        this.image = new Image(GameManager.getItemTexture(ItemType.None));
         this.table = new Table();
         table.add(image);
         table.add(label);
@@ -51,7 +51,9 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public void Destroy()
     {
-        table.remove();
+      //  table.remove(); 
+        Hide();
+        table.clear();
     }
 
     @Override

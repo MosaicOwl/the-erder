@@ -1507,6 +1507,7 @@ public class Server
                 + " LIMIT 1;");
         DatabaseClient.commandExecute("DELETE FROM attributes WHERE itemId = "
                 + item.id + ";");
+        item.Destroy();
     }
 
     public static void DestroyItem(Inventory i, Item item)

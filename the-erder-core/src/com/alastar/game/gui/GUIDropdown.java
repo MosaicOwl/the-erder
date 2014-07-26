@@ -73,7 +73,9 @@ public class GUIDropdown implements GUIElement
     @Override
     public void Destroy()
     {
-        box.remove();
+       // box.remove();
+        Hide();
+        box.clear();
     }
 
     @Override

@@ -19,7 +19,6 @@ import ru.alastar.enums.EquipType;
 import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddItemResponse;
-import ru.alastar.main.net.responses.RemoveItemResponse;
 import ru.alastar.main.net.responses.RemovePacket;
 import ru.alastar.main.net.responses.UpdateItemResponse;
 import ru.alastar.physics.PhysicalData;
@@ -111,6 +110,14 @@ public class Item extends Transform implements IUpdate
         }, 100, 100);
     }
 
+    public void Destroy()
+    {
+        if(active){
+            this.body.destroyFixture(fixture);
+            this.getWorld().getPhysic().destroyBody(body);
+        }
+    }
+    
     public int getAttributeValue(String s)
     {
         return attributes.getValue(s);
@@ -179,7 +186,7 @@ public class Item extends Transform implements IUpdate
         if (allAround.contains(i))
         {
             allAround.remove(i);
-            if (i.getType() == 0)
+            if (i.getType() == 1)
                 RemoveTo(Server.getClient((Entity) i));
         }
     }
@@ -190,7 +197,7 @@ public class Item extends Transform implements IUpdate
         if (!allAround.contains(e))
         {
             allAround.add(e);
-            if (e.getType() == 0){
+            if (e.getType() == 1){
                 UpdateTo(Server.getClient((Entity) e));
                 }
         }
@@ -199,7 +206,7 @@ public class Item extends Transform implements IUpdate
     @Override
     public int getType()
     {
-        return 1;
+        return 3;
     }
 
     @Override
@@ -216,7 +223,7 @@ public class Item extends Transform implements IUpdate
 
         for (IUpdate ent : allAround)
         {
-            if (ent.getType() == 0)
+            if (ent.getType() == 1)
             {
                 c = Server.getClient((Entity) ent);
 

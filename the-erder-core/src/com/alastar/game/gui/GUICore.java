@@ -16,7 +16,8 @@ public class GUICore
 
     public static void remove(String s)
     {
-        guiElements.get(s).getElementAsActor().remove();
+        if(guiElements.get(s) != null)
+        guiElements.get(s).Destroy();
         guiElements.remove(s);
     }
 

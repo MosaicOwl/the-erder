@@ -10,7 +10,8 @@ public class Transform implements Serializable
     private static final long serialVersionUID = -862176953291711450L;
     public Vector3            position         = Vector3.Zero;
     public int                z                = 0;
-
+    public int                side             = 0; // 0 - right, 1 - left
+    
     public Transform(Vector3 pos)
     {
         this.position = pos;

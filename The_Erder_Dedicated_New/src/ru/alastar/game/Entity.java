@@ -27,7 +27,6 @@ import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddEntityResponse;
 import ru.alastar.main.net.responses.AddEquipResponse;
-import ru.alastar.main.net.responses.RemoveEntityResponse;
 import ru.alastar.main.net.responses.RemovePacket;
 import ru.alastar.main.net.responses.SpeechResponse;
 import ru.alastar.main.net.responses.TargetInfoResponse;
@@ -649,24 +648,12 @@ public class Entity extends Transform implements IUpdate
             allAround.remove(i);
             i.RemoveTo(Server.getClient(this));
         }
-        /*
-         * switch(i.getType()) { case 0: // Entity Entity ent = (Entity)i;
-         * RemoveEntityResponse rer = new RemoveEntityResponse(); rer.id =
-         * ent.id;
-         * 
-         * ConnectedClient c = Server.getClient(this);
-         * 
-         * if(c != null) Server.SendTo(c.connection, rer);
-         * 
-         * if(isAI && ent.id != this.id) AI.OnLostEntity(ent); break; case 1: //
-         * Projectile break; } }
-         */
     }
 
     @Override
     public int getType()
     {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -686,7 +673,7 @@ public class Entity extends Transform implements IUpdate
 
         for (IUpdate ent : allAround)
         {
-            if (ent.getType() == 0)
+            if (ent.getType() == 1)
             {
                 c = Server.getClient((Entity) ent);
 

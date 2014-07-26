@@ -41,7 +41,9 @@ public class GUIButton implements GUIElement
     @Override
     public void Destroy()
     {
-        button.remove();
+       // button.remove(); 
+        Hide();
+        button.clear();
     }
 
     @Override

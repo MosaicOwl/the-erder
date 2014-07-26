@@ -9,8 +9,12 @@ import ru.alastar.game.Entity;
 import ru.alastar.game.IUpdate;
 import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
+import ru.alastar.main.net.responses.AddProjectileResponse;
+import ru.alastar.main.net.responses.RemovePacket;
+import ru.alastar.main.net.responses.UpdateProjectileResponse;
 import ru.alastar.world.ServerWorld;
 
+import com.alastar.game.enums.ProjectileType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -22,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class BaseProjectile implements IUpdate
 {
+    public int           id;
     public Entity        shooter;
     public Vector3       from;
     public float         lifeTime;
@@ -30,7 +35,8 @@ public class BaseProjectile implements IUpdate
     public ServerWorld   world;
     private Date         m_StartTime;
     public boolean       m_Shooted = false;
-
+    public ProjectileType type;
+    private ArrayList<IUpdate> allAround;
     // Physics
     BodyDef              bodyDef;
     public Body          body;
@@ -40,11 +46,12 @@ public class BaseProjectile implements IUpdate
     private Timer        updateTimer;
     private PhysicalData pData;
 
-    public BaseProjectile(Vector3 from, Entity shooter)
+    public BaseProjectile(int id, Vector3 from, Entity shooter)
     {
         this.from = from;
         this.shooter = shooter;
         this.world = shooter.world;
+        this.allAround = new ArrayList<IUpdate>();
     }
 
     public void Launch()
@@ -106,40 +113,77 @@ public class BaseProjectile implements IUpdate
     @Override
     public void UpdateTo(ConnectedClient c)
     {
-
+        if(c != null){
+            AddProjectileResponse r = new AddProjectileResponse();
+            r.id = this.id;
+            r.projectileType = this.type;
+            r.x = this.getPosition().x;
+            r.y = this.getPosition().y;
+            Server.SendTo(c, r);
+      }
     }
 
     @Override
     public void RemoveTo(ConnectedClient c)
     {
-        // TODO Add projectile packets
+        if (c != null) // MUST DO IT ALWAYS! RemoveTo() can take an AI
+                       // controlled Entity that have no ConnectedClient!
+        {
+            RemovePacket r = new RemovePacket();
+            r.id = this.id;
+            r.type = 2; // 2 - Projectile
+            Server.SendTo(c, r);
+        }
     }
-
     @Override
     public void tryRemoveNear(IUpdate i)
     {
-        // TODO Add projectile packets
-
+        if (allAround.contains(i))
+        {
+            allAround.remove(i);
+            if (i.getType() == 1)
+                RemoveTo(Server.getClient((Entity) i));
+        }
     }
 
     @Override
     public void tryAddToNear(IUpdate e)
     {
-        // TODO Add projectile packets
-
+        if (!allAround.contains(e))
+        {
+            allAround.add(e);
+            if (e.getType() == 1){
+                UpdateTo(Server.getClient((Entity) e));
+            }
+        }
     }
 
     @Override
     public int getType()
     {
-        return 1;
+        return 2;
     }
 
     @Override
     public void UpdateAround()
     {
-        // TODO Add projectile packets
-
+       UpdateProjectileResponse r = new UpdateProjectileResponse();
+       r.id = this.id;
+       r.x = this.getPosition().x;
+       r.y = this.getPosition().y;
+       r.type = this.type;
+       ConnectedClient c;
+       for(IUpdate upd: allAround)
+       {
+           if(upd.getType() == 1)
+           {
+               c = Server.getClient((Entity)upd);
+               if(c != null)
+               {
+                   Server.SendTo(c, r);
+               }
+           }
+       }
     }
 
     @Override
@@ -160,7 +204,7 @@ public class BaseProjectile implements IUpdate
     @Override
     public ArrayList<IUpdate> getAround()
     {
-        return null;
+        return allAround;
     }
 
 }

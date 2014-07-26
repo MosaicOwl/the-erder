@@ -63,7 +63,9 @@ public class GUITarget implements GUIElement
     @Override
     public void Destroy()
     {
-        table.remove();
+       // table.remove();
+       Hide();
+       table.clear();
     }
 
     @Override

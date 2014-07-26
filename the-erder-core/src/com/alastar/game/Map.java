@@ -41,8 +41,8 @@ public class Map
 
         try
         {
-            System.out.println("Update type: " + type + " id: " + id
-                    + " vector: " + vec.toString());
+          //  System.out.println("Update type: " + type + " id: " + id
+          //          + " vector: " + vec.toString());
             if (getObjectById(id, type) != null)
                 ((Transform) getObjectById(id, type)).setPosition(vec);
 
@@ -78,7 +78,7 @@ public class Map
 
     public static void handleRemoveEntity(int id2)
     {
-        System.out.println("Remove entity: " + id2);
+      //  System.out.println("Remove entity: " + id2);
         Entity e = (Entity) getObjectById(id2, 1);
         if (e != null)
         {
@@ -106,7 +106,7 @@ public class Map
             {
                 addEntity(p);
                 p.drawMessageOverhead(p.caption);
-                System.out.println("Entity added! Id: " + p.id);
+               // System.out.println("Entity added! Id: " + p.id);
             } else
             {
                 p.Remove();
@@ -115,9 +115,6 @@ public class Map
 
         catch (Exception e)
         {
-            System.out
-                    .println("Failed to add entity beacuse mode is null! Id: "
-                            + p.id);
             e.printStackTrace();
         }
     }

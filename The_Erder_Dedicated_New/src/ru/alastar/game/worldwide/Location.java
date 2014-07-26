@@ -15,7 +15,6 @@ import ru.alastar.main.Main;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddEntityResponse;
 import ru.alastar.main.net.responses.ChatSendResponse;
-import ru.alastar.main.net.responses.RemoveEntityResponse;
 
 public class Location
 {
@@ -97,13 +96,7 @@ public class Location
 
     public void RemoveEntity(Entity entity)
     {
-        RemoveEntityResponse r = new RemoveEntityResponse();
-        r.id = entity.id;
-        entities.remove(entity.id);
-        for (Entity e1 : entities.values())
-        {
-            Server.SendTo(Server.getClient(e1).connection, r);
-        }
+
     }
 
     public boolean haveFlag(String string)

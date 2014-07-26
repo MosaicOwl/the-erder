@@ -1,9 +1,10 @@
 package ru.alastar.main.net.responses;
 
-import com.alastar.game.enums.ItemType;
+import com.alastar.game.enums.ProjectileType;
 
 public class AddProjectileResponse
 {
-   public ItemType type;
-   public float x, y, z, angle;
+   public int id;
+   public float x, y, angle;
+   public ProjectileType projectileType;
 }

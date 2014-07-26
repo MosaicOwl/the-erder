@@ -13,7 +13,7 @@ import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddTileResponse;
 import ru.alastar.main.net.responses.ChatSendResponse;
-import ru.alastar.main.net.responses.RemoveEntityResponse;
+import ru.alastar.main.net.responses.RemovePacket;
 import ru.alastar.main.net.responses.RemoveTileResponse;
 import ru.alastar.main.net.responses.TargetInfoResponse;
 import ru.alastar.main.net.responses.UpdatePlayerResponse;
@@ -129,7 +129,9 @@ public class ServerWorld
 
     public void RemoveEntity(Entity entity)
     {
-        RemoveEntityResponse r = new RemoveEntityResponse();
+        RemovePacket r = new RemovePacket(); 
+        r.id = entity.id;
+        r.type = 1; // 1 - Entity
         ConnectedClient c;
         int index = 0;
         IUpdate upd;
@@ -143,7 +145,7 @@ public class ServerWorld
                     c = Server.getClient(((Entity) upd));
                     if (c != null)
                     {
-                        r.id = entity.id;
+
                         Server.SendTo(c.connection, r);
                     }
                 } else

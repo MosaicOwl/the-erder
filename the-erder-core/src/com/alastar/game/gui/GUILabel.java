@@ -63,7 +63,9 @@ public class GUILabel implements GUIElement
     @Override
     public void Destroy()
     {
-        label.remove();
+       // label.remove(); 
+        Hide();
+        label.clear();
     }
 
     @Override

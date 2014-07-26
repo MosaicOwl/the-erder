@@ -95,7 +95,9 @@ public class GUIChatWindow implements GUIElement
     @Override
     public void Destroy()
     {
-        window.remove();
+      //  window.remove();
+        Hide();
+        window.clear();
     }
 
     public void AddControl(GUIElement element)

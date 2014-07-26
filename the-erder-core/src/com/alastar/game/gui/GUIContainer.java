@@ -85,7 +85,9 @@ public class GUIContainer implements GUIElement
     @Override
     public void Destroy()
     {
-        modal.remove();
+        //modal.remove(); 
+        Hide();
+        modal.clear();
     }
 
     public void AddControl(GUIElement element)
