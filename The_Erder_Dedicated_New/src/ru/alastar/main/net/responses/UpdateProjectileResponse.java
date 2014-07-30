@@ -5,6 +5,6 @@ import com.alastar.game.enums.ProjectileType;
 public class UpdateProjectileResponse
 {
   public int id;
-  public float x,y;
+  public float x,y,z;
   public ProjectileType type;
 }

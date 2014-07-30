@@ -5,6 +5,8 @@ import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.alastar.game.enums.Type;
+import com.alastar.game.enums.TypeId;
 import com.alastar.game.enums.UpdateType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -16,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import ru.alastar.enums.EntityType;
+import ru.alastar.game.projectiles.TestProjectile;
 import ru.alastar.game.systems.BattleSystem;
 import ru.alastar.game.systems.SkillsSystem;
 import ru.alastar.game.systems.gui.NetGUIAnswer;
@@ -23,6 +26,7 @@ import ru.alastar.game.systems.gui.NetGUIInfo;
 import ru.alastar.game.systems.gui.NetGUISystem;
 import ru.alastar.game.systems.gui.hadlers.GUIHandler;
 import ru.alastar.game.systems.gui.hadlers.PlayerButtonGUIHandler;
+import ru.alastar.main.Main;
 import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddEntityResponse;
@@ -32,11 +36,12 @@ import ru.alastar.main.net.responses.SpeechResponse;
 import ru.alastar.main.net.responses.TargetInfoResponse;
 import ru.alastar.main.net.responses.TargetResponse;
 import ru.alastar.main.net.responses.UpdatePlayerResponse;
+import ru.alastar.physics.IPhysic;
 import ru.alastar.physics.PhysicalData;
 import ru.alastar.world.ServerTile;
 import ru.alastar.world.ServerWorld;
 
-public class Entity extends Transform implements IUpdate
+public class Entity extends Transform implements IUpdate, IPhysic
 {
 
     public int                           id           = -1;
@@ -119,7 +124,8 @@ public class Entity extends Transform implements IUpdate
         fixtureDef.restitution = 0.6f;
 
         fixture = body.createFixture(fixtureDef);
-        fixture.setUserData(pData);
+        fixture.setUserData((IPhysic)this);
+
         active = true;
         circle.dispose();
         final Entity e = this;
@@ -141,10 +147,11 @@ public class Entity extends Transform implements IUpdate
 
     }
 
+    @Override
     public void UpdatePhysicalData(int z, boolean b)
     {
-        pData = new PhysicalData(z, b);
-        fixture.setUserData(pData);
+        this.pData.setZ(z);
+        this.pData.setIgnore(b);
     }
 
     public void RemoveYourself(int aId)
@@ -634,7 +641,7 @@ public class Entity extends Transform implements IUpdate
     {
         RemovePacket r = new RemovePacket();
         r.id = this.id;
-        r.type = 3;
+        r.type = TypeId.getTypeId(Type.Entity);
         
         if (c != null)
             Server.SendTo(c.connection, r);
@@ -653,7 +660,7 @@ public class Entity extends Transform implements IUpdate
     @Override
     public int getType()
     {
-        return 1;
+        return TypeId.getTypeId(Type.Entity);
     }
 
     @Override
@@ -673,7 +680,7 @@ public class Entity extends Transform implements IUpdate
 
         for (IUpdate ent : allAround)
         {
-            if (ent.getType() == 1)
+            if (ent.getType() == TypeId.getTypeId(Type.Entity))
             {
                 c = Server.getClient((Entity) ent);
 
@@ -700,5 +707,31 @@ public class Entity extends Transform implements IUpdate
     public ArrayList<IUpdate> getAround()
     {
         return allAround;
+    }
+
+    @Override
+    public PhysicalData getData()
+    {
+        return pData;
+    }
+
+    public void act(double angle)
+    {
+        if(warMode)
+        {
+          TestProjectile t = new TestProjectile(Server.getProjFreeId(), new Vector3(this.getPosition().x, this.getPosition().y, this.z), this, angle);
+          t.Launch();
+          Main.Log("[ACTION]"," War action with angle: " + angle);
+        }
+        else
+        {
+           Main.Log("[ACTION]"," Action with angle: " + angle);
+        }
+    }
+
+    @Override
+    public int getId()
+    {
+        return id;
     }
 }

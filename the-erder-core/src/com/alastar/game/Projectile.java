@@ -1,8 +1,6 @@
 package com.alastar.game;
 
-import java.io.Serializable;
-
-import com.alastar.game.enums.TileType;
+import com.alastar.game.enums.ProjectileType;
 import com.alastar.game.enums.Type;
 import com.alastar.game.enums.TypeId;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,46 +9,39 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
-public class Tile extends Transform implements Serializable, TexturedObject
+@SuppressWarnings("serial")
+public class Projectile extends Transform implements TexturedObject
 {
-
-    private static final long serialVersionUID = 7420787875382412198L;
-    public TileType           type;
-    public boolean            passable         = false;
-
-    public Tile(Vector3 pos, TileType t, boolean p)
+    public int id;
+    public ProjectileType type;
+    public float angle;
+    
+    public Projectile(int id, float angle, ProjectileType projectileType,
+            float x, float y, float z)
     {
-        super(pos);
-        this.type = t;
-        this.passable = p;
+       super(new Vector3(x, y, z));
+       this.id = id;
+       this.angle = angle;
+       this.type = projectileType;
     }
 
     @Override
     public Texture getTexture()
     {
-        return GameManager.getTexture(type.name().toLowerCase(), getType());
+        return GameManager.getTexture(type.name().toLowerCase(), TypeId.getTypeId(Type.Projectile));
     }
 
     @Override
     public void setTexture()
     {
+        
     }
 
     @Override
     public Transform getTransform()
     {
-        return (Transform) this;
+        return this;
     }
-
-    @Override
-    public void Draw(SpriteBatch batch, float i, float j)
-    {
-        batch.draw(this.getTexture(), this.position.x
-                * GameManager.textureResolution, this.position.y
-                * GameManager.textureResolution + this.position.z
-                * GameManager.textureResolution);
-    }
-
     @Override
     public TextureRegion getTextureRegion()
     {
@@ -64,33 +55,37 @@ public class Tile extends Transform implements Serializable, TexturedObject
     public Rectangle getWindowRectangle()
     {
         return new Rectangle(this.position.x * GameManager.textureResolution,
-                this.position.y * GameManager.textureResolution
-                        + this.position.z * GameManager.textureResolution,
+                this.position.y * GameManager.textureResolution,
                 GameManager.textureResolution, GameManager.textureResolution);
+    }
+    @Override
+    public void Draw(SpriteBatch batch, float x, float y)
+    {
+        batch.draw(this.getTexture(), (float)this.position.x * GameManager.textureResolution, (float)this.position.y* GameManager.textureResolution);
     }
 
     @Override
     public int getType()
     {
-        return TypeId.getTypeId(Type.Tile);
+        return TypeId.getTypeId(Type.Projectile);
     }
 
     @Override
     public int getId()
     {
-        return 0;
+        return id;
     }
 
     @Override
     public int getZ()
     {
-        return (int) z;
+        return z;
     }
 
     @Override
     public void Remove()
     {
-
+        
     }
 
 }

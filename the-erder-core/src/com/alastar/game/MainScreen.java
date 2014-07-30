@@ -1,8 +1,8 @@
 package com.alastar.game;
 
+import ru.alastar.main.net.requests.ActInput;
 import ru.alastar.main.net.requests.DropdownMenuRequest;
 import ru.alastar.main.net.requests.InputRequest;
-import ru.alastar.main.net.requests.TargetRequest;
 import ru.alastar.net.Client;
 import ru.alastar.net.LoginClient;
 
@@ -44,6 +44,8 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
 
     public static OrthographicCamera camera;
 
+    public static ActInput actIn;
+    
     public MainScreen(ErderGame gam)
     {
         LoginClient.Connect();
@@ -52,6 +54,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
         camera.setToOrtho(false, 750 / Vars.getInt("balancedScreenWidth"),
                 400 / Vars.getInt("balancedScreenHeight"));
 
+        actIn = new ActInput();
         game = gam;
 
         gui = new Stage();
@@ -216,56 +219,57 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
     public boolean keyDown(int keycode)
     {
         currentStage.keyDown(keycode);
-        return false;
+        return true;
     }
 
     @Override
     public boolean keyUp(int keycode)
     {
         MainScreen.currentStage.keyUp(keycode);
-        return false;
+        return true;
     }
 
     @Override
     public boolean keyTyped(char character)
     {
         MainScreen.currentStage.keyTyped(character);
-        return false;
+        return true;
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button)
     {
-        return false;
+        return true;
     }
 
-    private boolean ProcessTouch(int x, int y, int count, int button)
+    private boolean ProcessTouch(int x, int y, int pointer, int button)
     {
 
-        Vector3 vec = camera.unproject(new Vector3(x, y, 0));
+       /* Vector3 vec = camera.unproject(new Vector3(x, y, 0));
         for (TexturedObject obj : Map.entities)
         {
             if (obj.getWindowRectangle().contains(vec.x, vec.y))
             {
-                if (count == 1)
-                {
+               // if (count == 1)
+             //   {
                     DropdownMenuRequest r = new DropdownMenuRequest();
                     r.id = obj.getId();
                     r.type = obj.getType();
                     r.x = obj.getTransform().position.x;
                     r.y = obj.getTransform().position.y;
                     Client.Send(r);
-                } else
-                {
+               // } else
+               // {
                     TargetRequest r = new TargetRequest();
                     r.id = obj.getId();
                     Client.Send(r);
                     System.out.println("Send target packet");
-                }
+               // }
+               
                 return true;
 
             }
-        }
+        }*/
         /*
          * for(TexturedObject obj: Map.world.tiles.values()) {
          * if(obj.getWindowRectangle().contains(vec.x, vec.y)) {
@@ -274,7 +278,19 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
          * obj.getTransform().position.x; r.y = obj.getTransform().position.y;
          * PacketGenerator.generatePacket(r); return true; } }
          */
-        return false;
+        // Good formuals :)
+       /* Vector2 toNormalize = new Vector2( x - Vars.getInt("screenWidth"), y - Vars.getInt("screenHeight")); 
+        float length = toNormalize.len();
+        Vector2 normalized = new Vector2( toNormalize.x / length, toNormalize.y / length);
+        */  
+        Vector2 toTransform = new Vector2( x - Vars.getInt("screenWidth"), y - Vars.getInt("screenHeight")); 
+        //double cosinus = toTransform.x / toTransform.len();
+       // double sinus = toTransform.y / toTransform.len(); 
+        actIn.angle  = toTransform.angle();
+       // System.out.println("Cos: " + cosinus + " arccos: " + Math.toDegrees(actIn.angle) + " Sin: " + sinus + " arcsin: " + Math.toDegrees(Math.asin(sinus)));
+        //System.out.println("Angle: " + actIn.angle );
+        Client.Send(actIn);
+        return true;
 
     }
 
@@ -282,42 +298,36 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
     public boolean touchUp(int screenX, int screenY, int pointer, int button)
     {
         MainScreen.currentStage.touchUp(screenX, screenY, pointer, button);
-        return false;
+        return true;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer)
     {
         MainScreen.currentStage.touchDragged(screenX, screenY, pointer);
-        return false;
+        return true;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY)
     {
         MainScreen.currentStage.mouseMoved(screenX, screenY);
-        return false;
+        return true;
     }
 
     @Override
     public boolean scrolled(int amount)
     {
         MainScreen.currentStage.scrolled(amount);
-        return false;
+        return true;
     }
 
     @Override
     public boolean touchDown(float x, float y, int pointer, int button)
     {
-        return false;
-    }
-
-    @Override
-    public boolean tap(float x, float y, int count, int button)
-    {
         if (!MainScreen.currentStage.touchDown((int) x, (int) y, 0, button))
         {
-            ProcessTouch((int) x, (int) y, count, button);
+            ProcessTouch((int) x, (int) y, pointer, button);
             return true;
         } else
         {
@@ -326,40 +336,46 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
     }
 
     @Override
+    public boolean tap(float x, float y, int count, int button)
+    {
+       return false;
+    }
+
+    @Override
     public boolean longPress(float x, float y)
     {
-        return false;
+        return true;
     }
 
     @Override
     public boolean fling(float velocityX, float velocityY, int button)
     {
-        return false;
+        return true;
     }
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY)
     {
-        return false;
+        return true;
     }
 
     @Override
     public boolean panStop(float x, float y, int pointer, int button)
     {
-        return false;
+        return true;
     }
 
     @Override
     public boolean zoom(float initialDistance, float distance)
     {
-        return false;
+        return true;
     }
 
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
             Vector2 pointer1, Vector2 pointer2)
     {
-        return false;
+        return true;
     }
 
     public static void PushMessage(String string, boolean canDisturb)

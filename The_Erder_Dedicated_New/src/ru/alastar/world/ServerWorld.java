@@ -17,6 +17,7 @@ import ru.alastar.main.net.responses.RemovePacket;
 import ru.alastar.main.net.responses.RemoveTileResponse;
 import ru.alastar.main.net.responses.TargetInfoResponse;
 import ru.alastar.main.net.responses.UpdatePlayerResponse;
+import ru.alastar.physics.BaseProjectile;
 import ru.alastar.physics.CollisionListener;
 
 import com.alastar.game.Tile;
@@ -94,16 +95,18 @@ public class ServerWorld
         for (int i = 0; i < entities.size(); ++i)
         {
             upd = entities.get(i);
-            if (upd.getType() == 0)
-            {
-                c = Server.getClient((Entity) entities.get(i));
-                if (c != null)
+            if(upd != null){
+                if (upd.getType() == 0)
                 {
-                    r.x = (int) t.position.x;
-                    r.y = (int) t.position.y;
-                    r.z = (int) t.position.z;
-                    r.type = t.type;
-                    Server.SendTo(c.connection, r);
+                    c = Server.getClient((Entity) entities.get(i));
+                    if (c != null)
+                    {
+                        r.x = (int) t.position.x;
+                        r.y = (int) t.position.y;
+                        r.z = (int) t.position.z;
+                        r.type = t.type;
+                        Server.SendTo(c.connection, r);
+                    }
                 }
             }
         }
@@ -113,13 +116,15 @@ public class ServerWorld
     ////
     public void AddEntity(IUpdate i)
     {
-        entities.add(i);
-        for (IUpdate ent : entities)
+        entities.add(i); 
+        for (int j = entities.size() - 1; j > -1; j--)
         {
-            if (ent.getPosition().dst(i.getPosition()) <= Server.syncDistance)
-            {
-                ent.tryAddToNear(i);
-                i.tryAddToNear(ent);
+            if(entities.get(j) != null){ // sanity
+                if (entities.get(j).getPosition().dst(i.getPosition()) <= Server.syncDistance)
+                {
+                    entities.get(j).tryAddToNear(i);
+                    i.tryAddToNear(entities.get(j));
+                }
             }
         }
         // Main.Log("[DEBUG]","Add " + e.caption +
@@ -127,29 +132,32 @@ public class ServerWorld
 
     }
 
-    public void RemoveEntity(Entity entity)
+    public void RemoveEntity(IUpdate u)
     {
         RemovePacket r = new RemovePacket(); 
-        r.id = entity.id;
-        r.type = 1; // 1 - Entity
+        r.id = u.getId();
+        r.type = u.getType();
         ConnectedClient c;
         int index = 0;
         IUpdate upd;
-        for (int i = 0; i < entities.size(); ++i)
+        for (int i = entities.size() - 1; i > -1; i--)
         {
             upd = entities.get(i);
-            if (upd.getType() == 0)
+            if(upd != null) // sanity
             {
-                if (entity.id != ((Entity) upd).id)
+                if (upd.getType() == 0)
                 {
-                    c = Server.getClient(((Entity) upd));
-                    if (c != null)
+                    if (upd.getId() != ((Entity) upd).id)
                     {
+                        c = Server.getClient(((Entity) upd));
+                        if (c != null)
+                        {
 
-                        Server.SendTo(c.connection, r);
-                    }
-                } else
-                    index = i;
+                            Server.SendTo(c.connection, r);
+                        }
+                    } else
+                        index = i;
+                }
             }
         }
         entities.remove(index);
@@ -252,27 +260,35 @@ public class ServerWorld
 
     public void UpdateNear(IUpdate e2)
     {
-
-        // Main.Log("[DEBUG]","UpdateNear");
-        for (IUpdate e : e2.getAround())
+        IUpdate e;
+        for (int i = e2.getAround().size() - 1; i > -1; i--)
         {
-            if (e.getPosition().dst(e2.getPosition()) > Server.syncDistance)
+            e = e2.getAround().get(i);
+            if( e != null) //sanity
             {
-                e.tryRemoveNear(e2);
-                e2.tryRemoveNear(e);
-                UpdateNear(e2);
-                break;
+                if (e.getPosition().dst(e2.getPosition()) > Server.syncDistance)
+                {
+                    e.tryRemoveNear(e2);
+                    e2.tryRemoveNear(e);
+                    UpdateNear(e2);
+                    break;
+                }
+            }
+        }
+        
+        for (int i = entities.size() - 1; i > -1; i--)
+        {
+            e = entities.get(i);
+            if(e != null) //sanity
+            {
+                if (e.getPosition().dst(e2.getPosition()) <= Server.syncDistance)
+                {
+                    e.tryAddToNear(e2);
+                    e2.tryAddToNear(e);
+                }
             }
         }
 
-        for (IUpdate e : entities)
-        {
-            if (e.getPosition().dst(e2.getPosition()) <= Server.syncDistance)
-            {
-                e.tryAddToNear(e2);
-                e2.tryAddToNear(e);
-            }
-        }
     }
 
     public void UpdateTargetInfo(Entity entity, Stats stats)

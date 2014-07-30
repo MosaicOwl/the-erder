@@ -67,6 +67,7 @@ import ru.alastar.main.net.responses.MessageResponse;
 import ru.alastar.main.net.responses.ProcessLoginResponse;
 import ru.alastar.main.net.responses.SetData;
 import ru.alastar.main.net.responses.SpeechResponse;
+import ru.alastar.physics.BaseProjectile;
 import ru.alastar.world.ServerTile;
 import ru.alastar.world.ServerWorld;
 
@@ -84,7 +85,7 @@ public class Server
     public static Hashtable<String, Handler>          consoleCommands;
     public static Hashtable<Integer, AI>              ais;
     public static Hashtable<Integer, Equip>           equips;
-
+    public static Hashtable<Integer, BaseProjectile>  projectiles;
     public static Random                              random;
     public static float                               syncDistance = 50;
     private static Hashtable<Integer, Item>           items;
@@ -121,6 +122,8 @@ public class Server
             ais = new Hashtable<Integer, AI>();
             equips = new Hashtable<Integer, Equip>();
             items = new Hashtable<Integer, Item>();
+            projectiles = new Hashtable<Integer, BaseProjectile>();
+            
             if (DatabaseClient.Start())
             {
                 LoadWorlds();
@@ -1874,6 +1877,36 @@ public class Server
     public static void SendTo(ConnectedClient client, Object r)
     {
         client.connection.sendUDP(r);
+    }
+
+    public static void HandleActInput(double angle, Connection connection)
+    {
+        ConnectedClient c = getClient(connection);
+        if(c.account != null && c.controlledEntity != null) //sanity
+        {
+          c.controlledEntity.act(angle);
+        }
+    }
+
+    public static void RemoveProjectile(BaseProjectile baseProjectile)
+    {
+        if(projectiles.containsKey(baseProjectile.id))
+            projectiles.remove(baseProjectile.id);
+    }
+
+    public static void RegisterProjectile(BaseProjectile baseProjectile)
+    {
+        if(!projectiles.containsKey(baseProjectile.id))
+            projectiles.put(baseProjectile.id, baseProjectile);
+    }
+
+    public static int getProjFreeId()
+    {
+        int id = random.nextInt(10000);
+        if(!projectiles.containsKey(id))
+            return id;
+        else
+            return getProjFreeId();
     }
 
 }

@@ -3,6 +3,8 @@ package com.alastar.game;
 import java.util.Hashtable;
 
 import com.alastar.game.enums.ItemType;
+import com.alastar.game.enums.Type;
+import com.alastar.game.enums.TypeId;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -133,7 +135,7 @@ public class Item extends Transform implements TexturedObject
     @Override
     public Texture getTexture()
     {
-        return GameManager.getItemTexture(itemType);
+        return GameManager.getTexture(itemType.name().toLowerCase(), getType());
     }
 
     @Override
@@ -168,7 +170,7 @@ public class Item extends Transform implements TexturedObject
     @Override
     public int getType()
     {
-        return 3;
+        return TypeId.getTypeId(Type.Item);
     }
 
     @Override
@@ -186,7 +188,6 @@ public class Item extends Transform implements TexturedObject
     @Override
     public void Remove()
     {
-        // TODO Auto-generated method stub
 
     }
 

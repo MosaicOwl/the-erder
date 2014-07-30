@@ -5,6 +5,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.alastar.game.enums.ItemType;
+import com.alastar.game.enums.Type;
+import com.alastar.game.enums.TypeId;
 import com.alastar.game.enums.UpdateItemType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -21,11 +23,12 @@ import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddItemResponse;
 import ru.alastar.main.net.responses.RemovePacket;
 import ru.alastar.main.net.responses.UpdateItemResponse;
+import ru.alastar.physics.IPhysic;
 import ru.alastar.physics.PhysicalData;
 import ru.alastar.world.ServerTile;
 import ru.alastar.world.ServerWorld;
 
-public class Item extends Transform implements IUpdate
+public class Item extends Transform implements IUpdate, IPhysic
 {
 
     public int                id;
@@ -86,7 +89,7 @@ public class Item extends Transform implements IUpdate
         fixtureDef.restitution = 0.6f;
 
         fixture = body.createFixture(fixtureDef);
-        fixture.setUserData(pData);
+        fixture.setUserData((IPhysic)this);
 
         circle.dispose();
         active = true; 
@@ -114,7 +117,8 @@ public class Item extends Transform implements IUpdate
     {
         if(active){
             this.body.destroyFixture(fixture);
-            this.getWorld().getPhysic().destroyBody(body);
+            this.getWorld().getPhysic().destroyBody(body); 
+            this.getWorld().RemoveEntity(this);
         }
     }
     
@@ -160,7 +164,7 @@ public class Item extends Transform implements IUpdate
         {
             RemovePacket r = new RemovePacket();
             r.id = this.id;
-            r.type = 3;
+            r.type = TypeId.getTypeId(Type.Item);
             Server.SendTo(c, r);
         }
     }
@@ -186,7 +190,7 @@ public class Item extends Transform implements IUpdate
         if (allAround.contains(i))
         {
             allAround.remove(i);
-            if (i.getType() == 1)
+            if (i.getType() == TypeId.getTypeId(Type.Entity))
                 RemoveTo(Server.getClient((Entity) i));
         }
     }
@@ -197,7 +201,7 @@ public class Item extends Transform implements IUpdate
         if (!allAround.contains(e))
         {
             allAround.add(e);
-            if (e.getType() == 1){
+            if (e.getType() == TypeId.getTypeId(Type.Entity)){
                 UpdateTo(Server.getClient((Entity) e));
                 }
         }
@@ -206,7 +210,7 @@ public class Item extends Transform implements IUpdate
     @Override
     public int getType()
     {
-        return 3;
+        return TypeId.getTypeId(Type.Item);
     }
 
     @Override
@@ -223,7 +227,7 @@ public class Item extends Transform implements IUpdate
 
         for (IUpdate ent : allAround)
         {
-            if (ent.getType() == 1)
+            if (ent.getType() == TypeId.getTypeId(Type.Entity))
             {
                 c = Server.getClient((Entity) ent);
 
@@ -252,6 +256,25 @@ public class Item extends Transform implements IUpdate
     public ArrayList<IUpdate> getAround()
     {
         return allAround;
+    }
+
+    @Override
+    public PhysicalData getData()
+    {
+        return pData;
+    }
+
+    @Override
+    public void UpdatePhysicalData(int z, boolean b)
+    {
+        this.pData.setZ(z);
+        this.pData.setIgnore(b);
+    }
+
+    @Override
+    public int getId()
+    {
+        return id;
     }
 
 }

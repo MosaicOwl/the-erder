@@ -90,10 +90,13 @@ public class Map
     {
         for (int i = interps.size() - 1; i > -1; i--)
         {
-            interps.get(i).Step();
-            if (interps.get(i).finished)
+            if(interps.get(i) != null)
             {
-                RemoveInter(interps.get(i));
+                interps.get(i).Step();
+                if (interps.get(i).finished)
+                {
+                    RemoveInter(interps.get(i));
+                }
             }
         }
     }
@@ -138,12 +141,12 @@ public class Map
     }
 
     public static void drawAllByZ(int z)
-    {
-        for (TexturedObject o : entities)
+    {   
+        for (int i = entities.size() - 1; i > -1; i--)
         {
-            if (o.getZ() == z)
+            if (entities.get(i).getZ() == z)
             {
-                o.Draw(ErderGame.batch, 0, 0);
+                entities.get(i).Draw(ErderGame.batch, 0, 0);
             }
         }
     }
@@ -190,6 +193,12 @@ public class Map
             entities.remove(obj);
             obj.Remove();
         }
+    }
+
+    public static void addProj(Projectile projectile)
+    {  
+        if (getObjectById(projectile.id, 2) == null)
+            entities.add(projectile);        
     }
 
 }

@@ -45,6 +45,7 @@ public class TListener extends Listener
         registerPacket(Vector2.class, true);
         registerPacket(ItemType.class, true);
         kryo.register(UpdateItemType.class);
+        kryo.register(ProjectileType.class);
 
         registerPacket(LoginResponse.class, true);
         registerPacket(AddEntityResponse.class, true);
@@ -82,7 +83,9 @@ public class TListener extends Listener
         registerPacket(UpdateItemResponse.class, true);
         registerPacket(AddProjectileResponse.class, true);
         registerPacket(UpdateProjectileResponse.class, true);
-        registerPacket(RemovePacket.class, true);
+        registerPacket(RemovePacket.class, true); 
+        registerPacket(ActInput.class, true);
+
     }
 
     public void registerPacket(@SuppressWarnings("rawtypes") Class c,
@@ -102,8 +105,13 @@ public class TListener extends Listener
                 {
                     AuthPacketRequest r = (AuthPacketRequest) object;
                     Server.Login(r.login, r.pass, connection);
+                } 
+                else if (object instanceof ActInput)
+                {
+                    ActInput r = (ActInput) object;
+                    Server.HandleActInput(r.angle, connection);
                 }
-                if (object instanceof CharacterChooseRequest)
+                else if (object instanceof CharacterChooseRequest)
                 {
                     CharacterChooseRequest r = (CharacterChooseRequest) object;
                     Server.HandleCharacterChoose(r.nick, connection);

@@ -27,4 +27,6 @@ public interface IUpdate
 
     public ArrayList<IUpdate> getAround();
 
+    public int getId();
+
 }

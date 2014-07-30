@@ -5,6 +5,8 @@ import java.util.Hashtable;
 import ru.alastar.net.Client;
 
 import com.alastar.game.enums.EntityType;
+import com.alastar.game.enums.Type;
+import com.alastar.game.enums.TypeId;
 import com.alastar.game.gui.GUIPlayerOverhead;
 import com.alastar.game.gui.GUITarget;
 import com.badlogic.gdx.graphics.Texture;
@@ -66,7 +68,7 @@ public class Entity extends Transform implements TexturedObject
     @Override
     public Texture getTexture()
     {
-        return GameManager.getEntityTexture(type);
+        return GameManager.getTexture(type.name().toLowerCase(), getType());
     }
 
     @Override
@@ -133,7 +135,7 @@ public class Entity extends Transform implements TexturedObject
                 if (getEquipSlot(slot).item != null)
                 {
                     item = getEquipSlot(slot).item;
-                    batch.draw(GameManager.getItemTexture(item.itemType), i
+                    batch.draw(GameManager.getTexture(item.itemType.name().toLowerCase(), TypeId.getTypeId(Type.Item)), i
                             + item.getEquipX(), j + item.getEquipY());
                 }
             }
@@ -160,7 +162,7 @@ public class Entity extends Transform implements TexturedObject
     @Override
     public int getType()
     {
-        return 1;
+      return TypeId.getTypeId(Type.Entity);
     }
 
     @Override

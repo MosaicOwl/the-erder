@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import com.alastar.game.enums.EntityType;
-import com.alastar.game.enums.ItemType;
-import com.alastar.game.enums.TileType;
 import com.alastar.game.lang.Entry;
 import com.alastar.game.lang.EntryManager;
 import com.alastar.game.lang.Language;
@@ -35,20 +32,11 @@ public class GameManager
 {
 
     public static int                     fontSize            = 10;
-    public static Texture                 grass;
-    public static Texture                 stone;
-    public static Texture                 swamp;
-    public static Texture                 lava;
-    public static Texture                 water;
-    public static Texture                 brick;
-
-    public static Texture                 elf;
-    public static Texture                 human;
-    public static Texture                 shaolin;
-    public static Texture                 orc;
-    public static Texture                 zombie;
-    public static Texture                 skeleton;
-    public static Texture                 wolf;
+    public static Hashtable<String, Texture>     tiles;
+    public static Hashtable<String, Texture>     entities;
+    public static Hashtable<String, Texture>     projectiles;
+    public static Hashtable<String, Texture>     items;
+    public static Texture                 nullTexture;
 
     // public static Texture background;
 
@@ -78,23 +66,27 @@ public class GameManager
         // //////////
         // TEXTURES//
         // //////////
-        grass = new Texture(Gdx.files.internal("textures/tiles/grass.png"));
-        water = new Texture(Gdx.files.internal("textures/tiles/Water.png"));
-        stone = new Texture(Gdx.files.internal("textures/tiles/Stone.png"));
-        lava = new Texture(Gdx.files.internal("textures/tiles/Lava.png"));
-        swamp = new Texture(Gdx.files.internal("textures/tiles/Swamp.png"));
-        brick = new Texture(Gdx.files.internal("textures/tiles/bricks.png"));
+        tiles = new Hashtable<String, Texture>();
+        entities = new Hashtable<String, Texture>();
+        projectiles = new Hashtable<String, Texture>();
+        items = new Hashtable<String, Texture>();
 
-        shaolin = new Texture(
-                Gdx.files.internal("textures/entities/shaolin.png"));
-        human = new Texture(Gdx.files.internal("textures/entities/human.png"));
-        orc = new Texture(Gdx.files.internal("textures/entities/orc.png"));
-        elf = new Texture(Gdx.files.internal("textures/entities/elf.png"));
-        wolf = new Texture(Gdx.files.internal("textures/entities/human.png"));
-        skeleton = new Texture(
-                Gdx.files.internal("textures/entities/human.png"));
-        zombie = new Texture(Gdx.files.internal("textures/entities/human.png"));
-        textureResolution = grass.getWidth();
+        tiles.put("grass", new Texture(Gdx.files.internal("textures/tiles/grass.png")));
+        tiles.put("water", new Texture(Gdx.files.internal("textures/tiles/Water.png")));
+        tiles.put("stone", new Texture(Gdx.files.internal("textures/tiles/Stone.png")));
+        tiles.put("lava", new Texture(Gdx.files.internal("textures/tiles/Lava.png")));
+        tiles.put("swamp", new Texture(Gdx.files.internal("textures/tiles/Swamp.png")));
+        tiles.put("brick", new Texture(Gdx.files.internal("textures/tiles/bricks.png")));
+
+        entities.put("shaolin", new Texture(Gdx.files.internal("textures/entities/shaolin.png")));
+        entities.put("human", new Texture(Gdx.files.internal("textures/entities/human.png")));
+        entities.put("orc", new Texture(Gdx.files.internal("textures/entities/orc.png")));
+        entities.put("elf", new Texture(Gdx.files.internal("textures/entities/elf.png")));
+        entities.put("wolf", new Texture(Gdx.files.internal("textures/entities/shaolin.png")));
+        entities.put("skeleton", new Texture(Gdx.files.internal("textures/entities/shaolin.png")));
+        entities.put("zombie", new Texture(Gdx.files.internal("textures/entities/shaolin.png")));
+        nullTexture = new Texture(Gdx.files.internal("textures/tiles/Lava.png"));
+        textureResolution = getTexture("grass", 0).getWidth();
 
         // background = new Texture(
         // Gdx.files.internal("textures/gui/TheErderBackground.png"));
@@ -360,28 +352,6 @@ public class GameManager
         return null;
     }
 
-    public static Texture getTexture(TileType t)
-    {
-        switch (t)
-        {
-            case Grass:
-                return grass;
-            case Brick:
-                return brick;
-            case Lava:
-                return lava;
-            case Stone:
-                return stone;
-            case Swamp:
-                return swamp;
-            case Water:
-                return water;
-            default:
-                return grass;
-
-        }
-    }
-
     public static String getLocalizedMessage(int res)
     {
         try
@@ -410,37 +380,36 @@ public class GameManager
         return new Vector3(f.x - w.x, f.y - w.y, f.z - w.z);
     }
 
-    public static Texture getEntityTexture(EntityType type)
-    {
-        switch (type)
-        {
-            case Human:
-                return human;
-            case Elf:
-                return elf;
-            case Orc:
-                return orc;
-            case Shaolin:
-                return shaolin;
-            case Skeleton:
-                return skeleton;
-            case Wolf:
-                return wolf;
-            case Zombie:
-                return zombie;
-            default:
-                return human;
-        }
-    }
-
     public static Skin getSkin(String skinName)
     {
         return skins.get(skinName);
     }
 
-    public static Texture getItemTexture(ItemType type)
+    public static Texture getTexture(String lowerCase, int type) // 0 -Tile, 1 - Entity, 2 - Projectile, 3 - Item
     {
-        return human;
+        switch(type)
+        {
+            case 0:
+                if(tiles.containsKey(lowerCase))
+                return tiles.get(lowerCase);
+            case 1: 
+                if(entities.containsKey(lowerCase))
+                return entities.get(lowerCase);
+            case 2:  
+                if(projectiles.containsKey(lowerCase))
+                return projectiles.get(lowerCase); 
+            case 3: 
+                if(items.containsKey(lowerCase))
+                return items.get(lowerCase);
+            default:
+                break;
+        }
+        return nullTexture;
+    }
+
+    public static Texture getGUITexture(String string)
+    {     
+        return getSkin(selectedSkin).get(string, Texture.class);
     }
 
 }

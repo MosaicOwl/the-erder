@@ -3,6 +3,8 @@ package com.alastar.game.gui;
 import com.alastar.game.GameManager;
 import com.alastar.game.Vars;
 import com.alastar.game.enums.ItemType;
+import com.alastar.game.enums.Type;
+import com.alastar.game.enums.TypeId;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -38,7 +40,7 @@ public class GUIContainerItem implements GUIElement
         modal.defaults().padBottom(l);
         modal.defaults().minWidth(10);
         modal.defaults().minHeight(10);
-        modal.add(new Image(GameManager.getItemTexture(type)));
+        modal.add(new Image(GameManager.getTexture(type.name().toLowerCase(), TypeId.getTypeId(Type.Item))));
         modal.setTitle("");
     }
 

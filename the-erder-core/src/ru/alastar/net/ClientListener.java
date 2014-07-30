@@ -13,13 +13,16 @@ import com.alastar.game.GameManager;
 import com.alastar.game.Item;
 import com.alastar.game.MainScreen;
 import com.alastar.game.Map;
+import com.alastar.game.Projectile;
 import com.alastar.game.TargetInfo;
 import com.alastar.game.enums.EntityType;
 import com.alastar.game.enums.ItemType;
+import com.alastar.game.enums.ProjectileType;
 import com.alastar.game.enums.UpdateItemType;
 import com.alastar.game.enums.UpdateType;
 import com.alastar.game.gui.GUICore;
 import com.alastar.game.gui.constructed.ChatGUI;
+import com.alastar.game.gui.constructed.JoysticksGUI;
 import com.alastar.game.gui.constructed.StatusGUI;
 import com.alastar.game.gui.net.NetGUIAnswer;
 import com.alastar.game.gui.net.NetGUICore;
@@ -53,6 +56,7 @@ public class ClientListener extends Listener
         kryo.register(Vector2.class);
         kryo.register(ItemType.class);
         kryo.register(UpdateItemType.class);
+        kryo.register(ProjectileType.class);
 
         kryo.register(LoginResponse.class);
         kryo.register(AddEntityResponse.class);
@@ -91,6 +95,7 @@ public class ClientListener extends Listener
         kryo.register(AddProjectileResponse.class);
         kryo.register(UpdateProjectileResponse.class);
         kryo.register(RemovePacket.class);
+        kryo.register(ActInput.class);
 
         // System.out.println("Client Handler have been started!");
     }
@@ -109,7 +114,19 @@ public class ClientListener extends Listener
             AddItemResponse r = (AddItemResponse) object;
             Map.handleItem(new Item(r.id, new Vector3(r.x, r.y, r.z),
                     r.caption, r.type, r.amount, r.attrs));
-        } else if (object instanceof RemovePacket)
+        }
+        else if (object instanceof AddProjectileResponse)
+        {
+            AddProjectileResponse r = (AddProjectileResponse) object;
+            Map.addProj(new Projectile(r.id, r.angle, r.projectileType, r.x, r.y, r.z));
+        }  
+        else if (object instanceof UpdateProjectileResponse)
+        {
+          //  System.out.println("Update proj");
+            UpdateProjectileResponse r = (UpdateProjectileResponse) object;
+            Map.handleUpdate(r.id, 2, new Vector3(r.x, r.y, r.z));
+        }
+        else if (object instanceof RemovePacket)
         {
             RemovePacket r = (RemovePacket) object;
             Map.handleRemove(r.id, r.type);
@@ -224,6 +241,7 @@ public class ClientListener extends Listener
             MainScreen.currentStage = MainScreen.gui;
             GUICore.addConstructedGUI(new StatusGUI(MainScreen.gui, "Status"));
             GUICore.addConstructedGUI(new ChatGUI(MainScreen.gui));
+            GUICore.addConstructedGUI(new JoysticksGUI(MainScreen.gui, "joysticks"));
             Client.LoadWorld(r.name);
         } else if (object instanceof UpdatePlayerResponse)
         {

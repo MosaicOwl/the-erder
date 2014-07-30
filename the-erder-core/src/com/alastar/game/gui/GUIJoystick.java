@@ -1,43 +1,43 @@
 package com.alastar.game.gui;
 
-import com.alastar.game.GameManager;
-import com.alastar.game.Vars;
-import com.alastar.game.enums.ItemType;
-import com.alastar.game.enums.Type;
-import com.alastar.game.enums.TypeId;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-public class GUIEquipSlot implements GUIElement
+public class GUIJoystick implements GUIElement
 {
-    private String name;
-    private Label  label;
-    private Table  table;
-    private Image  image;
 
-    public GUIEquipSlot()
+    public Table table;
+    public Image background;
+    public Image pressElement;
+    public Texture texture;
+    public Texture pressTexture;
+    public Vector2 center;
+    public EventListener tapListener;
+    
+    public GUIJoystick(float x, float y, Texture t, Texture pT, float w, float h, EventListener dl)
     {
-        this.name = "GenericSlot";
-        this.label = new Label(this.name,
-                GameManager.getSkin(GameManager.selectedSkin), "label");
-        this.image = new Image(GameManager.getTexture(ItemType.None.name().toLowerCase(), TypeId.getTypeId(Type.Item)));
-        this.table = new Table();
-        table.add(image);
-        table.add(label);
+        table = new Table();
+        table.setFillParent(false);
+        table.setPosition(x, y);
+        table.setWidth(w);
+        table.setHeight(h);
+        this.texture = t;
+        this.pressTexture = pT;
+        background = new Image(texture);
+        pressElement = new Image(pressTexture);
+        pressElement.setVisible(false);
+        background.setFillParent(true);
+        table.add(background);
+        table.add(pressElement);
+        center = new Vector2(table.getCenterX(), table.getCenterY());
+        tapListener = dl;
+        table.addListener(dl);
     }
-
-    public void Update(String s)
-    {
-    }
-
-    public void Update()
-    {
-    }
-
+    
     @Override
     public Actor getElementAsActor()
     {
@@ -47,15 +47,19 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public String getName()
     {
-        return name;
+        return null;
+    }
+
+    @Override
+    public void setName(String s)
+    {
+        
     }
 
     @Override
     public void Destroy()
     {
-      //  table.remove(); 
-        Hide();
-        table.clear();
+        
     }
 
     @Override
@@ -71,16 +75,21 @@ public class GUIEquipSlot implements GUIElement
     }
 
     @Override
+    public void Update(String val)
+    {
+        
+    }
+
+    @Override
     public String getHandledVariable()
     {
-        return "";
+        return null;
     }
 
     @Override
     public void setHandledVariable(String val)
     {
-      //  ItemType type = ItemType.valueOf(val);
-        image = new Image(GameManager.getTexture(ItemType.None.name().toLowerCase(), TypeId.getTypeId(Type.Item)));
+        
     }
 
     @Override
@@ -92,52 +101,43 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public void setEventListener(EventListener val)
     {
-
-    }
-
-    @Override
-    public void setName(String s)
-    {
-        this.name = s;
-        this.label.setName(s);
+        
     }
 
     @Override
     public Float getHeight()
     {
-        return label.getHeight();
+        return null;
     }
 
     @Override
     public void setHeight(float val)
     {
-        this.label.setHeight(val / Vars.getInt("balancedScreenHeight"));
+        
     }
 
     @Override
     public Float getWidth()
     {
-        return label.getWidth();
+        return null;
     }
 
     @Override
     public void setWidth(float val)
     {
-        this.label.setWidth(val / Vars.getInt("balancedScreenWidth"));
-
+        
     }
 
     @Override
     public Vector2 getPosition()
     {
-        return new Vector2(label.getX(), label.getY());
+        return null;
     }
 
     @Override
     public void setPosition(Vector2 val)
     {
-        label.setX(val.x / Vars.getInt("balancedScreenWidth"));
-        label.setY(val.y / Vars.getInt("balancedScreenHeight"));
+        
     }
 
     @Override
@@ -149,6 +149,7 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public void setPadTB(Vector2 val)
     {
+        
     }
 
     @Override
@@ -160,6 +161,7 @@ public class GUIEquipSlot implements GUIElement
     @Override
     public void setPadRL(Vector2 val)
     {
+        
     }
 
     @Override
@@ -170,7 +172,7 @@ public class GUIEquipSlot implements GUIElement
 
     @Override
     public void setMinHW(Vector2 val)
-    {
+    {        
     }
 
     @Override
@@ -181,27 +183,30 @@ public class GUIEquipSlot implements GUIElement
 
     @Override
     public void setMaxHW(Vector2 val)
-    {
-
+    {        
     }
 
     @Override
     public void setText(String text)
-    {
-        label.setText(text);
-        Update();
+    {        
     }
 
     @Override
     public String getText()
     {
-        return label.getText().toString();
+        return null;
     }
 
     @Override
     public void addChild(GUIElement o)
     {
+        
+    }
 
+    public void setPressPosition(float f, float g)
+    {
+
+        
     }
 
 }

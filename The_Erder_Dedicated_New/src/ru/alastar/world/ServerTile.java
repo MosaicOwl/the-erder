@@ -1,5 +1,6 @@
 package ru.alastar.world;
 
+import ru.alastar.physics.IPhysic;
 import ru.alastar.physics.PhysicalData;
 
 import com.alastar.game.Tile;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
-public class ServerTile extends Transform
+public class ServerTile extends Transform implements IPhysic
 {
     /**
      * 
@@ -39,13 +40,12 @@ public class ServerTile extends Transform
 
             groundBody = world.getPhysic().createBody(groundBodyDef);
             pData = new PhysicalData((int) this.position.z, false);
-            // groundBody.setUserData(pData);
 
             groundBox = new PolygonShape();
             groundBox.setAsBox(0.5f, 0.5f);
 
             fixture = groundBody.createFixture(groundBox, 0.0f);
-            fixture.setUserData(pData);
+            fixture.setUserData((IPhysic)this);
 
             groundBox.dispose();
         }
@@ -63,15 +63,27 @@ public class ServerTile extends Transform
 
             groundBody = w.getPhysic().createBody(groundBodyDef);
             pData = new PhysicalData((int) this.position.z, false);
-            // groundBody.setUserData(pData);
 
             groundBox = new PolygonShape();
             groundBox.setAsBox(0.5f, 0.5f);
 
             fixture = groundBody.createFixture(groundBox, 0.0f);
-            fixture.setUserData(pData);
+            fixture.setUserData((IPhysic)this);
 
             groundBox.dispose();
         }
+    }
+
+    @Override
+    public PhysicalData getData()
+    {
+        return pData;
+    }
+
+    @Override
+    public void UpdatePhysicalData(int z, boolean b)
+    {
+        this.pData.setZ(z);
+        this.pData.setIgnore(b);
     }
 }
