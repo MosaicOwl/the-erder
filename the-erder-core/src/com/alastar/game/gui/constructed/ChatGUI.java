@@ -33,7 +33,7 @@ public class ChatGUI extends BaseConstructed
         field.setPosition(new Vector2(10, 1800));
         window = new GUIChatWindow("Chat", new Window("Chat",
                 GameManager.getSkin(GameManager.selectedSkin), "window"),
-                new Vector2(10, 1850), new Vector2(900, 250), 10, 10, 0, 0);
+                new Vector2(10, 1850), new Vector2(300, 100), 10, 10, 0, 0);
 
         ChangeListener e = new ChangeListener()
         {

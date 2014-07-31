@@ -34,7 +34,7 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
 
     public static Stage              currentStage;
 
-    public static int                tileView = 13;
+    public static int                tileView = 25;
 
     public static Stage              gui;
 
@@ -51,8 +51,8 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
         LoginClient.Connect();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 750 / Vars.getInt("balancedScreenWidth"),
-                400 / Vars.getInt("balancedScreenHeight"));
+        camera.setToOrtho(false, (int)(400  / Vars.getDouble("balancedScreenWidth")),
+                (int)(400 / Vars.getDouble("balancedScreenHeight")));
 
         actIn = new ActInput();
         game = gam;
@@ -244,51 +244,9 @@ public class MainScreen implements Screen, InputProcessor, GestureListener
 
     private boolean ProcessTouch(int x, int y, int pointer, int button)
     {
-
-       /* Vector3 vec = camera.unproject(new Vector3(x, y, 0));
-        for (TexturedObject obj : Map.entities)
-        {
-            if (obj.getWindowRectangle().contains(vec.x, vec.y))
-            {
-               // if (count == 1)
-             //   {
-                    DropdownMenuRequest r = new DropdownMenuRequest();
-                    r.id = obj.getId();
-                    r.type = obj.getType();
-                    r.x = obj.getTransform().position.x;
-                    r.y = obj.getTransform().position.y;
-                    Client.Send(r);
-               // } else
-               // {
-                    TargetRequest r = new TargetRequest();
-                    r.id = obj.getId();
-                    Client.Send(r);
-                    System.out.println("Send target packet");
-               // }
-               
-                return true;
-
-            }
-        }*/
-        /*
-         * for(TexturedObject obj: Map.world.tiles.values()) {
-         * if(obj.getWindowRectangle().contains(vec.x, vec.y)) {
-         * DropdownMenuRequest r = new DropdownMenuRequest(); r.id =
-         * obj.getId(); r.type = obj.getType(); r.x =
-         * obj.getTransform().position.x; r.y = obj.getTransform().position.y;
-         * PacketGenerator.generatePacket(r); return true; } }
-         */
-        // Good formuals :)
-       /* Vector2 toNormalize = new Vector2( x - Vars.getInt("screenWidth"), y - Vars.getInt("screenHeight")); 
-        float length = toNormalize.len();
-        Vector2 normalized = new Vector2( toNormalize.x / length, toNormalize.y / length);
-        */  
-        Vector2 toTransform = new Vector2( x - Vars.getInt("screenWidth"), y - Vars.getInt("screenHeight")); 
-        //double cosinus = toTransform.x / toTransform.len();
-       // double sinus = toTransform.y / toTransform.len(); 
+        Vector2 toTransform = new Vector2( x - ((float)Vars.getDouble("screenWidth") / 2), y - ((float)Vars.getDouble("screenHeight") / 2)); 
+        toTransform = toTransform.nor();
         actIn.angle  = toTransform.angle();
-       // System.out.println("Cos: " + cosinus + " arccos: " + Math.toDegrees(actIn.angle) + " Sin: " + sinus + " arcsin: " + Math.toDegrees(Math.asin(sinus)));
-        //System.out.println("Angle: " + actIn.angle );
         Client.Send(actIn);
         return true;
 

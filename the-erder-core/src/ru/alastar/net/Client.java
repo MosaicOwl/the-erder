@@ -73,16 +73,16 @@ public class Client
         {
             stats.remove(name.toLowerCase());
         }
-        if (Vars.integerVars.containsKey(name.toLowerCase() + "_value"))
+        if (Vars.doubleVars.containsKey(name.toLowerCase() + "_value"))
         {
-            Vars.setVar(name.toLowerCase() + "_value", sValue);
+            Vars.setVar(name.toLowerCase() + "_value", (double)sValue);
         } else
-            Vars.AddVar(name.toLowerCase() + "_value", sValue);
-        if (Vars.integerVars.containsKey(name.toLowerCase() + "_max"))
+            Vars.AddVar(name.toLowerCase() + "_value", (double)sValue);
+        if (Vars.doubleVars.containsKey(name.toLowerCase() + "_max"))
         {
-            Vars.setVar(name.toLowerCase() + "_max", mValue);
+            Vars.setVar(name.toLowerCase() + "_max", (double)mValue);
         } else
-            Vars.AddVar(name.toLowerCase() + "_max", mValue);
+            Vars.AddVar(name.toLowerCase() + "_max", (double)mValue);
 
         stats.put(name.toLowerCase(), new Stat(name, sValue, mValue));
     }
@@ -93,16 +93,16 @@ public class Client
         {
             skills.remove(name.toLowerCase());
         }
-        if (Vars.integerVars.containsKey(name.toLowerCase() + "_value"))
+        if (Vars.doubleVars.containsKey(name.toLowerCase() + "_value"))
         {
-            Vars.setVar(name.toLowerCase() + "_value", sValue);
+            Vars.setVar(name.toLowerCase() + "_value", (double)sValue);
         } else
-            Vars.AddVar(name.toLowerCase() + "_value", sValue);
-        if (Vars.integerVars.containsKey(name.toLowerCase() + "_max"))
+            Vars.AddVar(name.toLowerCase() + "_value", (double)sValue);
+        if (Vars.doubleVars.containsKey(name.toLowerCase() + "_max"))
         {
-            Vars.setVar(name.toLowerCase() + "_max", mValue);
+            Vars.setVar(name.toLowerCase() + "_max", (double)mValue);
         } else
-            Vars.AddVar(name.toLowerCase() + "_max", mValue);
+            Vars.AddVar(name.toLowerCase() + "_max", (double)mValue);
 
         skills.put(name.toLowerCase(), new Skill(name, sValue, mValue));
     }

@@ -241,7 +241,7 @@ public class ClientListener extends Listener
             MainScreen.currentStage = MainScreen.gui;
             GUICore.addConstructedGUI(new StatusGUI(MainScreen.gui, "Status"));
             GUICore.addConstructedGUI(new ChatGUI(MainScreen.gui));
-            GUICore.addConstructedGUI(new JoysticksGUI(MainScreen.gui, "joysticks"));
+           // GUICore.addConstructedGUI(new JoysticksGUI(MainScreen.gui, "joysticks"));
             Client.LoadWorld(r.name);
         } else if (object instanceof UpdatePlayerResponse)
         {

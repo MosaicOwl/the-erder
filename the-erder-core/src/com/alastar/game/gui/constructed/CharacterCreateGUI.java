@@ -24,7 +24,7 @@ public class CharacterCreateGUI extends BaseConstructed
     {
         super(s, name);
 
-        final int bsw = Vars.getInt("balancedScreenWidth");
+        final float bsw = (float)Vars.getDouble("balancedScreenWidth");
 
         Label nickLabel = new Label(GameManager.getLocalizedMessage("Name")
                 + ":", GameManager.labelStyle);
@@ -47,13 +47,20 @@ public class CharacterCreateGUI extends BaseConstructed
                 GameManager.txtBtnStyle);
 
         btnCreate.setWidth(175 / bsw);
-
+        btnCreate.padLeft(15);
+        btnCreate.padRight(15);
+        btnCreate.padTop(10);
+        btnCreate.padBottom(10);
         final TextButton btnBack = new TextButton(
                 GameManager.getLocalizedMessage("Back"),
                 GameManager.txtBtnStyle);
 
         btnBack.setWidth(175 / bsw);
-
+        btnBack.padLeft(15);
+        btnBack.padRight(15);
+        btnBack.padTop(10);
+        btnBack.padBottom(10);
+        
         table = new Table();
         table.setFillParent(true);
 

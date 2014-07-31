@@ -20,15 +20,15 @@ public class GUIServerList implements GUIElement
     {
         this.window = new Window("servers_list",
                 GameManager.getSkin(GameManager.selectedSkin), "window");
-        this.window.setHeight(1000 / Vars.getInt("balancedScreenHeight"));
-        this.window.setWidth(1000 / Vars.getInt("balancedScreenWidth"));
+        this.window.setHeight(500 / (float)Vars.getDouble("balancedScreenHeight"));
+        this.window.setWidth(500 / (float)Vars.getDouble("balancedScreenWidth"));
         window.defaults().padLeft(10);
         window.defaults().padRight(10);
         window.defaults().padTop(10);
         window.defaults().padBottom(10);
-        window.defaults().prefWidth(1000 / Vars.getInt("balancedScreenWidth"));
+        window.defaults().prefWidth(500 / (float)Vars.getDouble("balancedScreenWidth"));
         window.defaults()
-                .prefHeight(1000 / Vars.getInt("balancedScreenHeight"));
+                .prefHeight(500 / (float)Vars.getDouble("balancedScreenHeight"));
 
         table = new Table();
         table.defaults().padLeft(10);
@@ -36,8 +36,8 @@ public class GUIServerList implements GUIElement
         table.defaults().padTop(10);
         table.defaults().padBottom(10);
         table.setFillParent(true);
-        table.setWidth(980);
-        table.setHeight(980);
+        table.setWidth(480);
+        table.setHeight(480);
         table.left();
         table.bottom();
 
@@ -48,8 +48,8 @@ public class GUIServerList implements GUIElement
         scroll.setFadeScrollBars(false);
         scroll.setFillParent(true);
         scroll.setSmoothScrolling(false);
-        scroll.setWidth(990);
-        scroll.setHeight(990);
+        scroll.setWidth(480);
+        scroll.setHeight(480);
 
         window.add(scroll).fill();
         window.setTitle("Pick a server");

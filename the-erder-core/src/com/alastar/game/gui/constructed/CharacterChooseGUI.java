@@ -22,7 +22,7 @@ public class CharacterChooseGUI extends BaseConstructed
     public CharacterChooseGUI(Stage s, String name)
     {
         super(s, name);
-        final int bsw = Vars.getInt("balancedScreenWidth");
+        final float bsw = (float)Vars.getDouble("balancedScreenWidth");
 
         String n = "";
 
@@ -37,19 +37,28 @@ public class CharacterChooseGUI extends BaseConstructed
                 GameManager.txtBtnStyle);
 
         btnCh.setWidth(175 / bsw);
-
+        btnCh.padLeft(15);
+        btnCh.padRight(15);
+        btnCh.padTop(10);
+        btnCh.padBottom(10);
         final TextButton btnCr = new TextButton(
                 GameManager.getLocalizedMessage("Create"),
                 GameManager.txtBtnStyle);
 
         btnCr.setWidth(175 / bsw);
-
+        btnCr.padLeft(15);
+        btnCr.padRight(15);
+        btnCr.padTop(10);
+        btnCr.padBottom(10);
         final TextButton btnDel = new TextButton(
                 GameManager.getLocalizedMessage("Delete"),
                 GameManager.txtBtnStyle);
 
         btnDel.setWidth(175 / bsw);
-
+        btnDel.padLeft(5);
+        btnDel.padRight(5);
+        btnDel.padTop(5);
+        btnDel.padBottom(5);
         table = new Table();
         table.setFillParent(true);
         table.add(nameLabel1);
@@ -64,11 +73,11 @@ public class CharacterChooseGUI extends BaseConstructed
 
         table.add(btnCr);
         table.row();
-
-        table.add(btnDel);
+        
+        table.add(btnCh);
         table.row();
 
-        table.add(btnCh);
+        table.add(btnDel);
 
         btnCh.addListener(new ChangeListener()
         {

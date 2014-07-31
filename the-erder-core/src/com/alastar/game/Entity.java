@@ -38,7 +38,7 @@ public class Entity extends Transform implements TexturedObject
         this.warMode = mode;
         this.equip = new Hashtable<String, Slot>();
         overhead = new GUIPlayerOverhead(caption + "_overhead", new Vector2(0,
-                0), new Vector2(400, 200));
+                0), new Vector2(50, 25));
         target = new GUITarget(this.getTexture().getWidth(), this.getTexture()
                 .getHeight());
         target.Hide();
@@ -101,14 +101,13 @@ public class Entity extends Transform implements TexturedObject
         Vector3 vec = MainScreen.camera.project(new Vector3(x, y, 0));
         DrawEquip(batch, x, y);
         target.setPosition(new Vector2(vec.x
-                * Vars.getInt("balancedScreenWidth"), vec.y
-                * Vars.getInt("balancedScreenHeight")));
+                * (float)Vars.getDouble("balancedScreenWidth"), vec.y
+                * (float)Vars.getDouble("balancedScreenHeight")));
         DrawTarget(batch, x, y);
-        overhead.setPosition(new Vector2((vec.x * Vars
-                .getInt("balancedScreenWidth"))
-                - (overhead.getWidth() / 2)
-                - 40, (vec.y + this.getTexture().getHeight() + 60)
-                * Vars.getInt("balancedScreenHeight")));
+        overhead.setPosition(new Vector2((vec.x * (float)Vars
+                .getDouble("balancedScreenWidth")),
+                (vec.y + this.getTexture().getHeight() + 60)
+                * (float)Vars.getDouble("balancedScreenHeight")));
     }
 
     private void DrawTarget(SpriteBatch batch, float i, float j)

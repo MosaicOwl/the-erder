@@ -103,7 +103,7 @@ public class GUIButton implements GUIElement
     @Override
     public void setHeight(float val)
     {
-        this.button.setHeight(val / Vars.getInt("balancedScreenHeight"));
+        this.button.setHeight(val / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -115,7 +115,7 @@ public class GUIButton implements GUIElement
     @Override
     public void setWidth(float val)
     {
-        this.button.setWidth(val / Vars.getInt("balancedScreenWidth"));
+        this.button.setWidth(val /(float)Vars.getDouble("balancedScreenWidth"));
 
     }
 
@@ -128,8 +128,8 @@ public class GUIButton implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        button.setX(val.x / Vars.getInt("balancedScreenWidth"));
-        button.setY(val.y / Vars.getInt("balancedScreenHeight"));
+        button.setX(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        button.setY(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override

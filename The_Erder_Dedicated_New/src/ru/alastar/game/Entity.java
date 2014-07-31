@@ -715,7 +715,7 @@ public class Entity extends Transform implements IUpdate, IPhysic
         return pData;
     }
 
-    public void act(double angle)
+    public void act(float angle)
     {
         if(warMode)
         {

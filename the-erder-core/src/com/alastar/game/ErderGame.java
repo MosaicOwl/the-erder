@@ -24,19 +24,19 @@ public class ErderGame extends Game
     public void create()
     {
         batch = new SpriteBatch();
-
-        Vars.AddVar("screenWidth", Gdx.graphics.getWidth());
-        Vars.AddVar("screenHeight", Gdx.graphics.getHeight());
-        Vars.AddVar("balancedScreenHeight", 1024 / Gdx.graphics.getHeight());
-        Vars.AddVar("balancedScreenWidth", 1280 / Gdx.graphics.getWidth());
-
         if (Gdx.app.getType() == ApplicationType.Desktop)
         {
             Gdx.graphics.setDisplayMode(
                     Gdx.graphics.getDesktopDisplayMode().width,
                     Gdx.graphics.getDesktopDisplayMode().height, false);
             Gdx.graphics.setTitle("The Erder");
-        }
+        } 
+        
+        Vars.AddVar("screenWidth", (double)Gdx.graphics.getWidth());
+        Vars.AddVar("screenHeight", (double)Gdx.graphics.getHeight());
+        Vars.AddVar("balancedScreenHeight", 1024 / (double)Gdx.graphics.getHeight());
+        Vars.AddVar("balancedScreenWidth", 1280 / (double)Gdx.graphics.getWidth());
+       
         Gdx.graphics.setVSync(true);
         Client.game = this;
 

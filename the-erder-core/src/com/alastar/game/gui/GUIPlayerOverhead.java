@@ -5,9 +5,13 @@ import java.util.TimerTask;
 
 import com.alastar.game.GameManager;
 import com.alastar.game.Vars;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -28,14 +32,14 @@ public class GUIPlayerOverhead implements GUIElement
         this.window = new Window(this.name,
                 GameManager.getSkin(GameManager.selectedSkin),
                 "overhead_window");
-        window.setPosition(vector2.x / Vars.getInt("balancedScreenWidth"),
-                vector2.y / Vars.getInt("balancedScreenHeight"));
-        window.setWidth(vector22.x / Vars.getInt("balancedScreenWidth"));
-        window.setHeight(vector22.y / Vars.getInt("balancedScreenHeight"));
+        window.setPosition(vector2.x / (float)Vars.getDouble("balancedScreenWidth"),
+                vector2.y / (float)Vars.getDouble("balancedScreenHeight"));
+        window.setWidth(vector22.x / (float)Vars.getDouble("balancedScreenWidth"));
+        window.setHeight(vector22.y / (float)Vars.getDouble("balancedScreenHeight"));
         window.defaults().prefWidth(
-                vector22.x / Vars.getInt("balancedScreenWidth"));
+                vector22.x / (float)Vars.getDouble("balancedScreenWidth"));
         window.defaults().prefHeight(
-                vector22.y / Vars.getInt("balancedScreenHeight"));
+                vector22.y / (float)Vars.getDouble("balancedScreenHeight"));
 
         table = new Table();
         table.setFillParent(true);
@@ -59,6 +63,13 @@ public class GUIPlayerOverhead implements GUIElement
         window.add(scroll).fill();
         window.setTitle("");
         window.setClip(false);
+        InputListener el = new InputListener() {
+            @Override
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                return false;
+            }
+        };
+        window.addListener(el);
     }
 
     @Override
@@ -143,7 +154,7 @@ public class GUIPlayerOverhead implements GUIElement
     @Override
     public void setHeight(float val)
     {
-        this.window.setHeight(val / Vars.getInt("balancedScreenHeight"));
+        this.window.setHeight(val / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -155,7 +166,7 @@ public class GUIPlayerOverhead implements GUIElement
     @Override
     public void setWidth(float val)
     {
-        this.window.setWidth(val / Vars.getInt("balancedScreenWidth"));
+        this.window.setWidth(val / (float)Vars.getDouble("balancedScreenWidth"));
 
     }
 
@@ -168,8 +179,8 @@ public class GUIPlayerOverhead implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        window.setX(val.x / Vars.getInt("balancedScreenWidth"));
-        window.setY(val.y / Vars.getInt("balancedScreenHeight"));
+        window.setX(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        window.setY(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -181,9 +192,9 @@ public class GUIPlayerOverhead implements GUIElement
     @Override
     public void setPadTB(Vector2 val)
     {
-        window.defaults().padTop(val.x / Vars.getInt("balancedScreenWidth"));
+        window.defaults().padTop(val.x / (float)Vars.getDouble("balancedScreenWidth"));
         window.defaults()
-                .padBottom(val.y / Vars.getInt("balancedScreenHeight"));
+                .padBottom(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -195,8 +206,8 @@ public class GUIPlayerOverhead implements GUIElement
     @Override
     public void setPadRL(Vector2 val)
     {
-        window.defaults().padRight(val.x / Vars.getInt("balancedScreenWidth"));
-        window.defaults().padLeft(val.y / Vars.getInt("balancedScreenHeight"));
+        window.defaults().padRight(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        window.defaults().padLeft(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -208,9 +219,9 @@ public class GUIPlayerOverhead implements GUIElement
     @Override
     public void setMinHW(Vector2 val)
     {
-        window.defaults().minWidth(val.x / Vars.getInt("balancedScreenWidth"));
+        window.defaults().minWidth(val.x / (float)Vars.getDouble("balancedScreenWidth"));
         window.defaults()
-                .minHeight(val.y / Vars.getInt("balancedScreenHeight"));
+                .minHeight(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -222,9 +233,9 @@ public class GUIPlayerOverhead implements GUIElement
     @Override
     public void setMaxHW(Vector2 val)
     {
-        window.defaults().maxWidth(val.x / Vars.getInt("balancedScreenWidth"));
+        window.defaults().maxWidth(val.x / (float)Vars.getDouble("balancedScreenWidth"));
         window.defaults()
-                .maxHeight(val.y / Vars.getInt("balancedScreenHeight"));
+                .maxHeight(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -248,6 +259,7 @@ public class GUIPlayerOverhead implements GUIElement
 
     public void addMsg(String msg)
     {
+        Show();
         table.row();
         final Label text = new Label(msg,
                 GameManager.getSkin(GameManager.selectedSkin), "label");
@@ -261,6 +273,10 @@ public class GUIPlayerOverhead implements GUIElement
             {
                 text.remove();
                 scroll.setScrollY(scroll.getMaxY());
+                if(table.getChildren().size == 0)
+                {
+                    Hide();
+                }
                 // System.out.println("Overhead removed");
             }
         }, 10000);

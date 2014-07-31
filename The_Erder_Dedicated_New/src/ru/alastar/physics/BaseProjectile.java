@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import ru.alastar.game.Entity;
 import ru.alastar.game.IUpdate;
+import ru.alastar.main.Main;
 import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddProjectileResponse;
@@ -39,7 +40,7 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
     public boolean       m_Shooted = false;
     public ProjectileType type;
     private ArrayList<IUpdate> allAround;
-    public double angle;
+    public float angle;
     // Physics
     BodyDef              bodyDef;
     public Body          body;
@@ -50,7 +51,7 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
     private PhysicalData pData;
     Vector2 add = new Vector2(1,1);
 
-    public BaseProjectile(int id, Vector3 from, Entity shooter, double angle)
+    public BaseProjectile(int id, Vector3 from, Entity shooter, float angle)
     {
         this.id = id;
         this.from = from;
@@ -69,7 +70,12 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
         bodyDef.type = BodyType.DynamicBody;
         bodyDef.bullet = true;
         Vector2 vec = new Vector2(from.x, from.y);
-        add.rotate((float) angle);
+        // What the function rotate vector properly????!
+        //add.rotate((float) -angle);
+        //add.setAngle((float) angle);
+        //add.setAngleRad((float) angle);
+        add.setAngle(angle);
+        Main.Log("[DEBUG]","Angle: " + add.angle());
         //add.scl(speed);
         vec.add(add);
         bodyDef.position.set(vec.x, vec.y);
@@ -79,7 +85,7 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
         body = world.getPhysic().createBody(bodyDef);
 
         circle = new CircleShape();
-        circle.setRadius(0.5f);
+        circle.setRadius(0.1f);
 
         fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;

@@ -17,7 +17,6 @@ import ru.alastar.main.net.responses.RemovePacket;
 import ru.alastar.main.net.responses.RemoveTileResponse;
 import ru.alastar.main.net.responses.TargetInfoResponse;
 import ru.alastar.main.net.responses.UpdatePlayerResponse;
-import ru.alastar.physics.BaseProjectile;
 import ru.alastar.physics.CollisionListener;
 
 import com.alastar.game.Tile;
@@ -77,7 +76,7 @@ public class ServerWorld
                 else
                     cancel();
             }
-        }, 10, 10);
+        }, 0, 10);
 
     }
 

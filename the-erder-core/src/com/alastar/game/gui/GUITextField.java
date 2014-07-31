@@ -102,7 +102,7 @@ public class GUITextField implements GUIElement
     @Override
     public void setHeight(float val)
     {
-        this.field.setHeight(val / Vars.getInt("balancedScreenHeight"));
+        this.field.setHeight(val / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class GUITextField implements GUIElement
     @Override
     public void setWidth(float val)
     {
-        this.field.setWidth(val / Vars.getInt("balancedScreenWidth"));
+        this.field.setWidth(val / (float)Vars.getDouble("balancedScreenWidth"));
 
     }
 
@@ -127,8 +127,8 @@ public class GUITextField implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        field.setX(val.x / Vars.getInt("balancedScreenWidth"));
-        field.setY(val.y / Vars.getInt("balancedScreenHeight"));
+        field.setX(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        field.setY(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override

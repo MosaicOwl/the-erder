@@ -7,14 +7,14 @@ import com.alastar.game.gui.GUICore;
 public class Vars
 {
 
-    public static Hashtable<String, Integer> integerVars = new Hashtable<String, Integer>();
+    public static Hashtable<String, Double> doubleVars = new Hashtable<String, Double>();
     public static Hashtable<String, String>  stringVars  = new Hashtable<String, String>();
 
-    public static void AddVar(String s, Integer i)
+    public static void AddVar(String s, Double i)
     {
         System.out.println("Added var " + s + ": " + i);
-        integerVars.put(s, i);
-        GUICore.notifyVariableHandlers(s, Integer.toString(i));
+        doubleVars.put(s, i);
+        GUICore.notifyVariableHandlers(s, Double.toString(i));
 
     }
 
@@ -26,15 +26,15 @@ public class Vars
 
     }
 
-    public static void setVar(String s, Integer i)
+    public static void setVar(String s, Double i)
     {
         System.out.println("Set var " + s + ": " + i);
 
-        if (integerVars.containsKey(s))
-            integerVars.remove(s);
+        if (doubleVars.containsKey(s))
+            doubleVars.remove(s);
 
-        integerVars.put(s, i);
-        GUICore.notifyVariableHandlers(s, Integer.toString(i));
+        doubleVars.put(s, i);
+        GUICore.notifyVariableHandlers(s, Double.toString(i));
     }
 
     public static void setVar(String s, String i)
@@ -48,9 +48,9 @@ public class Vars
         GUICore.notifyVariableHandlers(s, i);
     }
 
-    public static Integer getInt(String s)
+    public static double getDouble(String s)
     {
-        return integerVars.get(s);
+        return doubleVars.get(s);
     }
 
     public static String getStr(String s)
@@ -60,8 +60,8 @@ public class Vars
 
     public static String getVar(String s)
     {
-        if (integerVars.containsKey(s))
-            return Integer.toString(integerVars.get(s));
+        if (doubleVars.containsKey(s))
+            return Double.toString(doubleVars.get(s));
         else if (stringVars.containsKey(s))
             return stringVars.get(s);
         else

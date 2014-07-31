@@ -120,7 +120,7 @@ public class GUILabel implements GUIElement
     @Override
     public void setHeight(float val)
     {
-        this.label.setHeight(val / Vars.getInt("balancedScreenHeight"));
+        this.label.setHeight(val / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -132,7 +132,7 @@ public class GUILabel implements GUIElement
     @Override
     public void setWidth(float val)
     {
-        this.label.setWidth(val / Vars.getInt("balancedScreenWidth"));
+        this.label.setWidth(val / (float)Vars.getDouble("balancedScreenWidth"));
 
     }
 
@@ -145,8 +145,8 @@ public class GUILabel implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        label.setX(val.x / Vars.getInt("balancedScreenWidth"));
-        label.setY(val.y / Vars.getInt("balancedScreenHeight"));
+        label.setX(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        label.setY(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override

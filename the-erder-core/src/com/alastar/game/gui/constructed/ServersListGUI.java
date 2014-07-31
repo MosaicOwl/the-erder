@@ -39,8 +39,10 @@ public class ServersListGUI extends BaseConstructed
                 Client.init(address);
             }
         };
-        list.addChild(new GUIButton(name, new TextButton(name, GameManager
-                .getSkin(GameManager.selectedSkin), "button"), el));
+        GUIButton b = new GUIButton(name, new TextButton(name, GameManager
+                .getSkin(GameManager.selectedSkin), "button"), el);
+        ((TextButton)b.getElementAsActor()).pad(5);
+        list.addChild(b);
     }
 
     @Override

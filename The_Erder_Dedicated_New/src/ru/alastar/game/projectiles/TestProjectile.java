@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 public class TestProjectile extends ru.alastar.physics.BaseProjectile
 {
 
-    public TestProjectile(int id, Vector3 from, Entity shooter, double angle)
+    public TestProjectile(int id, Vector3 from, Entity shooter, float angle)
     {
         super(id, from, shooter, angle);
         this.speed = 10;

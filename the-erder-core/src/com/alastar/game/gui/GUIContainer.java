@@ -34,10 +34,10 @@ public class GUIContainer implements GUIElement
         this.name = n;
         this.type = type;
         modal = w;
-        this.modal.setPosition(vector2.x / Vars.getInt("balancedScreenWidth"),
-                vector2.y / Vars.getInt("balancedScreenHeight"));
-        this.modal.setHeight(vector22.y / Vars.getInt("balancedScreenHeight"));
-        this.modal.setWidth(vector22.x / Vars.getInt("balancedScreenWidth"));
+        this.modal.setPosition(vector2.x / (float)Vars.getDouble("balancedScreenWidth"),
+                vector2.y / (float)Vars.getDouble("balancedScreenHeight"));
+        this.modal.setHeight(vector22.y / (float)Vars.getDouble("balancedScreenHeight"));
+        this.modal.setWidth(vector22.x / (float)Vars.getDouble("balancedScreenWidth"));
         modal.defaults().padLeft(i);
         modal.defaults().padRight(j);
         modal.defaults().padTop(k);
@@ -154,7 +154,7 @@ public class GUIContainer implements GUIElement
     @Override
     public void setHeight(float val)
     {
-        this.modal.setHeight(val / Vars.getInt("balancedScreenHeight"));
+        this.modal.setHeight(val / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -166,7 +166,7 @@ public class GUIContainer implements GUIElement
     @Override
     public void setWidth(float val)
     {
-        this.modal.setWidth(val / Vars.getInt("balancedScreenWidth"));
+        this.modal.setWidth(val / (float)Vars.getDouble("balancedScreenWidth"));
 
     }
 
@@ -179,8 +179,8 @@ public class GUIContainer implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        modal.setX(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.setY(val.y / Vars.getInt("balancedScreenHeight"));
+        modal.setX(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        modal.setY(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -192,8 +192,8 @@ public class GUIContainer implements GUIElement
     @Override
     public void setPadTB(Vector2 val)
     {
-        modal.defaults().padTop(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.defaults().padBottom(val.y / Vars.getInt("balancedScreenHeight"));
+        modal.defaults().padTop(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        modal.defaults().padBottom(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -205,8 +205,8 @@ public class GUIContainer implements GUIElement
     @Override
     public void setPadRL(Vector2 val)
     {
-        modal.defaults().padRight(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.defaults().padLeft(val.y / Vars.getInt("balancedScreenHeight"));
+        modal.defaults().padRight(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        modal.defaults().padLeft(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -218,8 +218,8 @@ public class GUIContainer implements GUIElement
     @Override
     public void setMinHW(Vector2 val)
     {
-        modal.defaults().minWidth(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.defaults().minHeight(val.y / Vars.getInt("balancedScreenHeight"));
+        modal.defaults().minWidth(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        modal.defaults().minHeight(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -231,8 +231,8 @@ public class GUIContainer implements GUIElement
     @Override
     public void setMaxHW(Vector2 val)
     {
-        modal.defaults().maxWidth(val.x / Vars.getInt("balancedScreenWidth"));
-        modal.defaults().maxHeight(val.y / Vars.getInt("balancedScreenHeight"));
+        modal.defaults().maxWidth(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        modal.defaults().maxHeight(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override

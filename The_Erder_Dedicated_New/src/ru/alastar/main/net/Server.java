@@ -856,26 +856,26 @@ public class Server
                 Main.Log("[SERVER]", "Data was sent to player. Fuf...");
 
                 NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("inv_button",
-                        new Vector2(250, 10), new Vector2(100, 50), "",
+                        new Vector2(100, 10), new Vector2(50, 25), "",
                         "com.alastar.game.gui.GUIButton", "", "inventory"), c);
                 c.controlledEntity.AddGUIHandler("inv_button",
                         new InvButtonGUIHandler());
 
                 NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("peace_button",
-                        new Vector2(250, 70), new Vector2(100, 50), "",
+                        new Vector2(100, 35), new Vector2(50, 25), "",
                         "com.alastar.game.gui.GUIButton", "", "peace"), c);
                 c.controlledEntity.AddGUIHandler("peace_button",
                         new PeaceButtonGUIHandler());
 
                 NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("equip_button",
-                        new Vector2(250, 130), new Vector2(100, 50), "",
+                        new Vector2(100, 60), new Vector2(50, 25), "",
                         "com.alastar.game.gui.GUIButton", "", "Equip"), c);
                 c.controlledEntity.AddGUIHandler("equip_button",
                         new EquipButtonGUIHandler());
 
                 NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(
-                        "skills_button", new Vector2(250, 190), new Vector2(
-                                100, 50), "", "com.alastar.game.gui.GUIButton",
+                        "skills_button", new Vector2(100, 85), new Vector2(
+                                50, 25), "", "com.alastar.game.gui.GUIButton",
                         "", "Skills"), c);
                 c.controlledEntity.AddGUIHandler("skills_button",
                         new SkillsButtonGUIHandler());
@@ -1879,7 +1879,7 @@ public class Server
         client.connection.sendUDP(r);
     }
 
-    public static void HandleActInput(double angle, Connection connection)
+    public static void HandleActInput(float angle, Connection connection)
     {
         ConnectedClient c = getClient(connection);
         if(c.account != null && c.controlledEntity != null) //sanity

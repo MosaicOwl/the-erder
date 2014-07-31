@@ -23,26 +23,34 @@ public class LoginGUI extends BaseConstructed
     public LoginGUI(Stage s, String name)
     {
         super(s, name);
-        final int bsw = Vars.getInt("balancedScreenWidth");
+        final float bsw = (float)Vars.getDouble("balancedScreenWidth");
+        final float bsh = (float)Vars.getDouble("balancedScreenHeight");
 
         final TextButton btn = new TextButton(
                 GameManager.getLocalizedMessage("Login"),
                 GameManager.txtBtnStyle);
         btn.setWidth(175 / bsw);
-        btn.padLeft(5);
+        btn.padLeft(15);
+        btn.padRight(15);
+        btn.padTop(10);
+        btn.padBottom(10);
 
         final TextButton btnToReg = new TextButton(
                 GameManager.getLocalizedMessage("Reg"), GameManager.txtBtnStyle);
         btnToReg.setWidth(175 / bsw);
         btnToReg.padLeft(5);
+        btnToReg.padRight(5);
+        btnToReg.padTop(5);
+        btnToReg.padBottom(5);
 
         Label nameLabel = new Label(GameManager.getLocalizedMessage("Login")
                 + ":", GameManager.labelStyle);
 
         final TextField nameText = new TextField("Alastar",
                 GameManager.txtFieldStyle);
-
-        nameText.setWidth(175 / bsw);
+        nameText.setMaxLength(15);
+        nameText.setHeight(50 / bsh);
+        nameText.setWidth(275 / bsw);
 
         Label addressLabel = new Label(
                 GameManager.getLocalizedMessage("Password") + ":",
@@ -50,12 +58,13 @@ public class LoginGUI extends BaseConstructed
 
         final TextField passwordText = new TextField("123",
                 GameManager.txtFieldStyle);
-
-        passwordText.setWidth(175 / bsw);
+        passwordText.setMaxLength(15);
+        passwordText.setWidth(275 / bsw);
+        passwordText.setHeight(50 / bsh);
         passwordText.setMessageText("password");
         passwordText.setPasswordCharacter('*');
         passwordText.setPasswordMode(true);
-
+        
         table = new Table();
         table.setFillParent(true);
 

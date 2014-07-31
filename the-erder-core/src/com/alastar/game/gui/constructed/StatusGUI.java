@@ -35,7 +35,7 @@ public class StatusGUI extends BaseConstructed
                 "dexterity_value", 25);
 
         window = new GUIWindow("Status", w, new Vector2(10, 10), new Vector2(
-                300, 100), 15, 0, 0, 0);
+                150, 50), 15, 0, 0, 0);
         window.AddControl(hp);
         window.AddControl(mana);
         window.AddControl(inte);

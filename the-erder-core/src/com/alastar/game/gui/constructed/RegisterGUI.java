@@ -23,17 +23,25 @@ public class RegisterGUI extends BaseConstructed
     {
         super(s, name);
 
-        final int bsw = Vars.getInt("balancedScreenWidth");
+        final float bsw = (float)Vars.getDouble("balancedScreenWidth");
 
         final TextButton btnToLog = new TextButton(
                 GameManager.getLocalizedMessage("Login"),
                 GameManager.txtBtnStyle);
         btnToLog.setWidth(175 / bsw);
-
+        btnToLog.padLeft(15);
+        btnToLog.padRight(15);
+        btnToLog.padTop(10);
+        btnToLog.padBottom(10);
+        
         final TextButton btnReg = new TextButton(
                 GameManager.getLocalizedMessage("Reg"), GameManager.txtBtnStyle);
         btnReg.setWidth(175 / bsw);
-
+        btnReg.padLeft(15);
+        btnReg.padRight(15);
+        btnReg.padTop(10);
+        btnReg.padBottom(10);
+        
         Label loginLabel = new Label(GameManager.getLocalizedMessage("Login")
                 + ":", GameManager.labelStyle);
 
