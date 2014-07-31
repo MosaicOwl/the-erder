@@ -65,6 +65,7 @@ public class ServerWorld
         entities = new ArrayList<IUpdate>();
         physicsTimer = new Timer();
         pWorld.setContactListener(new CollisionListener());
+        
         physicsTimer.scheduleAtFixedRate(new TimerTask()
         {
 
@@ -146,12 +147,11 @@ public class ServerWorld
             {
                 if (upd.getType() == 0)
                 {
-                    if (upd.getId() != ((Entity) upd).id)
+                    if (u.getId() != upd.getId())
                     {
                         c = Server.getClient(((Entity) upd));
                         if (c != null)
                         {
-
                             Server.SendTo(c.connection, r);
                         }
                     } else

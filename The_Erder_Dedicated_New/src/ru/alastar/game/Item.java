@@ -77,7 +77,7 @@ public class Item extends Transform implements IUpdate, IPhysic
     {
 
         body = Server.getWorld(worldId).getPhysic().createBody(bodyDef);
-        pData = new PhysicalData(this.z, false);
+        pData = new PhysicalData(this.z, false, this);
 
         circle = new CircleShape();
         circle.setRadius(1f);

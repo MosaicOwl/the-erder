@@ -187,11 +187,13 @@ public class Map
 
     public static void handleRemove(int id, int type)
     {
+        System.out.println("Remove object type: " + type + " id: " + id);
         TexturedObject obj = getObjectById(id, type);
         if (obj != null)
         {
             entities.remove(obj);
-            obj.Remove();
+            obj.Remove();  
+            System.out.println("Removed!");
         }
     }
 

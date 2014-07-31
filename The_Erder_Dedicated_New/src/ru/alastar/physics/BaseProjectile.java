@@ -70,18 +70,14 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
         bodyDef.type = BodyType.DynamicBody;
         bodyDef.bullet = true;
         Vector2 vec = new Vector2(from.x, from.y);
-        // What the function rotate vector properly????!
-        //add.rotate((float) -angle);
-        //add.setAngle((float) angle);
-        //add.setAngleRad((float) angle);
-        add.setAngle(angle);
-        Main.Log("[DEBUG]","Angle: " + add.angle());
+        add.setAngle(-angle); // setting it clockwise, cause from client we getting counter-clockwise angle
+        //Main.Log("[DEBUG]","Angle: " + add.angle());
         //add.scl(speed);
         vec.add(add);
         bodyDef.position.set(vec.x, vec.y);
 
         bodyDef.linearDamping = 1.5F;
-        pData = new PhysicalData((int) from.z, true);
+        pData = new PhysicalData((int) from.z, false, this);
         body = world.getPhysic().createBody(bodyDef);
 
         circle = new CircleShape();
@@ -109,7 +105,6 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
                     {
                         if(body.getLinearVelocity().x > -maxSpeed && body.getLinearVelocity().y > -maxSpeed
                                 && body.getLinearVelocity().x < maxSpeed && body.getLinearVelocity().y < maxSpeed){
-                           // body.applyLinearImpulse(add, getPosition(), true);
                             body.applyForceToCenter(/*add.scl(speed)*/ add, true);
                             }
                             Server.UpdatePosition(e);
@@ -120,7 +115,7 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
                     }
 
                 }
-            }, 100, 100);
+            }, 0, 100);
         }
         m_Shooted = true;  
         world.AddEntity(this);
@@ -129,8 +124,16 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
 
     public void Destroy()
     {
+        updateTimer.cancel();
+        
+        body.destroyFixture(fixture);
+        body.setAwake(false);
+        world.getPhysic().destroyBody(body);
+        
         Server.RemoveProjectile(this);
         world.RemoveEntity(this);
+        
+        Main.Log("[DEBUG]","Proj destroy");
     }
 
     @Override

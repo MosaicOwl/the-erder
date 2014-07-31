@@ -111,7 +111,7 @@ public class Entity extends Transform implements IUpdate, IPhysic
     public void setActive()
     {
         body = world.getPhysic().createBody(bodyDef);
-        pData = new PhysicalData(this.z, false);
+        pData = new PhysicalData(this.z, false, this);
         // body.setUserData(pData);
 
         circle = new CircleShape();
@@ -165,11 +165,11 @@ public class Entity extends Transform implements IUpdate, IPhysic
             body.destroyFixture(fixture);
             world.getPhysic().destroyBody(body);
 
-            for (IUpdate e : allAround)
-            {
-                if (e != this)
-                    e.tryRemoveNear(this);
-            }
+           // for (IUpdate e : allAround)
+           // {
+           //     if (e != this)
+          //          e.tryRemoveNear(this);
+           // }
             world.RemoveEntity(this);
 
             Server.saveEntity(this, aId);
@@ -721,11 +721,11 @@ public class Entity extends Transform implements IUpdate, IPhysic
         {
           TestProjectile t = new TestProjectile(Server.getProjFreeId(), new Vector3(this.getPosition().x, this.getPosition().y, this.z), this, angle);
           t.Launch();
-          Main.Log("[ACTION]"," War action with angle: " + angle);
+        //  Main.Log("[ACTION]"," War action with angle: " + angle);
         }
         else
         {
-           Main.Log("[ACTION]"," Action with angle: " + angle);
+         //  Main.Log("[ACTION]"," Action with angle: " + angle);
         }
     }
 

@@ -19,6 +19,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.alastar.game.IDestroyable;
 import com.alastar.game.Tile;
 import com.alastar.game.enums.ItemType;
 import com.badlogic.gdx.math.Vector2;
@@ -85,7 +86,9 @@ public class Server
     public static Hashtable<String, Handler>          consoleCommands;
     public static Hashtable<Integer, AI>              ais;
     public static Hashtable<Integer, Equip>           equips;
-    public static Hashtable<Integer, BaseProjectile>  projectiles;
+    public static Hashtable<Integer, BaseProjectile>  projectiles;  
+    public static Hashtable<Integer, IDestroyable>   destroyable;
+
     public static Random                              random;
     public static float                               syncDistance = 50;
     private static Hashtable<Integer, Item>           items;
@@ -123,7 +126,7 @@ public class Server
             equips = new Hashtable<Integer, Equip>();
             items = new Hashtable<Integer, Item>();
             projectiles = new Hashtable<Integer, BaseProjectile>();
-            
+            destroyable = new Hashtable<Integer, IDestroyable>();
             if (DatabaseClient.Start())
             {
                 LoadWorlds();
@@ -1907,6 +1910,32 @@ public class Server
             return id;
         else
             return getProjFreeId();
+    }
+
+    public static int RegisterDestroyableTile(ServerTile serverTile)
+    {
+        int id = getFreeTileId();
+        destroyable.put(id, serverTile);
+        return id;
+    }
+
+    private static int getFreeTileId()
+    {
+        int id = random.nextInt(1000000000); // may fall when Server will have create a lot of dungeons
+        if(destroyable.containsKey(id))
+            return id;
+        else
+            return getFreeTileId();
+    }
+
+    public static BaseProjectile getProjectile(int id2)
+    {
+        return projectiles.get(id2);
+    }
+
+    public static IDestroyable getDestroyable(int id)
+    {
+        return destroyable.get(id);
     }
 
 }
