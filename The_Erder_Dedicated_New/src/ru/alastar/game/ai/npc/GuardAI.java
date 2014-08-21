@@ -17,9 +17,10 @@ public class GuardAI extends NPCAI
     @Override
     public void OnDropdownRequest(Entity from)
     {
-        NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("guard_dropdown_hire",
-                new Vector2(this.entity.body.getPosition().x, this.entity.body.getPosition().y), new Vector2(
-                        50, 50), "dropdown",
+        NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(
+                "guard_dropdown_hire",
+                new Vector2(this.entity.body.getPosition().x, this.entity.body
+                        .getPosition().y), new Vector2(50, 50), "dropdown",
                 "com.alastar.game.gui.GUILabel", "", "Hire"), Server
                 .getClient(from));
         from.AddGUIHandler("dropdown", new HireButtonGUIHandler());
@@ -29,11 +30,11 @@ public class GuardAI extends NPCAI
     public String getClassPath()
     {
         return "ru.alastar.game.ai.npc.GuardAI";
-    }  
-    
+    }
+
     @Override
     public void OnSeeEntity(Entity y)
     {
-       // Main.Log("[GUARD]"," See the " + y.caption);
+        // Main.Log("[GUARD]"," See the " + y.caption);
     }
 }

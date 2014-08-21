@@ -71,11 +71,11 @@ public class NetGUISystem
                 {
                     t = tile.type.name();
 
-                    NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(
-                            "dropdown", new Vector2(r.x, r.y
-                                    + tile.position.z), new Vector2(50, 50),
-                            "", "com.alastar.game.gui.GUIDropdown", "",
-                            "Tile(X:" + r.x + ",Y:" + r.y + ")"), c);
+                    NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("dropdown",
+                            new Vector2(r.x, r.y + tile.position.z),
+                            new Vector2(50, 50), "",
+                            "com.alastar.game.gui.GUIDropdown", "", "Tile(X:"
+                                    + r.x + ",Y:" + r.y + ")"), c);
                     NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo(
                             "tile_dropdown_info", new Vector2(r.x, r.y),
                             new Vector2(50, 50), "dropdown",

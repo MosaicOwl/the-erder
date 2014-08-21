@@ -16,14 +16,26 @@ public class StatusGUI extends BaseConstructed
     public StatusGUI(Stage s, String name)
     {
         super(s, name);
-        Window w = new Window("Status", GameManager.getSkin(GameManager.selectedSkin), "window");
-        GUILabel hp = new GUILabel("HP:", new Label("HP:", GameManager.getSkin(GameManager.selectedSkin), "label"), "hits_value", 25);
-        GUILabel mana = new GUILabel("MANA:", new Label("MANA:", GameManager.getSkin(GameManager.selectedSkin), "label"), "mana_value", 25);
-        GUILabel inte = new GUILabel("INT:", new Label("INT::", GameManager.getSkin(GameManager.selectedSkin), "label"), "int_value", 25);
-        GUILabel str = new GUILabel("STR:", new Label("STR:", GameManager.getSkin(GameManager.selectedSkin), "label"), "stringth_value", 25);
-        GUILabel dex = new GUILabel("DEX:", new Label("DEX:", GameManager.getSkin(GameManager.selectedSkin), "label"), "dexterity_value", 25);
+        Window w = new Window("Status",
+                GameManager.getSkin(GameManager.selectedSkin), "window");
+        GUILabel hp = new GUILabel("HP:", new Label("HP:",
+                GameManager.getSkin(GameManager.selectedSkin), "label"),
+                "hits_value", 25);
+        GUILabel mana = new GUILabel("MANA:", new Label("MANA:",
+                GameManager.getSkin(GameManager.selectedSkin), "label"),
+                "mana_value", 25);
+        GUILabel inte = new GUILabel("INT:", new Label("INT::",
+                GameManager.getSkin(GameManager.selectedSkin), "label"),
+                "int_value", 25);
+        GUILabel str = new GUILabel("STR:", new Label("STR:",
+                GameManager.getSkin(GameManager.selectedSkin), "label"),
+                "stringth_value", 25);
+        GUILabel dex = new GUILabel("DEX:", new Label("DEX:",
+                GameManager.getSkin(GameManager.selectedSkin), "label"),
+                "dexterity_value", 25);
 
-        window = new GUIWindow("Status", w, new Vector2(10,10), new Vector2(300, 100), 15, 0, 0, 0);
+        window = new GUIWindow("Status", w, new Vector2(10, 10), new Vector2(
+                150, 50), 15, 0, 0, 0);
         window.AddControl(hp);
         window.AddControl(mana);
         window.AddControl(inte);
@@ -36,11 +48,11 @@ public class StatusGUI extends BaseConstructed
         actors.add(inte);
         actors.add(str);
         actors.add(dex);
-        
+
         MainScreen.currentStage.addActor(window.getElementAsActor());
         window.Show();
     }
-    
+
     @Override
     public void Destroy()
     {

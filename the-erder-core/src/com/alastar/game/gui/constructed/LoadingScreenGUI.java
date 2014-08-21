@@ -16,50 +16,54 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 public class LoadingScreenGUI extends BaseConstructed
 {
     private GUIWindow window;
-    private GUILabel label;
-    private Table table;
-    
-    private boolean canDisturb = false;
-    
+    private GUILabel  label;
+    private Table     table;
+
+    private boolean   canDisturb = false;
+
     public LoadingScreenGUI(Stage s)
     {
         super(s, "loading_screen");
-       
+
         ChangeListener el = new ChangeListener()
         {
 
             @Override
             public void changed(ChangeEvent event, Actor actor)
             {
-                if(canDisturb)
+                if (canDisturb)
                 {
                     Hide();
                 }
             }
-            
+
         };
         table = new Table();
         table.setFillParent(true);
-        
-        Window w = new Window("Loading", GameManager.getSkin(GameManager.selectedSkin), "window");
-        label = new GUILabel("", new Label("", GameManager.getSkin(GameManager.selectedSkin), "label"), "", 25);
-        GUIButton disturb = new GUIButton("X", new TextButton("X", GameManager.getSkin(GameManager.selectedSkin), "button"), el);
 
-        window = new GUIWindow("Loading", w, new Vector2(400,400), new Vector2(700, 700), 15, 0, 0, 0);
+        Window w = new Window("Loading",
+                GameManager.getSkin(GameManager.selectedSkin), "window");
+        label = new GUILabel("", new Label("",
+                GameManager.getSkin(GameManager.selectedSkin), "label"), "", 25);
+        GUIButton disturb = new GUIButton("X", new TextButton("X",
+                GameManager.getSkin(GameManager.selectedSkin), "button"), el);
+
+        window = new GUIWindow("Loading", w, new Vector2(400, 400),
+                new Vector2(700, 700), 15, 0, 0, 0);
         window.AddControl(label);
         window.AddControl(disturb);
 
         table.add(window.getElementAsActor());
-        
+
         register(window.getElementAsActor());
     }
 
     public void ChangeCaption(String string, boolean canDisturb2)
     {
-       canDisturb = canDisturb2;
-       label.setText(string);
-    } 
-    
+        canDisturb = canDisturb2;
+        label.setText(string);
+    }
+
     @Override
     public void Hide()
     {
@@ -68,7 +72,7 @@ public class LoadingScreenGUI extends BaseConstructed
 
     @Override
     public void Show()
-    {    
-        window.Show(); 
+    {
+        window.Show();
     }
 }

@@ -16,30 +16,32 @@ public class GUITarget implements GUIElement
     public Image target;
     public Image bar;
     public float w;
-    
+
     public GUITarget(float w, float h)
     {
         table = new Table();
         table.setWidth(w);
         table.setHeight(h);
-        
+
         this.w = w;
-        
-        target = new Image(GameManager.getSkin(GameManager.selectedSkin).get("lwindow", Texture.class));
+
+        target = new Image(GameManager.getSkin(GameManager.selectedSkin).get(
+                "lwindow", Texture.class));
         target.setFillParent(true);
-        
-        bar = new Image(GameManager.getSkin(GameManager.selectedSkin).get("lbutton", Texture.class));
+
+        bar = new Image(GameManager.getSkin(GameManager.selectedSkin).get(
+                "lbutton", Texture.class));
         bar.setFillParent(true);
         bar.setAlign(Align.left);
         bar.setWidth(w);
-        
+
         table.align(Align.left);
-        
+
         table.add(target);
         table.row();
         table.add(bar);
     }
-    
+
     @Override
     public Actor getElementAsActor()
     {
@@ -55,13 +57,15 @@ public class GUITarget implements GUIElement
     @Override
     public void setName(String s)
     {
-        
+
     }
 
     @Override
     public void Destroy()
     {
-        table.remove();
+       // table.remove();
+       Hide();
+       table.clear();
     }
 
     @Override
@@ -79,7 +83,7 @@ public class GUITarget implements GUIElement
     @Override
     public void Update(String val)
     {
-        
+
     }
 
     @Override
@@ -90,7 +94,7 @@ public class GUITarget implements GUIElement
 
     @Override
     public void setHandledVariable(String val)
-    {        
+    {
     }
 
     @Override
@@ -102,7 +106,7 @@ public class GUITarget implements GUIElement
     @Override
     public void setEventListener(EventListener val)
     {
-        
+
     }
 
     @Override
@@ -114,7 +118,7 @@ public class GUITarget implements GUIElement
     @Override
     public void setHeight(float val)
     {
-        
+
     }
 
     @Override
@@ -126,7 +130,7 @@ public class GUITarget implements GUIElement
     @Override
     public void setWidth(float val)
     {
-        
+
     }
 
     @Override
@@ -137,7 +141,7 @@ public class GUITarget implements GUIElement
 
     @Override
     public void setPosition(Vector2 val)
-    {    
+    {
         this.table.setX(val.x);
         this.table.setY(val.y);
     }
@@ -151,7 +155,7 @@ public class GUITarget implements GUIElement
     @Override
     public void setPadTB(Vector2 val)
     {
-        
+
     }
 
     @Override
@@ -162,17 +166,18 @@ public class GUITarget implements GUIElement
 
     @Override
     public void setPadRL(Vector2 val)
-    {        
+    {
     }
 
     @Override
     public Vector2 getMinHW()
-    {        return null;
+    {
+        return null;
     }
 
     @Override
     public void setMinHW(Vector2 val)
-    {        
+    {
     }
 
     @Override
@@ -183,13 +188,13 @@ public class GUITarget implements GUIElement
 
     @Override
     public void setMaxHW(Vector2 val)
-    {        
+    {
     }
 
     @Override
     public void setText(String text)
     {
-        
+
     }
 
     @Override
@@ -201,7 +206,7 @@ public class GUITarget implements GUIElement
     @Override
     public void addChild(GUIElement o)
     {
-        
+
     }
 
     public void setPrecentage(int i)

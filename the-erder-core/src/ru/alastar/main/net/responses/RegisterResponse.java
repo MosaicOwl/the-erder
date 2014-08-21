@@ -3,5 +3,5 @@ package ru.alastar.main.net.responses;
 public class RegisterResponse
 {
     public boolean successful;
-    public String reason;
+    public String  reason;
 }

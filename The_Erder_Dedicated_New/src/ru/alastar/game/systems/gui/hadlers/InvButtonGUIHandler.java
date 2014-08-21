@@ -17,8 +17,7 @@ public class InvButtonGUIHandler implements GUIHandler
                             500, 500), "", "com.alastar.game.gui.GUIContainer",
                     "inv", "Inventory"), c);
 
-        }
-        else
+        } else
         {
             c.controlledEntity.closeGUI("inventory_container");
         }

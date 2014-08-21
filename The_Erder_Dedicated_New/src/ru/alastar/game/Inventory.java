@@ -2,6 +2,7 @@ package ru.alastar.game;
 
 import java.util.ArrayList;
 
+import ru.alastar.main.net.ConnectedClient;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddToContainerResponse;
 import ru.alastar.main.net.responses.RemoveFromContainerResponse;
@@ -29,6 +30,7 @@ public class Inventory implements IContainer
     @Override
     public void AddItem(Item i)
     {
+        ConnectedClient c;
         if (!items.contains(i))
         {
             Item st = getSameTypeItem(i.caption);
@@ -42,9 +44,12 @@ public class Inventory implements IContainer
                     r.amount = i.amount;
                     r.captiion = i.caption;
                     r.id = i.id;
-                    Server.SendTo(
-                            Server.getClient(Server.getEntity(entityId)).connection,
-                            r);
+                    if (Server.getEntity(entityId) != null)
+                    {
+                        c = Server.getClient(Server.getEntity(entityId));
+                        if (c != null)
+                            Server.SendTo(c.connection, r);
+                    }
                 } else
                 {
                     Server.warnEntity(Server.getEntity(entityId),
@@ -62,9 +67,12 @@ public class Inventory implements IContainer
                 r.amount = st.amount;
                 r.captiion = st.caption;
                 r.id = st.id;
-                Server.SendTo(
-                        Server.getClient(Server.getEntity(entityId)).connection,
-                        r);
+                if (Server.getEntity(entityId) != null)
+                {
+                    c = Server.getClient(Server.getEntity(entityId));
+                    if (c != null)
+                        Server.SendTo(c.connection, r);
+                }
                 Server.DestroyItem(i);
             }
 
@@ -94,7 +102,8 @@ public class Inventory implements IContainer
                 items.remove(it);
 
                 RemoveFromContainerResponse r = new RemoveFromContainerResponse();
-                r.name = "inv";                r.id = it.id;
+                r.name = "inv";
+                r.id = it.id;
                 Server.SendTo(
                         Server.getClient(Server.getEntity(entityId)).connection,
                         r);
@@ -166,7 +175,8 @@ public class Inventory implements IContainer
             Server.DestroyItem(this, item);
 
             RemoveFromContainerResponse r = new RemoveFromContainerResponse();
-            r.name = "inv";            r.id = item.id;
+            r.name = "inv";
+            r.id = item.id;
             Server.SendTo(
                     Server.getClient(Server.getEntity(entityId)).connection, r);
         } else

@@ -42,12 +42,14 @@ public class Stats
         if (vals.containsKey(s))
         {
             vals.get(s).value = i;
-            if(Server.getClient(whom)!=null){
-            AddStatResponse r = new AddStatResponse();
-            r.name = s;
-            r.sValue = vals.get(s).value;
-            r.mValue = vals.get(s).maxValue;
-             Server.SendTo(Server.getClient(whom).connection, r);}
+            if (Server.getClient(whom) != null)
+            {
+                AddStatResponse r = new AddStatResponse();
+                r.name = s;
+                r.sValue = vals.get(s).value;
+                r.mValue = vals.get(s).maxValue;
+                Server.SendTo(Server.getClient(whom).connection, r);
+            }
         }
     }
 }

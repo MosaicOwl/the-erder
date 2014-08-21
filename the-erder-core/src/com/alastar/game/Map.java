@@ -1,58 +1,66 @@
 package com.alastar.game;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
+import com.alastar.game.enums.ItemType;
 import com.badlogic.gdx.math.Vector3;
 
-public class Map {
+public class Map
+{
 
-	public static ArrayList<Entity> entities= new ArrayList<Entity>();
-	public static World world;
+    public static ArrayList<TexturedObject> entities = new ArrayList<TexturedObject>();
+    public static World                     world;
 
-    public static ArrayList<Interpolation> interps= new ArrayList<Interpolation>();
-    
+    public static ArrayList<Interpolation>  interps  = new ArrayList<Interpolation>();
 
-	public static void AddInter(Interpolation i)
-	{
-	    interps.add(i);
-	}
-	
-	public static void RemoveInter(Interpolation i)
-	{
-	    interps.remove(i);
-	}
-	
-	public static Entity getEntityById(int i) {
-		for (Entity e : entities) {
-			if (e.id == i) {
-				return e;
-			}
-		}
-		return null;
-	}
+    public static void AddInter(Interpolation i)
+    {
+        interps.add(i);
+    }
 
+    public static void RemoveInter(Interpolation i)
+    {
+        interps.remove(i);
+    }
 
-	public static void handleUpdate(int id, Vector3 vec) {
+    public static TexturedObject getObjectById(int i, int type)
+    {
+        for (TexturedObject e : entities)
+        {
+            if (e.getId() == i && e.getType() == type)
+            {
+                return e;
+            }
+        }
+        return null;
+    }
 
-		try{
-		    if(getEntityById(id) != null)
-	    getEntityById(id).setPosition(vec);    
-	    
-		}catch(Exception e)
-		{
-		   e.printStackTrace();
-		}
-	}
+    public static void handleUpdate(int id, int type, Vector3 vec)
+    {
 
-	public static void setWorld(World w)
-	{
-	    world = w;
-	}
-	
+        try
+        {
+          //  System.out.println("Update type: " + type + " id: " + id
+          //          + " vector: " + vec.toString());
+            if (getObjectById(id, type) != null)
+                ((Transform) getObjectById(id, type)).setPosition(vec);
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setWorld(World w)
+    {
+        world = w;
+    }
+
     public static void removeEntity(int i)
     {
-        getEntityById(i).Remove();
-        entities.remove(getEntityById(i));
+        ((Entity) getObjectById(i, 1)).Remove();
+        entities.remove(getObjectById(i, 1));
     }
 
     public static void addEntity(Entity p)
@@ -62,59 +70,68 @@ public class Map {
 
     public static void handleUpdate(int id, boolean val)
     {
-        Entity e = getEntityById(id);
-        if(e != null)
-        e.warMode = val;        
+        Entity e = (Entity) getObjectById(id, 1);
+
+        if (e != null)
+            e.warMode = val;
     }
 
     public static void handleRemoveEntity(int id2)
     {
-        System.out.println("Remove entity: " + id2);
-        Entity e = getEntityById(id2);
-        if(e != null){
+      //  System.out.println("Remove entity: " + id2);
+        Entity e = (Entity) getObjectById(id2, 1);
+        if (e != null)
+        {
             removeEntity(id2);
         }
     }
 
     public static void StepInterpolations()
     {
-            for (int i =interps.size()-1; i > -1; i--) {
+        for (int i = interps.size() - 1; i > -1; i--)
+        {
+            if(interps.get(i) != null)
+            {
                 interps.get(i).Step();
-                if(interps.get(i).finished){
+                if (interps.get(i).finished)
+                {
                     RemoveInter(interps.get(i));
                 }
             }
+        }
     }
-   
 
-    public static void handleEntity(Entity p) {
-        try{
-        if(!haveEntity(p)){
-        addEntity(p);
-        p.drawMessageOverhead(p.caption);
-        System.out.println("Entity added! Id: " + p.id);}
-        else
+    public static void handleEntity(Entity p)
+    {
+        try
         {
-            p.Remove();
-        }
+            if (!haveEntity(p))
+            {
+                addEntity(p);
+                p.drawMessageOverhead(p.caption);
+               // System.out.println("Entity added! Id: " + p.id);
+            } else
+            {
+                p.Remove();
+            }
         }
 
-        catch(Exception e)
+        catch (Exception e)
         {
-            System.out.println("Failed to add entity beacuse mode is null! Id: " + p.id);
             e.printStackTrace();
         }
     }
 
     private static boolean haveEntity(Entity p)
     {
-        if(getEntityById(p.id) == null)
-        return false;
+        if (getObjectById(p.id, 1) == null)
+            return false;
         else
             return true;
     }
 
-    public static void handleTile(Tile t) {
+    public static void handleTile(Tile t)
+    {
         world.tiles.put(t.position, t);
     }
 
@@ -122,16 +139,68 @@ public class Map {
     {
         setWorld(readObject);
     }
-    
+
     public static void drawAllByZ(int z)
-    {
-        for(TexturedObject o: entities)
+    {   
+        for (int i = entities.size() - 1; i > -1; i--)
         {
-            if(o.getZ() == z)
+            if (entities.get(i).getZ() == z)
             {
-                o.Draw(ErderGame.batch, 0, 0);   
+                entities.get(i).Draw(ErderGame.batch, 0, 0);
             }
-        }      
+        }
+    }
+
+    public static void handleItem(Item item)
+    {
+        if (getObjectById(item.id, 3) == null)
+            entities.add(item);
+    }
+
+    public static void handleItemUpdate(int id, int amount)
+    {
+        Item i = (Item) getObjectById(id, 3);
+        if (i != null)
+            i.amount = amount;
+    }
+
+    public static void handleItemUpdate(int id, Hashtable<String, Integer> attrs)
+    {
+        Item i = (Item) getObjectById(id, 3);
+        if (i != null)
+            i.attributes = attrs;
+    }
+
+    public static void handleItemUpdate(int id, String caption)
+    {
+        Item i = (Item) getObjectById(id, 3);
+        if (i != null)
+            i.caption = caption;
+    }
+
+    public static void handleItemUpdate(int id, ItemType type)
+    {
+        Item i = (Item) getObjectById(id, 3);
+        if (i != null)
+            i.itemType = type;
+    }
+
+    public static void handleRemove(int id, int type)
+    {
+        System.out.println("Remove object type: " + type + " id: " + id);
+        TexturedObject obj = getObjectById(id, type);
+        if (obj != null)
+        {
+            entities.remove(obj);
+            obj.Remove();  
+            System.out.println("Removed!");
+        }
+    }
+
+    public static void addProj(Projectile projectile)
+    {  
+        if (getObjectById(projectile.id, 2) == null)
+            entities.add(projectile);        
     }
 
 }

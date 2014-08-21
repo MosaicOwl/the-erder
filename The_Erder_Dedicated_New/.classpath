@@ -9,9 +9,9 @@
 	<classpathentry exported="true" kind="lib" path="D:/workspace/minlog.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/workspace/TextMMOEnums.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/workspace/mysql-connector-java-5.1.30-bin.jar"/>
-	<classpathentry exported="true" kind="lib" path="D:/workspace/gdx/gdx.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/workspace/gdx/gdx-box2d/gdx-box2d.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/workspace/gdx/gdx-box2d/gdx-box2d-gwt.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/workspace/gdx/gdx-box2d/gdx-box2d-natives.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/User1072/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.2.0/eb55d6eb1165daf6be23189767c19d811ca5eb36/gdx-1.2.0.jar" sourcepath="C:/Users/User1072/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.2.0/b7439d76fa8ef2b56999682df928f5cf6b489d2d/gdx-1.2.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

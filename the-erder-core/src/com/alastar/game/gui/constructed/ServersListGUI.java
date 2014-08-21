@@ -1,6 +1,5 @@
 package com.alastar.game.gui.constructed;
 
-
 import ru.alastar.net.Client;
 
 import com.alastar.game.GameManager;
@@ -14,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 public class ServersListGUI extends BaseConstructed
 {
     private GUIServerList list;
-    
+
     public ServersListGUI(Stage serversStage)
     {
         super(serversStage, "servers_list");
@@ -28,7 +27,7 @@ public class ServersListGUI extends BaseConstructed
     {
         list.Destroy();
     }
-    
+
     public void addServer(String name, final String address)
     {
         ChangeListener el = new ChangeListener()
@@ -40,15 +39,18 @@ public class ServersListGUI extends BaseConstructed
                 Client.init(address);
             }
         };
-        list.addChild(new GUIButton(name, new TextButton(name, GameManager.getSkin(GameManager.selectedSkin), "button"), el));
-    } 
-    
+        GUIButton b = new GUIButton(name, new TextButton(name, GameManager
+                .getSkin(GameManager.selectedSkin), "button"), el);
+        ((TextButton)b.getElementAsActor()).pad(5);
+        list.addChild(b);
+    }
+
     @Override
     public void Hide()
     {
         list.Hide();
     }
-    
+
     @Override
     public void Show()
     {

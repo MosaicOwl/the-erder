@@ -15,7 +15,6 @@ import ru.alastar.main.Main;
 import ru.alastar.main.net.Server;
 import ru.alastar.main.net.responses.AddEntityResponse;
 import ru.alastar.main.net.responses.ChatSendResponse;
-import ru.alastar.main.net.responses.RemoveEntityResponse;
 
 public class Location
 {
@@ -97,13 +96,7 @@ public class Location
 
     public void RemoveEntity(Entity entity)
     {
-        RemoveEntityResponse r = new RemoveEntityResponse();
-        r.id = entity.id;
-        entities.remove(entity.id);
-        for (Entity e1 : entities.values())
-        {
-            Server.SendTo(Server.getClient(e1).connection, r);
-        }
+
     }
 
     public boolean haveFlag(String string)
@@ -131,8 +124,8 @@ public class Location
         Item item = new Item(Server.getFreeItemId(), entity.id,
                 alloweditems.get(Server.random.nextInt(alloweditems.size())),
                 Server.random.nextInt(4) + 1, entity.body.getPosition().x,
-                entity.body.getPosition().y, entity.z, EquipType.None,
-                t, new Attributes(), entity.world.id);
+                entity.body.getPosition().y, entity.z, EquipType.None, t,
+                new Attributes(), entity.world.id);
         Inventory inv = Server.getInventory(entity);
         if (inv != null)
             inv.AddItem(item);

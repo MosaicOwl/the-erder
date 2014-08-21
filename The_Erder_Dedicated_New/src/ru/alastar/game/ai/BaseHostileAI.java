@@ -9,18 +9,19 @@ public class BaseHostileAI extends BaseAI
     {
 
     }
-    
+
     @Override
     public void OnSeeEntity(final Entity y)
     {
-        if(y.type == EntityType.Human)
+        if (y.type == EntityType.Human)
         {
-            if(!getEntity().alreadyTargets()){
-              this.entity.toggleWar(true);
-              entity.actToTarget(y);
-              StartChasingTarget();
+            if (!getEntity().alreadyTargets())
+            {
+                this.entity.toggleWar(true);
+                entity.actToTarget(y);
+                StartChasingTarget();
             }
         }
-    } 
-    
+    }
+
 }

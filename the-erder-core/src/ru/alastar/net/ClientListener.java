@@ -13,12 +13,16 @@ import com.alastar.game.GameManager;
 import com.alastar.game.Item;
 import com.alastar.game.MainScreen;
 import com.alastar.game.Map;
+import com.alastar.game.Projectile;
 import com.alastar.game.TargetInfo;
 import com.alastar.game.enums.EntityType;
 import com.alastar.game.enums.ItemType;
+import com.alastar.game.enums.ProjectileType;
+import com.alastar.game.enums.UpdateItemType;
 import com.alastar.game.enums.UpdateType;
 import com.alastar.game.gui.GUICore;
 import com.alastar.game.gui.constructed.ChatGUI;
+import com.alastar.game.gui.constructed.JoysticksGUI;
 import com.alastar.game.gui.constructed.StatusGUI;
 import com.alastar.game.gui.net.NetGUIAnswer;
 import com.alastar.game.gui.net.NetGUICore;
@@ -30,14 +34,17 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
 
-public class ClientListener extends Listener {
+public class ClientListener extends Listener
+{
     public Kryo kryo;
-	public ClientListener(EndPoint e) {
+
+    public ClientListener(EndPoint e)
+    {
         kryo = e.getKryo();
 
         kryo.setRegistrationRequired(true);
         kryo.setAsmEnabled(true);
-        
+
         kryo.register(EntityType.class);
         kryo.register(Hashtable.class);
         kryo.register(ArrayList.class);
@@ -48,12 +55,13 @@ public class ClientListener extends Listener {
         kryo.register(UpdateType.class);
         kryo.register(Vector2.class);
         kryo.register(ItemType.class);
+        kryo.register(UpdateItemType.class);
+        kryo.register(ProjectileType.class);
 
         kryo.register(LoginResponse.class);
         kryo.register(AddEntityResponse.class);
         kryo.register(SetData.class);
         kryo.register(ChatSendResponse.class);
-        kryo.register(RemoveEntityResponse.class);
         kryo.register(RegisterResponse.class);
         kryo.register(AddStatResponse.class);
         kryo.register(AddSkillResponse.class);
@@ -82,114 +90,167 @@ public class ClientListener extends Listener {
         kryo.register(HitResponse.class);
         kryo.register(TargetResponse.class);
         kryo.register(TargetInfoResponse.class);
+        kryo.register(AddItemResponse.class);
+        kryo.register(UpdateItemResponse.class);
+        kryo.register(AddProjectileResponse.class);
+        kryo.register(UpdateProjectileResponse.class);
+        kryo.register(RemovePacket.class);
+        kryo.register(ActInput.class);
 
-		//System.out.println("Client Handler have been started!");
-	}
+        // System.out.println("Client Handler have been started!");
+    }
 
-	public void received(Connection connection, Object object) {
+    public void received(Connection connection, Object object)
+    {
 
-	    
-		 if (object instanceof SetData) {
-		     SetData r = (SetData)object;
-		     Client.id = r.id;
-             System.out.println("Dataset " + r.id + ". Our id now: " + Client.id);
-		 } 
-	     else if (object instanceof LoginResponse) {
-	         LoginResponse r = (LoginResponse)object;
-             System.out.println("LoginResponse " + r.succesful);
-	         if(r.succesful)
-	         {
-	           System.out.println("enabling choose gui");
-	           GUICore.enableOne("choose");  
-	         }
-	         else
-	         {
-	             
-	         }
-	     }
-		 else if (object instanceof TargetInfoResponse) {
-		     TargetInfoResponse r = (TargetInfoResponse)object;
-             TargetInfo.setInfo(r.hits, r.mhits);
-         }
-	     else if (object instanceof TargetResponse) {
-	         TargetResponse r = (TargetResponse)object;
-	         Client.handleTarget(r.id);
-	     }
-	     else if (object instanceof AddEquipResponse) {
-	         AddEquipResponse r = (AddEquipResponse)object;
-	         Client.handleEquip(r);
-	     }
-	     else if (object instanceof RemoveEquipResponse) {
-	         RemoveEquipResponse r = (RemoveEquipResponse)object;
-	         Client.handleEquip(r.eid, r.slot);
-	     }
-	     else if (object instanceof ChatSendResponse) {
-	         ChatSendResponse r = (ChatSendResponse)object;
-	         ((ChatGUI)GUICore.getConstructedByName("Chat")).addEntry(r.sender, r.msg);
-	     }
-	     else if (object instanceof AddEntityResponse) {
-	          AddEntityResponse r = (AddEntityResponse)object;
-	          Entity e = new Entity(r.id, new Vector3(r.x, r.y, r.z), r.caption, r.type, r.warMode);
-	          
-	          if(e.id == Client.id){
-	              Client.controlledEntity = e;
-	              MainScreen.camera.position.x = e.position.x * GameManager.textureResolution;
-	              MainScreen.camera.position.y = e.position.y * GameManager.textureResolution
-	                       + (e.position.z * GameManager.textureResolution);
-	          }
-	          
-	          Map.handleEntity(e);
-	          
-	     }
-	     else if (object instanceof AddStatResponse) {
-	          AddStatResponse r = (AddStatResponse)object;
-              Client.handleStat(r.name, r.sValue, r.mValue);
-         }
-	      else if (object instanceof RemoveEntityResponse) {
-	          RemoveEntityResponse r = (RemoveEntityResponse)object;
-              Client.handleEntityRemove(r.id);
-         }
-	     else if (object instanceof AddSkillResponse) {
-	          AddSkillResponse r = (AddSkillResponse)object;
-              Client.handleSkill(r.name, r.sValue, r.mValue);
-         }
-	     else if (object instanceof CreateContainerResponse) {
-	         CreateContainerResponse r = (CreateContainerResponse)object;
-	         ContainersInfo.addContainer(r.name, new ContainerInfo(r.name, r.max));
-	     } 
-	     else if (object instanceof AddToContainerResponse) {
-	         AddToContainerResponse r = (AddToContainerResponse)object;
-             ContainersInfo.addToContainer(r.name, new Item(r.id, new Vector3(), r.captiion, r.type, r.amount, r.attrs));
-         }
-	     else if (object instanceof RemoveContainerResponse) {
-	          RemoveContainerResponse r = (RemoveContainerResponse)object;
-	          ContainersInfo.removeContainer(r.name);
-	     }
-	     else if (object instanceof RemoveFromContainerResponse) {
-	           RemoveFromContainerResponse r = (RemoveFromContainerResponse)object;
-	                 ContainersInfo.removeFromContainer(r.name, r.id);
-	     }
-	     else if (object instanceof AddCharacterResponse) {
-	         AddCharacterResponse r = (AddCharacterResponse)object;
-	         Client.handleChar(r.name, r.type);
-	     }
-	     else if (object instanceof RemoveEntityResponse) {
-	         RemoveEntityResponse r = (RemoveEntityResponse)object;
-	         Map.removeEntity(r.id); 
-	     }
-	     else if (object instanceof LoadWorldResponse) {
-	         LoadWorldResponse r = (LoadWorldResponse)object;
-	         MainScreen.currentStage = MainScreen.gui;
-	         GUICore.addConstructedGUI(new StatusGUI(MainScreen.gui, "Status")); 
-	         GUICore.addConstructedGUI(new ChatGUI(MainScreen.gui)); 
-	         Client.LoadWorld(r.name);
-	     }
-	     else if (object instanceof UpdatePlayerResponse) {
-	          UpdatePlayerResponse r = (UpdatePlayerResponse)object;
-	          switch(r.updType){
-	              case Position:
-	                  Map.handleUpdate(r.id, new Vector3(r.x, r.y, r.z));
-	              break;
+        if (object instanceof SetData)
+        {
+            SetData r = (SetData) object;
+            Client.id = r.id;
+            // System.out.println("Dataset " + r.id + ". Our id now: " +
+            // Client.id);
+        } else if (object instanceof AddItemResponse)
+        {
+            AddItemResponse r = (AddItemResponse) object;
+            Map.handleItem(new Item(r.id, new Vector3(r.x, r.y, r.z),
+                    r.caption, r.type, r.amount, r.attrs));
+        }
+        else if (object instanceof AddProjectileResponse)
+        {
+            AddProjectileResponse r = (AddProjectileResponse) object;
+            Map.addProj(new Projectile(r.id, r.angle, r.projectileType, r.x, r.y, r.z));
+        }  
+        else if (object instanceof UpdateProjectileResponse)
+        {
+          //  System.out.println("Update proj");
+            UpdateProjectileResponse r = (UpdateProjectileResponse) object;
+            Map.handleUpdate(r.id, 2, new Vector3(r.x, r.y, r.z));
+        }
+        else if (object instanceof RemovePacket)
+        {
+            RemovePacket r = (RemovePacket) object;
+            Map.handleRemove(r.id, r.type);
+        } else if (object instanceof UpdateItemResponse)
+        {
+            UpdateItemResponse r = (UpdateItemResponse) object;
+            switch (r.updType)
+            {
+                case Amount:
+                    Map.handleItemUpdate(r.id, r.amount);
+                    break;
+                case Attributes:
+                    Map.handleItemUpdate(r.id, r.attrs);
+                    break;
+                case Caption:
+                    Map.handleItemUpdate(r.id, r.caption);
+                    break;
+                case Position:
+                    Map.handleUpdate(r.id, 3, new Vector3(r.x, r.y, r.z));
+                    break;
+                case Type:
+                    Map.handleItemUpdate(r.id, r.type);
+                    break;
+                default:
+                    break;
+
+            }
+        } else if (object instanceof LoginResponse)
+        {
+            LoginResponse r = (LoginResponse) object;
+            System.out.println("LoginResponse " + r.succesful);
+            if (r.succesful)
+            {
+                System.out.println("enabling choose gui");
+                GUICore.enableOne("choose");
+            } else
+            {
+
+            }
+        } else if (object instanceof TargetInfoResponse)
+        {
+            TargetInfoResponse r = (TargetInfoResponse) object;
+            TargetInfo.setInfo(r.hits, r.mhits);
+        } else if (object instanceof TargetResponse)
+        {
+            TargetResponse r = (TargetResponse) object;
+            Client.handleTarget(r.id);
+        } else if (object instanceof AddEquipResponse)
+        {
+            AddEquipResponse r = (AddEquipResponse) object;
+            Client.handleEquip(r);
+        } else if (object instanceof RemoveEquipResponse)
+        {
+            RemoveEquipResponse r = (RemoveEquipResponse) object;
+            Client.handleEquip(r.eid, r.slot);
+        } else if (object instanceof ChatSendResponse)
+        {
+            ChatSendResponse r = (ChatSendResponse) object;
+            ((ChatGUI) GUICore.getConstructedByName("Chat")).addEntry(r.sender,
+                    r.msg);
+        } else if (object instanceof AddEntityResponse)
+        {
+            AddEntityResponse r = (AddEntityResponse) object;
+            Entity e = new Entity(r.id, new Vector3(r.x, r.y, r.z), r.caption,
+                    r.type, r.warMode);
+
+            if (e.id == Client.id)
+            {
+                Client.controlledEntity = e;
+                MainScreen.camera.position.x = e.position.x
+                        * GameManager.textureResolution;
+                MainScreen.camera.position.y = e.position.y
+                        * GameManager.textureResolution
+                        + (e.position.z * GameManager.textureResolution);
+            }
+
+            Map.handleEntity(e);
+
+        } else if (object instanceof AddStatResponse)
+        {
+            AddStatResponse r = (AddStatResponse) object;
+            Client.handleStat(r.name, r.sValue, r.mValue);
+        } else if (object instanceof AddSkillResponse)
+        {
+            AddSkillResponse r = (AddSkillResponse) object;
+            Client.handleSkill(r.name, r.sValue, r.mValue);
+        } else if (object instanceof CreateContainerResponse)
+        {
+            CreateContainerResponse r = (CreateContainerResponse) object;
+            ContainersInfo.addContainer(r.name,
+                    new ContainerInfo(r.name, r.max));
+        } else if (object instanceof AddToContainerResponse)
+        {
+            AddToContainerResponse r = (AddToContainerResponse) object;
+            ContainersInfo.addToContainer(r.name, new Item(r.id, new Vector3(),
+                    r.captiion, r.type, r.amount, r.attrs));
+        } else if (object instanceof RemoveContainerResponse)
+        {
+            RemoveContainerResponse r = (RemoveContainerResponse) object;
+            ContainersInfo.removeContainer(r.name);
+        } else if (object instanceof RemoveFromContainerResponse)
+        {
+            RemoveFromContainerResponse r = (RemoveFromContainerResponse) object;
+            ContainersInfo.removeFromContainer(r.name, r.id);
+        } else if (object instanceof AddCharacterResponse)
+        {
+            AddCharacterResponse r = (AddCharacterResponse) object;
+            Client.handleChar(r.name, r.type);
+        } else if (object instanceof LoadWorldResponse)
+        {
+            LoadWorldResponse r = (LoadWorldResponse) object;
+            MainScreen.currentStage = MainScreen.gui;
+            GUICore.addConstructedGUI(new StatusGUI(MainScreen.gui, "Status"));
+            GUICore.addConstructedGUI(new ChatGUI(MainScreen.gui));
+           // GUICore.addConstructedGUI(new JoysticksGUI(MainScreen.gui, "joysticks"));
+            Client.LoadWorld(r.name);
+        } else if (object instanceof UpdatePlayerResponse)
+        {
+            UpdatePlayerResponse r = (UpdatePlayerResponse) object;
+            switch (r.updType)
+            {
+                case Position:
+                    Map.handleUpdate(r.id, 1, new Vector3(r.x, r.y, r.z));
+                    break;
                 case All:
                     break;
                 case Health:
@@ -201,48 +262,53 @@ public class ClientListener extends Listener {
                     break;
                 default:
                     break;
-	          }
-	     } 
-	     else if (object instanceof NetGUIInfo) {
-	         NetGUIInfo r = (NetGUIInfo)object;
-             NetGUICore.createGUIElement(r);
-         }
-	     else if (object instanceof CloseGUIResponse) {
-	         CloseGUIResponse r = (CloseGUIResponse)object;
-             GUICore.remove(r.name);
-         }
-	     else if (object instanceof MessageResponse) {
-	         MessageResponse r = (MessageResponse)object;
-	         System.out.println("Message! Contents: " + r.msg + " ID: " + r.type);
-	         switch(r.type)
-	         {
-	             case 0:
-	                 ((ChatGUI)GUICore.getConstructedByName("Chat")).addEntry("I", r.msg);
-	                 break;
-	             case 1: 
-	                 if(Client.controlledEntity != null)
-	                 Client.controlledEntity.drawMessageOverhead(r.msg);
-	                 break;
-	             case 2:
-	                 if(Client.controlledEntity != null)
-	                 Client.controlledEntity.drawMessageOverhead(r.msg);
-	                 break;
-	         }
-         }
-	     else if (object instanceof SpeechResponse) {
-	         SpeechResponse r = (SpeechResponse)object;
-             Client.handleSpeech(r.id, r.msg);
-         }
-	}
+            }
+        } else if (object instanceof NetGUIInfo)
+        {
+            NetGUIInfo r = (NetGUIInfo) object;
+            NetGUICore.createGUIElement(r);
+        } else if (object instanceof CloseGUIResponse)
+        {
+            CloseGUIResponse r = (CloseGUIResponse) object;
+            GUICore.remove(r.name);
+        } else if (object instanceof MessageResponse)
+        {
+            MessageResponse r = (MessageResponse) object;
+            System.out
+                    .println("Message! Contents: " + r.msg + " ID: " + r.type);
+            switch (r.type)
+            {
+                case 0:
+                    if (((ChatGUI) GUICore.getConstructedByName("Chat")) != null)
+                        ((ChatGUI) GUICore.getConstructedByName("Chat"))
+                                .addEntry("I", r.msg);
+                    break;
+                case 1:
+                    if (Client.controlledEntity != null)
+                        Client.controlledEntity.drawMessageOverhead(r.msg);
+                    break;
+                case 2:
+                    if (Client.controlledEntity != null)
+                        Client.controlledEntity.drawMessageOverhead(r.msg);
+                    break;
+            }
+        } else if (object instanceof SpeechResponse)
+        {
+            SpeechResponse r = (SpeechResponse) object;
+            Client.handleSpeech(r.id, r.msg);
+        }
+    }
 
-	@Override
-	public void connected(Connection connection) {
+    @Override
+    public void connected(Connection connection)
+    {
 
-	}
+    }
 
-	@Override
-	public void disconnected(Connection connection) {
-		connection.close();
-	}
+    @Override
+    public void disconnected(Connection connection)
+    {
+        connection.close();
+    }
 
 }

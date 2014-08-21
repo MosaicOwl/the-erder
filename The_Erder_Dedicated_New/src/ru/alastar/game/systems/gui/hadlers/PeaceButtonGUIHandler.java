@@ -12,9 +12,9 @@ public class PeaceButtonGUIHandler implements GUIHandler
     public void handle(String[] args, ConnectedClient c)
     {
         c.controlledEntity.closeGUI("peace_button");
-        c.controlledEntity.toggleWar(true);
+        c.controlledEntity.toggleWar(true);    
         NetGUISystem.OpenGUI(NetGUISystem.CreateGUIInfo("war_button",
-                new Vector2(250, 70), new Vector2(100, 50), "",
+                new Vector2(100, 35), new Vector2(50, 25), "",
                 "com.alastar.game.gui.GUIButton", "", "war"), c);
         c.controlledEntity.AddGUIHandler("war_button",
                 new WarButtonGUIHandler());

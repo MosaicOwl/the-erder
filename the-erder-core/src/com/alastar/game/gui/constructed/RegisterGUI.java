@@ -18,22 +18,30 @@ public class RegisterGUI extends BaseConstructed
 {
 
     public Table table;
-    
+
     public RegisterGUI(Stage s, String name)
     {
         super(s, name);
-        
-        final int bsw = Vars.getInt("balancedScreenWidth");
-        
+
+        final float bsw = (float)Vars.getDouble("balancedScreenWidth");
+
         final TextButton btnToLog = new TextButton(
                 GameManager.getLocalizedMessage("Login"),
                 GameManager.txtBtnStyle);
         btnToLog.setWidth(175 / bsw);
-
+        btnToLog.padLeft(15);
+        btnToLog.padRight(15);
+        btnToLog.padTop(10);
+        btnToLog.padBottom(10);
+        
         final TextButton btnReg = new TextButton(
                 GameManager.getLocalizedMessage("Reg"), GameManager.txtBtnStyle);
         btnReg.setWidth(175 / bsw);
-
+        btnReg.padLeft(15);
+        btnReg.padRight(15);
+        btnReg.padTop(10);
+        btnReg.padBottom(10);
+        
         Label loginLabel = new Label(GameManager.getLocalizedMessage("Login")
                 + ":", GameManager.labelStyle);
 
@@ -53,13 +61,13 @@ public class RegisterGUI extends BaseConstructed
         final TextField mailText = new TextField("Mail",
                 GameManager.txtFieldStyle);
         mailText.setWidth(175 / bsw);
-        
+
         table = new Table();
         table.setFillParent(true);
 
         table.add(loginLabel);
         table.row();
-        
+
         table.add(loginText);
         table.row();
 
@@ -71,26 +79,30 @@ public class RegisterGUI extends BaseConstructed
 
         table.add(mailLabel);
         table.row();
-        
+
         table.add(mailText);
         table.row();
-        
+
         table.add(btnReg);
         table.row();
-        
+
         table.add(btnToLog);
 
-        btnToLog.addListener(new ChangeListener() {
+        btnToLog.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 GUICore.getConstructedByName("login").Show();
                 Hide();
             }
         });
-        
-        btnReg.addListener(new ChangeListener() {
+
+        btnReg.addListener(new ChangeListener()
+        {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor)
+            {
                 RegistrationPacketRequest r = new RegistrationPacketRequest();
                 r.login = loginText.getText();
                 r.pass = passText.getText();
@@ -101,12 +113,13 @@ public class RegisterGUI extends BaseConstructed
         });
         this.register(table);
     }
+
     @Override
     public void Hide()
     {
         table.setVisible(false);
     }
-    
+
     @Override
     public void Show()
     {

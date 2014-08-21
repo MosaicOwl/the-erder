@@ -7,10 +7,11 @@ import ru.alastar.main.net.requests.AccountRequest;
 import ru.alastar.main.net.requests.AuthServerRequest;
 
 public class ServerRegistrator
-{  
+{
     public static com.esotericsoftware.kryonet.Client client = null;
-    
-    public static void StartClient() throws Exception {
+
+    public static void StartClient() throws Exception
+    {
         client = new com.esotericsoftware.kryonet.Client();
         client.start();
         client.addListener(new RegListener(client));
@@ -18,20 +19,25 @@ public class ServerRegistrator
         Register();
     }
 
-    public static void Connect() {
-        try {
-            int port = Integer.parseInt(Configuration.GetEntryValue("loginPort"));
-            client.connect(100, Configuration.GetEntryValue("loginHost"), port, port + 1);
-        } catch (IOException e) {
+    public static void Connect()
+    {
+        try
+        {
+            int port = Integer.parseInt(Configuration
+                    .GetEntryValue("loginPort"));
+            client.connect(100, Configuration.GetEntryValue("loginHost"), port,
+                    port + 1);
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
-    
+
     public static void Send(Object r)
     {
         client.sendUDP(r);
     }
-    
+
     private static void Register()
     {
         AuthServerRequest r = new AuthServerRequest();
@@ -39,7 +45,7 @@ public class ServerRegistrator
         r.state = Server.state;
         r.port = Configuration.GetEntryValue("port");
         Send(r);
-        
+
     }
 
     public static void getClient(String login, String pass)

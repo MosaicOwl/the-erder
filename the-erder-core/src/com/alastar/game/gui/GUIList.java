@@ -13,42 +13,43 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 
 public class GUIList implements GUIElement
 {
-    private String name;
-    private Window window; 
-    private Table table;
+    private String     name;
+    private Window     window;
+    private Table      table;
     private ScrollPane scroll;
-    
+
     public GUIList()
     {
         this.name = "GenericGUIList";
-        this.window = new Window(this.name, GameManager.getSkin(GameManager.selectedSkin), "window");
+        this.window = new Window(this.name,
+                GameManager.getSkin(GameManager.selectedSkin), "window");
         this.window.setName(name);
-        this.window.setPosition(0 / Vars.getInt("balancedScreenWidth"), 0 / Vars.getInt("balancedScreenHeight"));
-        this.window.setHeight(0 / Vars.getInt("balancedScreenHeight"));
-        this.window.setWidth(0 / Vars.getInt("balancedScreenWidth"));
+        this.window.setPosition(0 / (float)Vars.getDouble("balancedScreenWidth"),
+                0 / (float)Vars.getDouble("balancedScreenHeight"));
+        this.window.setHeight(0 / (float)Vars.getDouble("balancedScreenHeight"));
+        this.window.setWidth(0 / (float)Vars.getDouble("balancedScreenWidth"));
         window.defaults().padLeft(0);
         window.defaults().padRight(0);
         window.defaults().padTop(0);
         window.defaults().padBottom(0);
-        window.defaults().minWidth(100/ Vars.getInt("balancedScreenWidth"));
-        window.defaults().minHeight(30/ Vars.getInt("balancedScreenHeight"));
-        
-        table = new 
-                Table();
+        window.defaults().minWidth(100 / (float)Vars.getDouble("balancedScreenWidth"));
+        window.defaults().minHeight(30 / (float)Vars.getDouble("balancedScreenHeight"));
+
+        table = new Table();
         table.defaults().padLeft(0);
         table.defaults().padRight(0);
         table.defaults().padTop(0);
-        table.defaults().padBottom(0);  
+        table.defaults().padBottom(0);
         table.setFillParent(true);
         table.setWidth(100);
         table.setHeight(30);
         table.left();
         table.bottom();
-        
+
         scroll = new ScrollPane(table);
         scroll.setScrollBarPositions(false, true);
         scroll.setScrollingDisabled(true, true);
-        scroll.setScrollbarsOnTop(true); 
+        scroll.setScrollbarsOnTop(true);
         scroll.setFadeScrollBars(false);
         scroll.setFillParent(true);
         scroll.setSmoothScrolling(false);
@@ -57,15 +58,17 @@ public class GUIList implements GUIElement
 
         window.add(scroll).fill();
     }
-    
-    public GUIList(String n, Window w, Vector2 vector2, Vector2 vector22, int i, int j, int k, int l)
+
+    public GUIList(String n, Window w, Vector2 vector2, Vector2 vector22,
+            int i, int j, int k, int l)
     {
         this.name = n;
         this.window = w;
         this.window.setName(n);
-        this.window.setPosition(vector2.x / Vars.getInt("balancedScreenWidth"), vector2.y / Vars.getInt("balancedScreenHeight"));
-        this.window.setHeight(vector22.y / Vars.getInt("balancedScreenHeight"));
-        this.window.setWidth(vector22.x / Vars.getInt("balancedScreenWidth"));
+        this.window.setPosition(vector2.x / (float)Vars.getDouble("balancedScreenWidth"),
+                vector2.y / (float)Vars.getDouble("balancedScreenHeight"));
+        this.window.setHeight(vector22.y / (float)Vars.getDouble("balancedScreenHeight"));
+        this.window.setWidth(vector22.x / (float)Vars.getDouble("balancedScreenWidth"));
         window.defaults().padLeft(i);
         window.defaults().padRight(j);
         window.defaults().padTop(k);
@@ -74,7 +77,7 @@ public class GUIList implements GUIElement
         window.defaults().minHeight(30);
 
     }
-    
+
     @Override
     public Actor getElementAsActor()
     {
@@ -90,7 +93,9 @@ public class GUIList implements GUIElement
     @Override
     public void Destroy()
     {
-        window.remove();
+      //  window.remove();
+        Hide();
+        window.clear();
     }
 
     public void AddControl(GUIElement element)
@@ -98,7 +103,7 @@ public class GUIList implements GUIElement
         window.add(element.getElementAsActor());
         window.pack();
     }
-    
+
     @Override
     public void Hide()
     {
@@ -114,7 +119,7 @@ public class GUIList implements GUIElement
     @Override
     public void Update(String s)
     {
-        
+
     }
 
     @Override
@@ -125,7 +130,7 @@ public class GUIList implements GUIElement
 
     @Override
     public void setHandledVariable(String val)
-    {        
+    {
     }
 
     @Override
@@ -136,7 +141,7 @@ public class GUIList implements GUIElement
 
     @Override
     public void setEventListener(EventListener val)
-    {        
+    {
     }
 
     @Override
@@ -155,7 +160,7 @@ public class GUIList implements GUIElement
     @Override
     public void setHeight(float val)
     {
-        this.window.setHeight(val / Vars.getInt("balancedScreenHeight"));
+        this.window.setHeight(val / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -167,8 +172,8 @@ public class GUIList implements GUIElement
     @Override
     public void setWidth(float val)
     {
-        this.window.setWidth(val / Vars.getInt("balancedScreenWidth"));
-        
+        this.window.setWidth(val / (float)Vars.getDouble("balancedScreenWidth"));
+
     }
 
     @Override
@@ -180,8 +185,8 @@ public class GUIList implements GUIElement
     @Override
     public void setPosition(Vector2 val)
     {
-        window.setX(val.x / Vars.getInt("balancedScreenWidth") );
-        window.setY(val.y / Vars.getInt("balancedScreenHeight") );
+        window.setX(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        window.setY(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -193,8 +198,9 @@ public class GUIList implements GUIElement
     @Override
     public void setPadTB(Vector2 val)
     {
-        window.defaults().padTop(val.x / Vars.getInt("balancedScreenWidth"));
-        window.defaults().padBottom(val.y/ Vars.getInt("balancedScreenHeight"));
+        window.defaults().padTop(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        window.defaults()
+                .padBottom(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -206,8 +212,8 @@ public class GUIList implements GUIElement
     @Override
     public void setPadRL(Vector2 val)
     {
-        window.defaults().padRight(val.x / Vars.getInt("balancedScreenWidth"));
-        window.defaults().padLeft(val.y/ Vars.getInt("balancedScreenHeight"));
+        window.defaults().padRight(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        window.defaults().padLeft(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -219,8 +225,9 @@ public class GUIList implements GUIElement
     @Override
     public void setMinHW(Vector2 val)
     {
-        window.defaults().minWidth(val.x / Vars.getInt("balancedScreenWidth"));
-        window.defaults().minHeight(val.y/ Vars.getInt("balancedScreenHeight"));
+        window.defaults().minWidth(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        window.defaults()
+                .minHeight(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
 
     @Override
@@ -232,10 +239,11 @@ public class GUIList implements GUIElement
     @Override
     public void setMaxHW(Vector2 val)
     {
-        window.defaults().maxWidth(val.x / Vars.getInt("balancedScreenWidth"));
-        window.defaults().maxHeight(val.y/ Vars.getInt("balancedScreenHeight"));        
+        window.defaults().maxWidth(val.x / (float)Vars.getDouble("balancedScreenWidth"));
+        window.defaults()
+                .maxHeight(val.y / (float)Vars.getDouble("balancedScreenHeight"));
     }
-    
+
     @Override
     public void setText(String text)
     {
@@ -252,8 +260,8 @@ public class GUIList implements GUIElement
     public void addChild(GUIElement o)
     {
         table.row();
-        ((Label)o.getElementAsActor()).setAlignment(Align.left);
-        ((Label)o.getElementAsActor()).setWrap(true);
+        ((Label) o.getElementAsActor()).setAlignment(Align.left);
+        ((Label) o.getElementAsActor()).setWrap(true);
         table.add(o.getElementAsActor());
     }
 }

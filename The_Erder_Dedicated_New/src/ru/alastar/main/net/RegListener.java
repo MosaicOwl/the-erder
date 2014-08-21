@@ -23,20 +23,20 @@ public class RegListener extends Listener
         // последовательности, что и на сервере!*
         kryo.setRegistrationRequired(true);
         kryo.setAsmEnabled(true);
-        
+
         kryo.register(ServerState.class);
 
-        kryo.register(AuthServerRequest.class); 
+        kryo.register(AuthServerRequest.class);
         kryo.register(AccountRequest.class);
         kryo.register(ProcessLoginResponse.class);
     }
 
     public void received(Connection connection, Object object)
     {
-       if(object instanceof ProcessLoginResponse)
-       {
-           Server.ProcessLogin((ProcessLoginResponse)object);
-       }
+        if (object instanceof ProcessLoginResponse)
+        {
+            Server.ProcessLogin((ProcessLoginResponse) object);
+        }
     }
 
     @Override
