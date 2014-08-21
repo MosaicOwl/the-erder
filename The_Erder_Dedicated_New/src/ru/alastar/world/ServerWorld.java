@@ -21,6 +21,8 @@ import ru.alastar.physics.CollisionListener;
 
 import com.alastar.game.Tile;
 import com.alastar.game.enums.TileType;
+import com.alastar.game.enums.Type;
+import com.alastar.game.enums.TypeId;
 import com.alastar.game.enums.UpdateType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -145,17 +147,18 @@ public class ServerWorld
             upd = entities.get(i);
             if(upd != null) // sanity
             {
-                if (upd.getType() == 0)
+                if (upd.getType() == TypeId.getTypeId(Type.Entity))
                 {
-                    if (u.getId() != upd.getId())
-                    {
-                        c = Server.getClient(((Entity) upd));
-                        if (c != null)
-                        {
-                            Server.SendTo(c.connection, r);
-                        }
-                    } else
+                    if (u.getId() == upd.getId())
+                    {   
                         index = i;
+                    }
+                      c = Server.getClient(((Entity) upd));
+                      if (c != null)
+                      {
+                         Server.SendTo(c.connection, r);
+                      }
+                    
                 }
             }
         }

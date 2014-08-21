@@ -111,7 +111,6 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
                     } else
                     {
                         Destroy();
-                        cancel();
                     }
 
                 }
@@ -125,13 +124,13 @@ public abstract class BaseProjectile implements IUpdate, IPhysic
     public void Destroy()
     {
         updateTimer.cancel();
-        
-        body.destroyFixture(fixture);
-        body.setAwake(false);
-        world.getPhysic().destroyBody(body);
+
+        //body.setActive(false);
+        // body.destroyFixture(fixture);
+        // world.getPhysic().destroyBody(body);                
         
         Server.RemoveProjectile(this);
-        world.RemoveEntity(this);
+        getWorld().RemoveEntity(this);
         
         Main.Log("[DEBUG]","Proj destroy");
     }
